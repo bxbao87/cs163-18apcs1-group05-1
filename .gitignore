@@ -1,0 +1,16 @@
+*.exe
+/**/Debug/
+*.a
+main
+a.out
+A
+/**/.vs/
+.DS_Store
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+/**/Data/
+*.txt
+*.zip
+commit*
