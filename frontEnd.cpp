@@ -279,7 +279,7 @@ void BogosearchSplash() {
 				H(147, 5, 68);
 				break;
 			}
-			Sleep(150);
+			Sleep(300);
 			++t;
 		}
 
