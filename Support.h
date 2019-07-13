@@ -16,9 +16,12 @@
 #include <ctime>
 
 std::vector<std::string> AND(std::vector<std::string> &v1, std::vector<std::string> &v2);
+<<<<<<< HEAD
 std::vector<std::string> splitSentence(const std::string& s);
 bool loadStopWord(std::set<std::string>& stopword);
 void Tolower(std::string& s); // Change a string to lower case
 std::vector<std::string> RemoveStopWord(const std::vector<std::string>& words);
+=======
+>>>>>>> f32b55c7b9393c48fc12f27a6787f489e838ad26
 
 #endif
