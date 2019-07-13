@@ -3,11 +3,15 @@
 #define Search_h
 #include "Support.h"
 #include "Trie.h"
+#include "frontEnd.h"
 
-//class Search
-//{
-//public:
-//	Search();
-//};
+class Search
+{
+private:
+	Trie trie;
+public:
+	Search();
+	void Run();
+};
 
 #endif

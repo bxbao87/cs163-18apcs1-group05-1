@@ -1,16 +1,9 @@
 #include "Search.h"
-#include "frontEnd.h"
-#include "Support.h"
-
-
 
 int main()
 {
-	/*
 	Search bogoSearch;
-	bogoSearch.run();*
-	*/
-	Trie trie;
+	bogoSearch.Run();
 	system("pause");
 	return 0;
 }

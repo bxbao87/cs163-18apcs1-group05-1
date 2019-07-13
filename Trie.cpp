@@ -70,6 +70,14 @@ void Trie::AddKey(const std::string& key, const std::vector<std::string> fileLis
 	cur->fileList = fileList;
 }
 
+void Trie::AddManyKey(const std::vector<std::string>& keyList, const std::string& inFile)
+{
+	for (auto key : keyList)
+	{
+		AddKey(key, inFile);
+	}
+}
+
 std::vector<std::string> Trie::GetKey(const std::string& key)
 {
 	bool newBranch = false;
