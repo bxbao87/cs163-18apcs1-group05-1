@@ -15,4 +15,6 @@
 #include <conio.h>
 #include <ctime>
 
+std::vector<std::string> AND(std::vector<std::string> &v1, std::vector<std::string> &v2);
+
 #endif
