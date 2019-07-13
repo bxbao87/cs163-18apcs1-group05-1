@@ -43,7 +43,6 @@ std::vector<std::string> AND(std::vector<std::string>& v1, std::vector<std::stri
 
 	return intersection;
 }
-<<<<<<< HEAD
 
 std::vector<std::string> splitSentence(const std::string& s) // split string into vector<string>
 {
@@ -103,5 +102,3 @@ std::vector<std::string> RemoveStopWord(const std::vector<std::string>& words)
 	}
 	return afterRemove;
 }
-=======
->>>>>>> f32b55c7b9393c48fc12f27a6787f489e838ad26
