@@ -1,16 +1,10 @@
 #include "Search.h"
+#include "Support.h"
 
 int main()
 {
-	/*Search bogoSearch;
-	bogoSearch.run();*/
-	Trie trie;
-	/*std::string tmp = "ahihi";
-	std::string inFile = "nothing";
-	trie.AddKey(tmp, inFile);
-	tmp = "yolo";
-	inFile = "something";
-	trie.AddKey(tmp, inFile);
-	trie.SaveTrie("Process\\Index.txt");*/
+	Search bogoSearch;
+	bogoSearch.Run();
+	system("pause");
 	return 0;
 }
