@@ -1,5 +1,14 @@
 #include "Support.h"
 
+bool isDelimiter(const char & c)
+{
+	std::vector <char> delimiter = { '.', ',', '\'', '?', '\"', '\n', '!' };
+	for (int i = 0; i < delimiter.size(); i++)
+		if (c == delimiter[i])
+			return true;
+	return false;
+}
+
 std::vector<std::string> AND(std::vector<std::string>& v1, std::vector<std::string>& v2)
 {
 	std::vector<std::string> intersection;

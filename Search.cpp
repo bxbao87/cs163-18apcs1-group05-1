@@ -12,3 +12,37 @@ void Search::Run()
 	trie.LoadTrie(fileName);
 	trie.SaveTrie(fileName);
 }
+
+std::vector<std::string> Search::ReadSingleFile(const std::string & fileName)
+{
+	std::vector<std::string> tokenVector;
+	std::string filePath = "Data/" + fileName;
+	std::ifstream inFile;
+	inFile.open(filePath.c_str());
+	if (inFile.is_open()) {
+		std::string fileData;
+		//read everything into string
+		while (!inFile.eof()) {
+			std::string line;
+			getline(inFile, line);
+			fileData += " " + line;
+		}
+
+		std::stringstream ss(fileData);
+		std::string token;
+		//extract token from string stream
+		while (ss >> token) {
+			if (isDelimiter(token[token.size() - 1])) //check for the last char is a delimiter or not
+				token.erase(token.end()-1);
+			tokenVector.push_back(token);
+		}
+		//eliminate duplicate element
+		std::sort(tokenVector.begin(), tokenVector.end());
+		tokenVector.erase(std::unique(tokenVector.begin(), tokenVector.end()), tokenVector.end());
+	}
+	else
+		std::cout << "File " << fileName << " is not found";
+	inFile.close();
+
+	return tokenVector;
+}

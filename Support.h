@@ -15,6 +15,9 @@
 #include <conio.h>
 #include <ctime>
 
-std::vector<std::string> AND(std::vector<std::string> &v1, std::vector<std::string> &v2);
+bool isDelimiter(const char &c);//Check if char c is a delimiter . , ! ? ' " 
+
+
+std::vector<std::string> AND(std::vector<std::string> &v1, std::vector<std::string> &v2);//AND operation
 
 #endif
