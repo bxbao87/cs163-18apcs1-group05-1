@@ -12,6 +12,7 @@ private:
 public:
 	Search();
 	void Run();
+	std::vector<std::string> ReadSingleFile(const std::string &fileName);
 };
 
 #endif
