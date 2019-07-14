@@ -9,6 +9,16 @@ bool isDelimiter(const char & c)
 	return false;
 }
 
+bool isNumber(const std::string & s)
+{
+	for (int i = 0; i < s.length(); ++i)
+	{
+		if (('a' <= s[i] && s[i] <= 'z') || ('A' <= s[i] && s[i] <= 'Z'))
+			return false;
+	}
+	return true;
+}
+
 std::vector<std::string> AND(std::vector<std::string>& v1, std::vector<std::string>& v2)
 {
 	std::vector<std::string> intersection;
