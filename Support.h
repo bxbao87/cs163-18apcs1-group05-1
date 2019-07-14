@@ -28,6 +28,6 @@ bool loadStopWord(std::set<std::string>& stopword);
 void Tolower(std::string& s); // Change a string to lower case
 std::vector<std::string> RemoveStopWord(const std::vector<std::string>& words);
 
-
+bool isPrefix(const std::string &check, const std::string &query);// check if query is prefix of check
 
 #endif

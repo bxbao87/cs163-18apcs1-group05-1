@@ -137,3 +137,11 @@ std::vector<std::string> OR(const std::vector<std::string>& v1, const std::vecto
 	}
 	return res;
 }
+
+bool isPrefix(const std::string & check, const std::string & query)
+{
+	if (check.size() < query.size())
+		return false;
+	std::string compareString(check, 0, query.size());
+	return !compareString.compare(query);
+}

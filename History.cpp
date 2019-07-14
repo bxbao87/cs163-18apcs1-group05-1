@@ -52,12 +52,9 @@ void History::WriteHistory()
 
 void History::Add(const std::string & query)
 {
-	if (history.size() < 20)
-		history.push(query);
-	else {
+	history.push(query);
+	if (history.size() > 20)
 		history.pop();
-		history.push(query);
-	}
 }
 
 std::vector<std::string> History::GetHistory(const std::string & searchKeyword)
@@ -75,12 +72,4 @@ std::vector<std::string> History::GetHistory(const std::string & searchKeyword)
 		history.push(cur);
 	}
 	return resultVector;
-}
-
-bool isPrefix(const std::string & check, const std::string & query)
-{
-	if (check.size() < query.size())
-		return false;
-	std::string compareString(check, 0, query.size());
-	return !compareString.compare(query);
 }

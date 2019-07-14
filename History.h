@@ -16,5 +16,4 @@ public :
 private:
 	std::queue <std::string> history;
 };
-bool isPrefix(const std::string &check, const std::string &query);// check if query is prefix of check
 #endif
