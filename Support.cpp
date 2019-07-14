@@ -103,3 +103,37 @@ std::vector<std::string> RemoveStopWord(const std::vector<std::string>& words)
 	}
 	return afterRemove;
 }
+
+std::vector<std::string> OR(const std::vector<std::string>& v1, const std::vector<std::string>& v2)
+{
+	std::vector<std::string> res;
+	res.clear();
+
+	std::set<std::string> tmp;
+	tmp.clear();
+
+	std::string s;
+
+	for (int i = 0; i < v1.size() && i<v2.size(); ++i)
+	{
+		s = v1[i];
+		tmp.insert(s);
+		s = v2[i];
+		tmp.insert(s);
+	}
+	for (int i = v1.size(); i < v2.size(); ++i)// if v1 is shorter than v2
+	{
+		s = v2[i];
+		tmp.insert(s);
+	}
+	for (int i = v2.size(); i < v1.size(); ++i) // if v2 is shorter than v1
+	{
+		s = v1[i];
+		tmp.insert(s);
+	}
+	for (std::set<std::string>::iterator it = tmp.begin(); it != tmp.end(); ++it)
+	{
+		res.push_back(*it);
+	}
+	return res;
+}

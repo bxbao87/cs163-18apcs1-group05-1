@@ -16,8 +16,6 @@
 #include <ctime>
 
 
-std::vector<std::string> AND(std::vector<std::string> &v1, std::vector<std::string> &v2);
-
 bool isDelimiter(const char &c);//Check if char c is a delimiter . , ! ? ' " 
 
 std::vector<std::string> AND(std::vector<std::string> &v1, std::vector<std::string> &v2);//AND operation
@@ -27,5 +25,6 @@ bool loadStopWord(std::set<std::string>& stopword);
 void Tolower(std::string& s); // Change a string to lower case
 std::vector<std::string> RemoveStopWord(const std::vector<std::string>& words);
 
+std::vector<std::string> OR(const std::vector<std::string>& v1, const std::vector<std::string>& v2);// OR operator
 
 #endif
