@@ -46,3 +46,16 @@ std::vector<std::string> Search::ReadSingleFile(const std::string & fileName)
 
 	return tokenVector;
 }
+
+std::vector<std::string> Search::GetFilename(const std::string rootDirectory)
+{
+	std::vector <std::string> pathVector;
+	std::stringstream ss;
+	for (auto & entry : std::experimental::filesystem::directory_iterator(rootDirectory))
+		ss << entry.path() << " ";
+	std::string path;
+	while (ss >> path) {
+		pathVector.push_back(path);
+	}
+	return pathVector;
+}
