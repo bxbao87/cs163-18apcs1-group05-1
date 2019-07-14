@@ -54,6 +54,11 @@ Trie::Trie()
 	pRoot = nullptr;
 }
 
+Trie::~Trie()
+{
+	SaveTrie();
+}
+
 void Trie::AddKey(const std::string& key, const std::string& inFile)
 {
 	bool newBranch = true;
@@ -86,16 +91,17 @@ std::vector<std::string> Trie::GetKey(const std::string& key)
 	else return std::vector<std::string>();
 }
 
-void Trie::SaveTrie(const std::string& fileName)
+void Trie::SaveTrie()
 {
-	std::ofstream ou(fileName);
+	std::ofstream ou(link);
 	PrintTrieTo(pRoot, "", ou);
 	ou.close();
 }
 
-void Trie::LoadTrie(const std::string& fileName)
+bool Trie::LoadTrie()
 {
-	std::ifstream in(fileName);
+	std::ifstream in(link);
+	if (!in.is_open()) return false;
 	std::string key;
 	while (in >> key)
 	{
@@ -110,4 +116,6 @@ void Trie::LoadTrie(const std::string& fileName)
 		}
 		AddKey(key, fileList);
 	}
+	in.close();
+	return true;
 }
