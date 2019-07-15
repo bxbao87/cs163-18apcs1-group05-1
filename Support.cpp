@@ -9,6 +9,16 @@ bool isDelimiter(const char & c)
 	return false;
 }
 
+bool isNumber(const std::string & s)
+{
+	for (int i = 0; i < s.length(); ++i)
+	{
+		if (('a' <= s[i] && s[i] <= 'z') || ('A' <= s[i] && s[i] <= 'Z'))
+			return false;
+	}
+	return true;
+}
+
 std::vector<std::string> AND(std::vector<std::string>& v1, std::vector<std::string>& v2)
 {
 	std::vector<std::string> intersection;
@@ -138,3 +148,10 @@ std::vector<std::string> OR(const std::vector<std::string>& v1, const std::vecto
 	return res;
 }
 
+bool isPrefix(const std::string & check, const std::string & query)
+{
+	if (check.size() < query.size())
+		return false;
+	std::string compareString(check, 0, query.size());
+	return !compareString.compare(query);
+}

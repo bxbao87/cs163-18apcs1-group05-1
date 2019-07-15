@@ -4,14 +4,24 @@ Search::Search()
 {
 	system("md Process");
 	system("md Data");
+
+	if (!trie.LoadTrie())
+	{
+		//CreateIndex();
+		trie.SaveTrie();
+		numIndex.SaveNumIndex();
+	}
+	else numIndex.LoadNumIndex();
+}
+
+Search::~Search()
+{
 }
 
 void Search::Run()
 {
-	std::string fileName = "Process\\index.txt";
-	trie.LoadTrie(fileName);
-	trie.SaveTrie(fileName);
-
+	trie.LoadTrie();
+	trie.SaveTrie();
 }
 
 std::vector<std::string> Search::ReadSingleFile(const std::string & fileName)

@@ -15,9 +15,11 @@
 #include <conio.h>
 #include <ctime>
 #include <filesystem>
+#include <queue>
 
 
 bool isDelimiter(const char &c);//Check if char c is a delimiter . , ! ? ' " 
+bool isNumber(const std::string& s);// check if a string is a number (1,2,..) or not
 
 std::vector<std::string> AND(std::vector<std::string> &v1, std::vector<std::string> &v2);//AND operation
 std::vector<std::string> OR(const std::vector<std::string>& v1, const std::vector<std::string>& v2);// OR operator
@@ -27,5 +29,6 @@ bool loadStopWord(std::set<std::string>& stopword);
 void Tolower(std::string& s); // Change a string to lower case
 std::vector<std::string> RemoveStopWord(const std::vector<std::string>& words);
 
+bool isPrefix(const std::string &check, const std::string &query);// check if query is prefix of check
 
 #endif
