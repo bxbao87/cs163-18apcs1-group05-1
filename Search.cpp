@@ -11,6 +11,7 @@ void Search::Run()
 	std::string fileName = "Process\\index.txt";
 	trie.LoadTrie(fileName);
 	trie.SaveTrie(fileName);
+
 }
 
 std::vector<std::string> Search::ReadSingleFile(const std::string & fileName)

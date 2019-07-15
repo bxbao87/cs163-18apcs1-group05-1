@@ -1,4 +1,22 @@
-#include"Support.h"
+#include"frontEnd.h"
+
+void FrontEnd() {
+	SetWindow(168, 44);
+	system("color f0");
+	system("chcp 437");
+	system("cls");
+	BogosearchSplash();
+	Center("Created by", 250, 20, 240);
+	Center("NGUYEN THANH NHAN", 220, 21, 241);
+	Center("PHAM KHA LUAN", 220, 22, 245);
+	Center("DANG KHANH MAI", 220, 23, 250);
+	Center("BUI XUAN BAO", 220, 24, 252);
+	std::string a = "press any key to continue...";
+	Gotoxy((168 - a.length()) / 2, 27);
+	system("pause");
+	system("cls");
+	SearchScreen();
+}
 
 void Gotoxy(int x, int y)
 {
@@ -318,23 +336,68 @@ void OutOfRange(std::string a) {
 
 }
 
-void FrontEnd() {
-	SetWindow(168, 44);
-	system("color f0");
-	system("chcp 437");
-	system("cls");
-	BogosearchSplash();
-	Center("Created by", 250, 20, 240);
-	Center("NGUYEN THANH NHAN", 220, 21, 241);
-	Center("PHAM KHA LUAN", 220, 22, 245);
-	Center("DANG KHANH MAI", 220, 23, 250);
-	Center("BUI XUAN BAO", 220, 24, 252);
-	std::string a = "press any key to continue...";
-	Gotoxy((168 - a.length()) / 2, 27);
-	system("pause");
-	system("cls");
-	SearchScreen();
-	Gotoxy(28, 21);
-	
+void DisplayHistory(const std::vector<std::string> &v, std::string str) {
+	int xC = 27, yC = 23;
 
+	Gotoxy(xC, yC);
+	for (int i = yC; i < 29; ++i) {
+		Gotoxy(xC, i);
+		for (int j = 0; j < 115; ++j)
+			std::cout << " ";
+	}
+	if (!v.empty()) {
+
+		int t = 0;
+		for (unsigned i = 0; i < v.size() && t < 5; ++i) {
+			if (v[i].find(str) != std::string::npos) {
+				Gotoxy(xC, yC);
+				std::cout << (char)179 << v[i];
+				Gotoxy(141, yC++);
+				std::cout << (char)179;
+				++t;
+			}
+		}
+
+	}
+	Gotoxy(xC, yC);
+	std::cout << (char)192;
+	for (int i = 1; i < 114; ++i)
+		std::cout << (char)196;
+	std::cout << (char)217;
 }
+
+
+std::string InputKey(int x, int y) {
+	int key, len = 0;
+	std::string str;
+	std::vector<std::string> v;//get history
+	v.push_back("hello");
+	v.push_back("ha noi");
+	v.push_back("toi la ai");
+	Gotoxy(x, y);
+	key = _getch();
+	while (key != 13) {
+		if (key == 8 && len > 0)
+		{
+			std::cout << "\b \b";
+			--len;
+			str.pop_back();
+			DisplayHistory(v, str);
+		}
+		else if (key != 0 && key != 224 && key != 8)
+		{
+			str += (char)key;
+			std::cout << (char)key;
+			++len;
+			if (str != " ")
+				DisplayHistory(v, str);
+		}
+		Gotoxy(x + len, y);
+		key = _getch();
+	}
+
+	//save history
+	return str;
+}
+
+

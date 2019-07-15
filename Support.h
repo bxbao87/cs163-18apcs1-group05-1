@@ -28,5 +28,4 @@ void Tolower(std::string& s); // Change a string to lower case
 std::vector<std::string> RemoveStopWord(const std::vector<std::string>& words);
 
 
-
 #endif
