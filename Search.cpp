@@ -27,9 +27,8 @@ void Search::Run()
 std::vector<std::string> Search::ReadSingleFile(const std::string & fileName)
 {
 	std::vector<std::string> tokenVector;
-	std::string filePath = "Data/" + fileName;
 	std::ifstream inFile;
-	inFile.open(filePath.c_str());
+	inFile.open(fileName.c_str());
 	if (inFile.is_open()) {
 		std::string fileData;
 		//read everything into string
@@ -45,6 +44,8 @@ std::vector<std::string> Search::ReadSingleFile(const std::string & fileName)
 		while (ss >> token) {
 			if (isDelimiter(token[token.size() - 1])) //check for the last char is a delimiter or not
 				token.erase(token.end()-1);
+			if (isDelimiter(token[0]))
+				token.erase(token[0]);
 			tokenVector.push_back(token);
 		}
 		//eliminate duplicate element

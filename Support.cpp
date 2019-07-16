@@ -2,7 +2,7 @@
 
 bool isDelimiter(const char & c)
 {
-	std::vector <char> delimiter = { '.', ',', '\'', '?', '\"', '\n', '!' };
+	std::vector <char> delimiter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')' };
 	for (int i = 0; i < delimiter.size(); i++)
 		if (c == delimiter[i])
 			return true;
