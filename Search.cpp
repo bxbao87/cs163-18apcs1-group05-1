@@ -27,7 +27,7 @@ void Search::Run()
 std::vector<std::string> Search::ReadSingleFile(const std::string & fileName)
 {
 	std::vector<std::string> tokenVector;
-	std::string filePath = "Data/" + fileName;
+	std::string filePath ="Data/"+ fileName;
 	std::ifstream inFile;
 	inFile.open(filePath.c_str());
 	if (inFile.is_open()) {
@@ -70,3 +70,47 @@ std::vector<std::string> Search::GetFilename(const std::string rootDirectory)
 	}
 	return pathVector;
 }
+
+bool Search::createIndex()
+{
+	std::vector<std::string> fileName;
+	fileName.clear();
+	fileName = GetFilename("Data");
+
+	NumIndex numIn;
+	Trie trie;
+
+	if (fileName.empty())
+		return false;
+	for (auto i : fileName)
+	{
+		std::vector<std::string> wordsInFile;
+		wordsInFile.clear();
+		wordsInFile = ReadSingleFile(i);
+
+		if (wordsInFile.empty())
+		{
+			std::cout << "Can't load file";
+			return false;
+		}
+
+		wordsInFile = RemoveStopWord(wordsInFile);
+
+		for (int j=0;j<(int)wordsInFile.size();++j)
+		{
+			if (isNumberWithChar(wordsInFile[j]))
+			{
+				double val = stod(wordsInFile[j]);
+				numIn.AddNum(val, i);
+			}
+			else
+			{
+				trie.AddKey(wordsInFile[j], i);
+			}
+		}
+	}
+	return true;
+}
+
+
+

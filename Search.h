@@ -18,7 +18,7 @@ public:
 	void Run();
 	std::vector<std::string> ReadSingleFile(const std::string &fileName);//Read a single file and return a vector string of tokens
 	std::vector<std::string> GetFilename(const std::string rootDirectory);//Return all file in rootDirectory folder
-
+	bool createIndex();
 
 };
 

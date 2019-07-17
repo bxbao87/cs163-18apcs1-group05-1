@@ -11,12 +11,29 @@ bool isDelimiter(const char & c)
 
 bool isNumber(const std::string & s)
 {
-	for (int i = 0; i < s.length(); ++i)
+	for (auto i:s)
 	{
-		if (('a' <= s[i] && s[i] <= 'z') || ('A' <= s[i] && s[i] <= 'Z'))
+		if (('a' <= i && i <= 'z') || ('A' <= i && i <= 'Z'))
 			return false;
 	}
 	return true;
+}
+
+bool isNumberWithChar(std::string & s)
+{
+	std::string tmp;
+	tmp.clear();
+
+
+	for (int i=0;i<(int)s.size();++i)
+	{
+		if (('a' <= s[i] && s[i] <= 'z') || ('A' <= s[i] && s[i] <= 'Z'))
+			return false;
+		if (s[i] == '$')
+			s.erase(s.begin()+i);
+	}
+	return true;
+
 }
 
 std::vector<std::string> AND(std::vector<std::string>& v1, std::vector<std::string>& v2)
