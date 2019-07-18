@@ -27,9 +27,6 @@ void Search::Run()
 std::vector<std::string> Search::ReadSingleFile(const std::string & fileName)
 {
 	std::vector<std::string> tokenVector;
-
-	std::string filePath ="Data/"+ fileName;
-
 	std::ifstream inFile;
 	inFile.open(fileName.c_str());
 	if (inFile.is_open()) {
@@ -47,9 +44,10 @@ std::vector<std::string> Search::ReadSingleFile(const std::string & fileName)
 		while (ss >> token) {
 			if (isDelimiter(token[token.size() - 1])) //check for the last char is a delimiter or not
 				token.erase(token.end()-1);
-			if (isDelimiter(token[0]))
-				token.erase(token[0]);
-			tokenVector.push_back(token);
+			while (isDelimiter(token[0]))
+				token.erase(0, 1);
+			if (token != "")
+				tokenVector.push_back(token);
 		}
 		//eliminate duplicate element
 		std::sort(tokenVector.begin(), tokenVector.end());
@@ -77,17 +75,15 @@ std::vector<std::string> Search::GetFilename(const std::string rootDirectory)
 
 bool Search::createIndex()
 {
-	std::vector<std::string> fileName;
-	fileName.clear();
-	fileName = GetFilename("Data");
+	std::vector<std::string> fileList;
+	fileList.clear();
+	fileList = GetFilename("Data");
 
-	NumIndex numIn;
-	Trie trie;
-
-	if (fileName.empty())
+	if (fileList.empty())
 		return false;
-	for (auto i : fileName)
+	for (auto i : fileList)
 	{
+		std::cout << i << ' ';
 		std::vector<std::string> wordsInFile;
 		wordsInFile.clear();
 		wordsInFile = ReadSingleFile(i);
@@ -105,7 +101,7 @@ bool Search::createIndex()
 			if (isNumberWithChar(wordsInFile[j]))
 			{
 				double val = stod(wordsInFile[j]);
-				numIn.AddNum(val, i);
+				numIndex.AddNum(val, i);
 			}
 			else
 			{
