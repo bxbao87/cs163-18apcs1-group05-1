@@ -20,8 +20,6 @@ Search::~Search()
 
 void Search::Run()
 {
-	trie.LoadTrie();
-	trie.SaveTrie();
 }
 
 std::vector<std::string> Search::ReadSingleFile(const std::string & fileName)

@@ -18,7 +18,9 @@ private:
 	const std::string link = "Process\\index.txt";
 
 	void PrintTrieTo(Node* pRoot, std::string key, std::ostream& cout); // print the key and its filelist to file
-	Node* TraverseTrie(Node*& pRoot, const std::string& key, const bool& newBranch); // return the node of string key on trie
+	Node* TraverseTrie(Node*& pRoot, const std::string& key, const bool& newBranch); 
+		// return the node of string key on trie if newBranch is true then 
+		// this function will create new branch if there wasn't a branch there before (new branch = true only for add key)
 public:
 	Trie();
 	~Trie();
