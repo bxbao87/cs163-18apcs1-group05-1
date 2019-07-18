@@ -29,7 +29,6 @@ void History::LoadHistory()
 	{
 		std::string query;
 		while (getline(inFile, query)) {
-			getline(inFile, query);
 			history.push(query);
 		}
 	}
@@ -65,7 +64,7 @@ std::vector<std::string> History::GetHistory(const std::string & searchKeyword)
 	{
 		std::string cur = history.front();
 
-		if (isPrefix(cur, searchKeyword)) 
+		if (isSub(cur, searchKeyword)) 
 			resultVector.push_back(cur);
 		
 		history.pop();

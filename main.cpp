@@ -4,10 +4,10 @@
 
 int main()
 {
-	//Search bogoSearch;
-	//bogoSearch.Run();
-	std::string tmp = "Nhan";
-	tmp.find("Nhan");
+	Search bogoSearch;
+	bogoSearch.Run();
+	FrontEnd();
+	bogoSearch.InputKey(28, 21);
 	system("pause");
 	return 0;
 }

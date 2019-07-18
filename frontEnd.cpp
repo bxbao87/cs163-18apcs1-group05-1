@@ -1,4 +1,22 @@
-#include"Support.h"
+#include"frontEnd.h"
+
+void FrontEnd() {
+	SetWindow(168, 44);
+	system("color f0");
+	system("chcp 437");
+	system("cls");
+	BogosearchSplash();
+	Center("Created by", 250, 20, 240);
+	Center("NGUYEN THANH NHAN", 220, 21, 241);
+	Center("PHAM KHA LUAN", 220, 22, 245);
+	Center("DANG KHANH MAI", 220, 23, 250);
+	Center("BUI XUAN BAO", 220, 24, 252);
+	std::string a = "press any key to continue...";
+	Gotoxy((168 - a.length()) / 2, 27);
+	system("pause");
+	system("cls");
+	SearchScreen();
+}
 
 void Gotoxy(int x, int y)
 {
@@ -315,26 +333,37 @@ void SearchScreen() {
 }
 
 void OutOfRange(std::string a) {
-
-}
-
-void FrontEnd() {
-	SetWindow(168, 44);
-	system("color f0");
-	system("chcp 437");
-	system("cls");
-	BogosearchSplash();
-	Center("Created by", 250, 20, 240);
-	Center("NGUYEN THANH NHAN", 220, 21, 241);
-	Center("PHAM KHA LUAN", 220, 22, 245);
-	Center("DANG KHANH MAI", 220, 23, 250);
-	Center("BUI XUAN BAO", 220, 24, 252);
-	std::string a = "press any key to continue...";
-	Gotoxy((168 - a.length()) / 2, 27);
-	system("pause");
-	system("cls");
-	SearchScreen();
 	Gotoxy(28, 21);
-	
-
+	int len = a.length();
+	for (int i = len - 111; i <len; ++i)
+		std::cout << a[i];
 }
+
+void DisplayHistory(const std::vector<std::string> &v) {
+	int xC = 27, yC = 23;
+
+	Gotoxy(xC, yC);
+	for (int i = yC; i < 29; ++i) {
+		Gotoxy(xC, i);
+		for (int j = 0; j < 115; ++j)
+			std::cout << " ";
+	}
+	if (!v.empty()) {
+
+		int t = 0;
+		for (int i = v.size() - 1; i >= 0 && t < 5; --i) {
+				Gotoxy(xC, yC);
+				std::cout << (char)179 << v[i];
+				Gotoxy(141, yC++);
+				std::cout << (char)179;
+				++t;
+		}
+
+	}
+	Gotoxy(xC, yC);
+	std::cout << (char)192;
+	for (int i = 1; i < 114; ++i)
+		std::cout << (char)196;
+	std::cout << (char)217;
+}
+

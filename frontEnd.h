@@ -3,6 +3,8 @@
 
 #include"Support.h"
 
+void FrontEnd();
+
 void Gotoxy(int x, int y);
 void Color(int x);
 void SetWindow(int Width, int Height);
@@ -18,7 +20,8 @@ void G(int x, int y, int colour);
 void Center(std::string a, int s, int y, int colour);
 void BogosearchSplash();
 void SearchScreen();
+
 void OutOfRange(std::string a);
-void FrontEnd();
+void DisplayHistory(const std::vector<std::string> &v);
 
 #endif
