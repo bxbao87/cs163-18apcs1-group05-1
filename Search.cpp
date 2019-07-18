@@ -5,9 +5,12 @@ Search::Search()
 	system("md Process");
 	system("md Data");
 
+	if (!loadStopWord(stopWord))
+		std::cerr << "Can't open stop word file\n";
+
 	if (!trie.LoadTrie())
 	{
-		//CreateIndex();
+		createIndex();
 		trie.SaveTrie();
 		numIndex.SaveNumIndex();
 	}
@@ -94,7 +97,7 @@ bool Search::createIndex()
 
 		wordsInFile = RemoveStopWord(wordsInFile);
 
-		for (int j=0;j<(int)wordsInFile.size();++j)
+		for (int j = 0; j < (int)wordsInFile.size(); ++j)
 		{
 			if (isNumberWithChar(wordsInFile[j]))
 			{

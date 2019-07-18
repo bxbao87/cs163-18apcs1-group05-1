@@ -12,6 +12,7 @@ class Search
 private:
 	Trie trie;
 	NumIndex numIndex;
+	std::set<std::string> stopWord;
 public:
 	Search();
 	~Search();
@@ -21,8 +22,6 @@ public:
 	std::vector<std::string> GetFilename(const std::string rootDirectory);//Return all file in rootDirectory folder
 
 	bool createIndex();
-
-
 
 	std::string InputKey(int x, int y);
 

@@ -91,7 +91,7 @@ std::vector<std::string> splitSentence(const std::string& s) // split string int
 bool loadStopWord(std::set<std::string>& stopword) // load stopword into set 
 {
 	std::ifstream fin;
-	fin.open("/cs163-18apcs1-group05/Process/stopword.txt");
+	fin.open("Process/stopword.txt");
 	if (!fin.is_open()) return false;
 	std::string word;
 	while (!fin.eof())
