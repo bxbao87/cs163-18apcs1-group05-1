@@ -5,6 +5,7 @@
 #include "Trie.h"
 #include "frontEnd.h"
 #include "NumIndex.h"
+#include "History.h"
 
 class Search
 {
@@ -18,7 +19,12 @@ public:
 	void Run();
 	std::vector<std::string> ReadSingleFile(const std::string &fileName);//Read a single file and return a vector string of tokens
 	std::vector<std::string> GetFilename(const std::string rootDirectory);//Return all file in rootDirectory folder
+
 	bool createIndex();
+
+
+
+	std::string InputKey(int x, int y);
 
 };
 

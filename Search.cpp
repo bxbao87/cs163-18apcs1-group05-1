@@ -73,6 +73,7 @@ std::vector<std::string> Search::GetFilename(const std::string rootDirectory)
 	return pathVector;
 }
 
+
 bool Search::createIndex()
 {
 	std::vector<std::string> fileList;
@@ -112,5 +113,52 @@ bool Search::createIndex()
 	return true;
 }
 
+
+
+std::string Search::InputKey(int x, int y) {
+	int key, len = 0;
+	std::string str, resultStr;
+	History h;
+
+	Gotoxy(x, y);
+	key = _getch();
+	while (key != 13) {
+		if (key == 8 && len > 0)
+		{
+			--len;
+			str.pop_back();
+			resultStr.pop_back();
+			if (len > 110)
+				OutOfRange(resultStr);
+			else
+				std::cout << "\b \b";
+			DisplayHistory(h.GetHistory(str));
+		}
+		else if (key == 0 || key == 224)
+			int ex = _getch();
+		else if (key != 0 && key != 224 && key != 8)
+		{
+			str += tolower((char)key);
+			resultStr += (char)key;
+			if (len > 110)
+				OutOfRange(resultStr);
+			else
+				std::cout << (char)key;
+			++len;
+			if (str != " ")
+				DisplayHistory(h.GetHistory(str));
+		}
+
+		if (len < 111)
+			Gotoxy(x + len, y);
+		else
+			Gotoxy(x + 111, y);
+		key = _getch();
+	}
+
+	h.Add(str);
+
+	return resultStr;
+}
 
 

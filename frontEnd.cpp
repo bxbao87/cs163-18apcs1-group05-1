@@ -333,10 +333,13 @@ void SearchScreen() {
 }
 
 void OutOfRange(std::string a) {
-
+	Gotoxy(28, 21);
+	int len = a.length();
+	for (int i = len - 111; i <len; ++i)
+		std::cout << a[i];
 }
 
-void DisplayHistory(const std::vector<std::string> &v, std::string str) {
+void DisplayHistory(const std::vector<std::string> &v) {
 	int xC = 27, yC = 23;
 
 	Gotoxy(xC, yC);
@@ -348,14 +351,12 @@ void DisplayHistory(const std::vector<std::string> &v, std::string str) {
 	if (!v.empty()) {
 
 		int t = 0;
-		for (unsigned i = 0; i < v.size() && t < 5; ++i) {
-			if (v[i].find(str) != std::string::npos) {
+		for (int i = v.size() - 1; i >= 0 && t < 5; --i) {
 				Gotoxy(xC, yC);
 				std::cout << (char)179 << v[i];
 				Gotoxy(141, yC++);
 				std::cout << (char)179;
 				++t;
-			}
 		}
 
 	}
@@ -365,39 +366,4 @@ void DisplayHistory(const std::vector<std::string> &v, std::string str) {
 		std::cout << (char)196;
 	std::cout << (char)217;
 }
-
-
-std::string InputKey(int x, int y) {
-	int key, len = 0;
-	std::string str;
-	std::vector<std::string> v;//get history
-	v.push_back("hello");
-	v.push_back("ha noi");
-	v.push_back("toi la ai");
-	Gotoxy(x, y);
-	key = _getch();
-	while (key != 13) {
-		if (key == 8 && len > 0)
-		{
-			std::cout << "\b \b";
-			--len;
-			str.pop_back();
-			DisplayHistory(v, str);
-		}
-		else if (key != 0 && key != 224 && key != 8)
-		{
-			str += (char)key;
-			std::cout << (char)key;
-			++len;
-			if (str != " ")
-				DisplayHistory(v, str);
-		}
-		Gotoxy(x + len, y);
-		key = _getch();
-	}
-
-	//save history
-	return str;
-}
-
 
