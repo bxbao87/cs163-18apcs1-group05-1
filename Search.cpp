@@ -84,7 +84,6 @@ bool Search::createIndex()
 		return false;
 	for (auto i : fileList)
 	{
-		std::cout << i << ' ';
 		std::vector<std::string> wordsInFile;
 		wordsInFile.clear();
 		wordsInFile = ReadSingleFile(i);
