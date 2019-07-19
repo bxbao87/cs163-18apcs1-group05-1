@@ -40,9 +40,9 @@ std::vector<std::string> Search::ReadSingleFile(const std::string & fileName)
 		std::string token;
 		//extract token from string stream
 		while (ss >> token) {
-			if (isDelimiter(token[token.size() - 1])) //check for the last char is a delimiter or not
+			while ((int)token.size()>0 && isDelimiter(token.back())) //check for the last char is a delimiter or not
 				token.erase(token.end()-1);
-			while (isDelimiter(token[0]))
+			while ((int)token.size()>0 && isDelimiter(token[0]))
 				token.erase(0, 1);
 			if (token != "")
 				tokenVector.push_back(token);
@@ -94,22 +94,26 @@ bool Search::createIndex()
 
 		wordsInFile = RemoveStopWord(wordsInFile);
 
-		for (int j=0;j<(int)wordsInFile.size();++j)
+		for (int j = 0; j < (int)wordsInFile.size(); ++j)
 		{
-			if (isNumberWithChar(wordsInFile[j]))
+			bool mixType = false;
+			if (isNumberWithChar(wordsInFile[j], mixType))
 			{
 				double val = stod(wordsInFile[j]);
 				numIndex.AddNum(val, i);
 			}
 			else
 			{
-				trie.AddKey(wordsInFile[j], i);
+				if (!mixType)
+				{
+					trie.AddKey(wordsInFile[j], i);
+				}
 			}
+
 		}
 	}
 	return true;
 }
-
 
 
 std::string Search::InputKey(int x, int y) {
