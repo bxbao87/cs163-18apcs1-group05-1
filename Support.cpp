@@ -142,3 +142,21 @@ bool isSub(const std::string & hist, const std::string & query)
 		return true;
 	return false;
 }
+
+int ConvertCharToNum(const char& c)
+{
+	if (c >= 'a' && c <= 'z') return c - 'a';
+	if (c >= '0' && c <= '9') return c - '0' + 26;
+	if (c == '-') return 36;
+	if (c == '#') return 37;
+	return -1;
+}
+
+char ConvertNumToChar(const int& x)
+{
+	if (x >= 0 && x <= 25) return (char)(x + 'a');
+	if (x >= 26 && x <= 35) return (char)(x - 26 + '0');
+	if (x == 36) return '-';
+	if (x == 37) return '#';
+	return '?';
+}

@@ -10,21 +10,17 @@ Search::Search()
 	if (!LoadStopWord())
 		std::cerr << "Can't open stop word file\n";
 
-	if (!trie.LoadTrie())
+	if (!LoadListOfFile())
 	{
 		CreateIndex();
 		trie.SaveTrie();
 		numIndex.SaveNumIndex();
+		SaveListOfFile();
 	}
 	else
 	{
 		numIndex.LoadNumIndex();
-		//std::vector<std::string> newData = HaveNewData();
-		//for (auto data : newData)
-		{
-			// Move file into data 
-			// CreateIndexForAFile(data);
-		}
+		trie.LoadTrie();
 	}
 }
 
@@ -85,11 +81,11 @@ void Search::ReadSingleFile(const std::string & fileName, std::vector<std::strin
 		while (inFile >> token)
 		{
 			if (IsWeirdWord(token)) continue;
-			if (IsStopWord(token)) continue;
 			while ((int)token.size() > 0 && IsDelimeter(token[0]))
 				token.erase(0, 1);
 			while ((int)token.size() > 0 && IsDelimeter(token.back()))
 				token.pop_back();
+			if (IsStopWord(token)) continue;
 			if (!token.empty())
 				tokenVector.push_back(token);
 		}
@@ -164,38 +160,65 @@ std::vector<std::string> Search::RemoveWeirdWord(const std::vector<std::string>&
 
 bool Search::CreateIndex()
 {
-	std::vector<std::string> fileList;
-	fileList.clear();
-	GetFilename("Data", fileList);
+	GetFilename("Data", theFullListOfFile);
 
-	if (fileList.empty())
+	if (theFullListOfFile.empty())
 		return false;
-	for (auto i : fileList)
+
+	int cnt = 0;
+	for (auto i : theFullListOfFile)
 	{
 		std::vector<std::string> wordsInFile;
 		wordsInFile.clear();
 		ReadSingleFile(i, wordsInFile);
 
-		if (wordsInFile.empty())
-		{
-			std::cout << "Can't load file\n";
-			//return false;
-		}
+		//if (wordsInFile.empty())
+		//{
+		//	std::cout << "Can't load file\n";
+		//	//return false;
+		//}
 
 		for (int j = 0; j < (int)wordsInFile.size(); ++j)
 		{
 			if (isNumberWithChar(wordsInFile[j]))
 			{
 				double val = stod(wordsInFile[j]);
-				numIndex.AddNum(val, i);
+				numIndex.AddNum(val, cnt);
 			}
 			else
 			{
-				if (!wordsInFile[j].empty()) trie.AddKey(wordsInFile[j], i);
+				if (!wordsInFile[j].empty()) trie.AddKey(wordsInFile[j], cnt);
 			}
 		}
+		++cnt;
 	}
 	return true;
+}
+
+bool Search::LoadListOfFile()
+{
+	std::ifstream in("Process\\filename.txt");
+	if (!in.is_open()) return false;
+	int total;
+	in >> total;
+	std::string filename;
+	std::getline(in, filename);
+	for (int i = 0; i < total; ++i)
+	{
+		std::getline(in, filename);
+		theFullListOfFile.push_back(filename);
+	}
+	in.close();
+	return true;
+}
+
+void Search::SaveListOfFile()
+{
+	std::ofstream ou("Process\\filename.txt");
+	ou << theFullListOfFile.size() << '\n';
+	for (auto name : theFullListOfFile)
+		ou << name << '\n';
+	ou.close();
 }
 
 

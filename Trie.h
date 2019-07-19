@@ -5,8 +5,9 @@
 
 struct Node
 {
-	std::map<char, Node*> Next;
-	std::vector<std::string> fileList;
+	//std::map<char, Node*> Next;
+	Node* Next[40]; // a..z : 0..25, 0..9 : 26..35, - : 36, # : 37
+	std::vector<int> fileList;
 	Node();
 	~Node();
 };
@@ -24,11 +25,11 @@ private:
 public:
 	Trie();
 	~Trie();
-	void AddKey(const std::string& key, const std::string& inFile); // Add a key from a file to trie
-	void AddKey(const std::string& key, std::vector<std::string>& fileList); // Add a key and its fileList to trie
-	void AddManyKey(const std::vector<std::string>& keyList, const std::string& inFile); // Add a list of key and their file
+	void AddKey(const std::string& key, const int& inFile); // Add a key from a file to trie
+	void AddKey(const std::string& key, std::vector<int>& fileList); // Add a key and its fileList to trie
+	void AddManyKey(const std::vector<std::string>& keyList, const int& inFile); // Add a list of key and their file
 
-	std::vector<std::string> GetKey(const std::string& key); // Return fileList of a key
+	std::vector<int> GetKey(const std::string& key); // Return fileList of a key
 	void SaveTrie(); // Save trie into link
 	bool LoadTrie(); // Load trie from file
 };

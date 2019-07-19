@@ -14,6 +14,7 @@ private:
 	NumIndex numIndex;
 	std::set<std::string> stopWord;
 	std::map<std::string, std::vector<std::string> > synonym;
+	std::vector<std::string> theFullListOfFile;
 
 	const std::set <char> delimeter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/',
 		'&','[',']','+',':','`','@','%','^','=','_', '\\', '|' };
@@ -35,6 +36,9 @@ public:
 	bool LoadStopWord(); // load stopword into set 
 	//bool CreateIndexForAFile(const std::string& fileName); // create inverted index for a single file
 	bool CreateIndex(); // create inverted index
+
+	bool LoadListOfFile();
+	void SaveListOfFile();
 
 	std::string InputKey(int x, int y);
 
