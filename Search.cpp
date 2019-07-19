@@ -5,9 +5,12 @@ Search::Search()
 	system("md Process");
 	system("md Data");
 
+	if (!loadStopWord(stopWord))
+		std::cerr << "Can't open stop word file\n";
+
 	if (!trie.LoadTrie())
 	{
-		//CreateIndex();
+		createIndex();
 		trie.SaveTrie();
 		numIndex.SaveNumIndex();
 	}
