@@ -7,12 +7,12 @@ Search::Search()
 
 	if (!LoadSynonym())
 		std::cerr << "Can't open synonym file\n";
-	if (!loadStopWord(stopWord))
+	if (!LoadStopWord(stopWord))
 		std::cerr << "Can't open stop word file\n";
 
 	if (!trie.LoadTrie())
 	{
-		createIndex();
+		CreateIndex();
 		trie.SaveTrie();
 		numIndex.SaveNumIndex();
 	}
@@ -28,7 +28,7 @@ bool Search::LoadSynonym()
 	std::ifstream in("Process\\synonym.txt");
 	if (!in.is_open()) return false;
 	std::string word;
-	while (std::getline(in, word))
+	while (std::getline(in, word) && word != "")
 	{
 		std::string listOfWord;
 		std::getline(in, listOfWord);
@@ -63,9 +63,9 @@ std::vector<std::string> Search::ReadSingleFile(const std::string & fileName)
 		std::string token;
 		//extract token from string stream
 		while (ss >> token) {
-			if (isDelimiter(token[token.size() - 1])) //check for the last char is a delimiter or not
+			while ((int)token.size()>0 && isDelimiter(token.back())) //check for the last char is a delimiter or not
 				token.erase(token.end()-1);
-			while (isDelimiter(token[0]))
+			while ((int)token.size()>0 && isDelimiter(token[0]))
 				token.erase(0, 1);
 			if (token != "")
 				tokenVector.push_back(token);
@@ -94,8 +94,40 @@ std::vector<std::string> Search::GetFilename(const std::string rootDirectory)
 	return pathVector;
 }
 
+bool Search::LoadStopWord(std::set<std::string>& stopword)
+{
+	std::ifstream fin;
+	fin.open("Process/stopword.txt");
+	if (!fin.is_open()) return false;
+	std::string word;
+	while (!fin.eof())
+	{
+		fin >> word;
+		stopword.insert(word);
+	}
+	fin.close();
+	return true;
+}
 
-bool Search::createIndex()
+std::vector<std::string> Search::RemoveStopWord(const std::vector<std::string>& words)
+{
+	std::vector<std::string> afterRemove;
+	afterRemove.clear();
+
+	std::string word;
+
+	for (int i = 0; i <(int) words.size(); ++i)
+	{
+		word = words[i];
+		Tolower(word);
+		if (stopWord.find(word) == stopWord.end())
+			afterRemove.push_back(word);
+	}
+	return afterRemove;
+}
+
+
+bool Search::CreateIndex()
 {
 	std::vector<std::string> fileList;
 	fileList.clear();
@@ -119,20 +151,24 @@ bool Search::createIndex()
 
 		for (int j = 0; j < (int)wordsInFile.size(); ++j)
 		{
-			if (isNumberWithChar(wordsInFile[j]))
+			bool mixType = false;
+			if (isNumberWithChar(wordsInFile[j], mixType))
 			{
 				double val = stod(wordsInFile[j]);
 				numIndex.AddNum(val, i);
 			}
 			else
 			{
-				trie.AddKey(wordsInFile[j], i);
+				if (!mixType)
+				{
+					trie.AddKey(wordsInFile[j], i);
+				}
 			}
+
 		}
 	}
 	return true;
 }
-
 
 
 std::string Search::InputKey(int x, int y) {
