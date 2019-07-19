@@ -5,6 +5,8 @@ Search::Search()
 	system("md Process");
 	system("md Data");
 
+	if (!LoadSynonym())
+		std::cerr << "Can't open synonym file\n";
 	if (!loadStopWord(stopWord))
 		std::cerr << "Can't open stop word file\n";
 
@@ -19,6 +21,24 @@ Search::Search()
 
 Search::~Search()
 {
+}
+
+bool Search::LoadSynonym()
+{
+	std::ifstream in("Process\\synonym.txt");
+	if (!in.is_open()) return false;
+	std::string word;
+	while (std::getline(in, word))
+	{
+		std::string listOfWord;
+		std::getline(in, listOfWord);
+		std::stringstream ss(listOfWord);
+
+		std::string wordInList;
+		while (ss >> wordInList) synonym[word].push_back(wordInList);
+	}
+	in.close();
+	return true;
 }
 
 void Search::Run()
