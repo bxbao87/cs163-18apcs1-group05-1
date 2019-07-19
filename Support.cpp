@@ -2,7 +2,7 @@
 
 bool isDelimiter(const char & c)
 {
-	std::vector <char> delimiter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/','&','[',']','+',':','`','~','@','%','^','=','_'};
+	std::vector <char> delimiter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/','&','[',']','+',':','`','@','%','^','=','_'};
 	for (int i = 0; i < delimiter.size(); i++)
 		if (c == delimiter[i])
 			return true;
@@ -86,65 +86,27 @@ bool isMixType(const std::string & s)
 	}
 
 
-	std::vector<std::string> splitSentence(const std::string& s) // split string into vector<string>
-	{
-		std::vector<std::string> a;
-		a.clear();
-		std::istringstream iss(s);
+std::vector<std::string> splitSentence(const std::string& s) // split string into vector<string>
+{
+	std::vector<std::string> a;
+	a.clear();
+	std::istringstream iss(s);
 
-		while (iss)
-		{
-			std::string word;
-			iss >> word;
-			if (word.length())
-				a.push_back(word);
-		}
-		return a;
-	}
-
-	bool loadStopWord(std::set<std::string>& stopword) // load stopword into set 
+	while (iss)
 	{
-		std::ifstream fin;
-		fin.open("/cs163-18apcs1-group05/Process/stopword.txt");
-		if (!fin.is_open()) return false;
 		std::string word;
-		while (!fin.eof())
-		{
-			fin >> word;
-			stopword.insert(word);
-		}
-		fin.close();
-		return true;
+		iss >> word;
+		if (word.length())
+			a.push_back(word);
 	}
+	return a;
+}
 
-	void Tolower(std::string& s) // Change a string to lower case
-	{
+void Tolower(std::string& s) // Change a string to lower case
+{
 		for (int i = 0; i < s.length(); ++i)
 			s[i] = tolower(s[i]);
-	}
-
-	std::vector<std::string> RemoveStopWord(const std::vector<std::string>& words)
-	{
-		std::vector<std::string> afterRemove;
-		afterRemove.clear();
-
-		std::set<std::string> stopwords;
-
-		if (!loadStopWord(stopwords))
-			std::cout << "Can't open file stopword";
-
-		std::string word;
-
-		for (int i = 0; i < words.size(); ++i)
-		{
-
-			word = words[i];
-			Tolower(word);
-			if (stopwords.find(word) == stopwords.end())
-				afterRemove.push_back(word);
-		}
-		return afterRemove;
-	}
+}
 
 
 std::vector<std::string> OR(const std::vector<std::string>& v1, const std::vector<std::string>& v2)

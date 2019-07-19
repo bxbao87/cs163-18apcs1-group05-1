@@ -5,12 +5,12 @@ Search::Search()
 	system("md Process");
 	system("md Data");
 
-	if (!loadStopWord(stopWord))
+	if (!LoadStopWord(stopWord))
 		std::cerr << "Can't open stop word file\n";
 
 	if (!trie.LoadTrie())
 	{
-		createIndex();
+		CreateIndex();
 		trie.SaveTrie();
 		numIndex.SaveNumIndex();
 	}
@@ -74,8 +74,40 @@ std::vector<std::string> Search::GetFilename(const std::string rootDirectory)
 	return pathVector;
 }
 
+bool Search::LoadStopWord(std::set<std::string>& stopword)
+{
+	std::ifstream fin;
+	fin.open("Process/stopword.txt");
+	if (!fin.is_open()) return false;
+	std::string word;
+	while (!fin.eof())
+	{
+		fin >> word;
+		stopword.insert(word);
+	}
+	fin.close();
+	return true;
+}
 
-bool Search::createIndex()
+std::vector<std::string> Search::RemoveStopWord(const std::vector<std::string>& words)
+{
+	std::vector<std::string> afterRemove;
+	afterRemove.clear();
+
+	std::string word;
+
+	for (int i = 0; i <(int) words.size(); ++i)
+	{
+		word = words[i];
+		Tolower(word);
+		if (stopWord.find(word) == stopWord.end())
+			afterRemove.push_back(word);
+	}
+	return afterRemove;
+}
+
+
+bool Search::CreateIndex()
 {
 	std::vector<std::string> fileList;
 	fileList.clear();
