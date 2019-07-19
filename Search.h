@@ -18,14 +18,17 @@ public:
 	Search();
 	~Search();
 
-	bool LoadSynonym();
-	void Run();
+	void Run(); // main function
 	std::vector<std::string> ReadSingleFile(const std::string &fileName);//Read a single file and return a vector string of tokens
 	std::vector<std::string> GetFilename(const std::string rootDirectory);//Return all file in rootDirectory folder
-	bool LoadStopWord(std::set<std::string>& stopword); // load stopword into set 
-	std::vector<std::string> RemoveStopWord(const std::vector<std::string>& words);
+	std::vector<std::string> RemoveStopWord(const std::vector<std::string>& words); // Remove stop word from words
+	std::vector<std::string> RemoveWeirdWord(const std::vector<std::string>& words); // Remove weird word containing weird character
 
-	bool CreateIndex();
+	bool IsWeirdWord(const std::string& word); // Check if word has weird character
+	bool LoadSynonym(); // Load file synonym from synonym.txt
+	bool LoadStopWord(std::set<std::string>& stopword); // load stopword into set 
+	bool CreateIndexForAFile(const std::string& fileName); // create inverted index for a single file
+	bool CreateIndex(); // create inverted index
 
 	std::string InputKey(int x, int y);
 

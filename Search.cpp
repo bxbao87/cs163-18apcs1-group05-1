@@ -16,11 +16,29 @@ Search::Search()
 		trie.SaveTrie();
 		numIndex.SaveNumIndex();
 	}
-	else numIndex.LoadNumIndex();
+	else
+	{
+		numIndex.LoadNumIndex();
+		//std::vector<std::string> newData = HaveNewData();
+		//for (auto data : newData)
+		{
+			// Move file into data 
+			// CreateIndexForAFile(data);
+		}
+	}
 }
 
 Search::~Search()
 {
+}
+
+bool Search::IsWeirdWord(const std::string& word)
+{
+	for (auto c : word)
+	{
+		if (c < 0 || c > 255) return true;
+	}
+	return false;
 }
 
 bool Search::LoadSynonym()
@@ -124,6 +142,16 @@ std::vector<std::string> Search::RemoveStopWord(const std::vector<std::string>& 
 			afterRemove.push_back(word);
 	}
 	return afterRemove;
+}
+
+std::vector<std::string> Search::RemoveWeirdWord(const std::vector<std::string>& words)
+{
+	std::vector<std::string> answer;
+	for (auto word : words)
+	{
+		if (!IsWeirdWord(word)) answer.push_back(word);
+	}
+	return answer;
 }
 
 
