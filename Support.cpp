@@ -10,10 +10,6 @@ bool isNumber(const char& c)
 bool isNumberWithChar(std::string & s)
 {
 	if (s.empty()) return false;
-	if (s[0] == '$') s.erase(0, 1);
-	if (s.empty()) return false;
-	if (s.back() == '$') s.pop_back();
-	if (s.empty()) return false;
 
 	for (int i = 0; i < (int)s.size(); ++i)
 	{
@@ -24,7 +20,6 @@ bool isNumberWithChar(std::string & s)
 		}
 	}
 	return true;
-	
 }
 
 bool isMixType(const std::string & s)
@@ -43,40 +38,40 @@ bool isMixType(const std::string & s)
 	return false;
 }
 
-	std::vector<std::string> AND(std::vector<std::string>& v1, std::vector<std::string>& v2)
+std::vector<std::string> AND(std::vector<std::string>& v1, std::vector<std::string>& v2)
+{
+	std::vector<std::string> intersection;
+
+	std::sort(v1.begin(), v1.end());
+	std::sort(v2.begin(), v2.end());
+	int index1 = 0, index2 = 0;
+	while (index1 < v1.size() && index2 < v2.size())
 	{
-		std::vector<std::string> intersection;
-
-		std::sort(v1.begin(), v1.end());
-		std::sort(v2.begin(), v2.end());
-		int index1 = 0, index2 = 0;
-		while (index1 < v1.size() && index2 < v2.size())
-		{
-			if (v1[index1].compare(v2[index2]) < 0)//v1[i] < v2[j]
-				++index1;
-			else if (v1[index1].compare(v2[index2]) > 0)//v1[i] > v2[j]
-				++index2;
-			else
-			{
-				intersection.push_back(v1[index1]);
-				++index1, ++index2;
-			}
-		}
-
-		while (index1 < v1.size()) {
-			if (v1[index1] == v2[v2.size() - 1])
-				intersection.push_back(v1[index1]);
+		if (v1[index1].compare(v2[index2]) < 0)//v1[i] < v2[j]
 			++index1;
-		}
-
-		while (index2 < v2.size()) {
-			if (v1[v1.size() - 1] == v2[index2])
-				intersection.push_back(v2[index2]);
+		else if (v1[index1].compare(v2[index2]) > 0)//v1[i] > v2[j]
 			++index2;
+		else
+		{
+			intersection.push_back(v1[index1]);
+			++index1, ++index2;
 		}
-
-		return intersection;
 	}
+
+	while (index1 < v1.size()) {
+		if (v1[index1] == v2[v2.size() - 1])
+			intersection.push_back(v1[index1]);
+		++index1;
+	}
+
+	while (index2 < v2.size()) {
+		if (v1[v1.size() - 1] == v2[index2])
+			intersection.push_back(v2[index2]);
+		++index2;
+	}
+
+	return intersection;
+}
 
 
 std::vector<std::string> splitSentence(const std::string& s) // split string into vector<string>
@@ -141,6 +136,24 @@ bool isSub(const std::string & hist, const std::string & query)
 	if (hist.find(query) != std::string::npos)
 		return true;
 	return false;
+}
+
+int IsWhichKind(const std::string& var)
+{
+	if (var.empty()) return 0;
+	bool isNum = true;
+	for (auto i : var)
+	{
+		if (i < 0 || i > 255) return 0;
+		if (i == '.' || i == ',') continue;
+		if (i < '0' || i > '9')
+		{
+			isNum = false;
+			break;
+		}
+	}
+	if (isNum) return 1;
+	return 2;
 }
 
 int ConvertCharToNum(const char& c)

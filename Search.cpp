@@ -78,21 +78,24 @@ void Search::ReadSingleFile(const std::string & fileName, std::vector<std::strin
 		std::string fileData;
 		//read everything into string
 		std::string token;
+		std::set<std::string> tokenSet;
 		while (inFile >> token)
 		{
-			if (IsWeirdWord(token)) continue;
+			//if (IsWeirdWord(token)) continue;
 			while ((int)token.size() > 0 && IsDelimeter(token[0]))
 				token.erase(0, 1);
 			while ((int)token.size() > 0 && IsDelimeter(token.back()))
 				token.pop_back();
 			if (IsStopWord(token)) continue;
 			if (!token.empty())
-				tokenVector.push_back(token);
+				//tokenVector.push_back(token);
+				tokenSet.insert(token);
 		}
 		
+		for (auto i : tokenSet) tokenVector.push_back(i);
 		//eliminate duplicate element
-		std::sort(tokenVector.begin(), tokenVector.end());
-		tokenVector.erase(std::unique(tokenVector.begin(), tokenVector.end()), tokenVector.end());
+		//std::sort(tokenVector.begin(), tokenVector.end());
+		//tokenVector.erase(std::unique(tokenVector.begin(), tokenVector.end()), tokenVector.end());
 	}
 	else
 		std::cout << "File " << fileName << " is not found\n";

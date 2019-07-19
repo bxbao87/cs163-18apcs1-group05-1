@@ -30,6 +30,7 @@ void Tolower(std::string& s); // Change a string to lower case
 
 bool isSub(const std::string &check, const std::string &query);// check if query is substring of check
 
+int IsWhichKind(const std::string& var); // ony accept string after trim, return 0 if it is weird, 1 if is number and 2 otherwise
 int ConvertCharToNum(const char& c);
 char ConvertNumToChar(const int& x);
 
