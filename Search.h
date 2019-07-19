@@ -27,7 +27,7 @@ public:
 	bool IsWeirdWord(const std::string& word); // Check if word has weird character
 	bool LoadSynonym(); // Load file synonym from synonym.txt
 	bool LoadStopWord(std::set<std::string>& stopword); // load stopword into set 
-	bool CreateIndexForAFile(const std::string& fileName); // create inverted index for a single file
+	//bool CreateIndexForAFile(const std::string& fileName); // create inverted index for a single file
 	bool CreateIndex(); // create inverted index
 
 	std::string InputKey(int x, int y);

@@ -22,10 +22,9 @@ void Trie::PrintTrieTo(Node* pRoot, std::string key, std::ostream& cout)
 	if (!pRoot->fileList.empty())
 	{
 		cout << key << ' ';
-		cout << pRoot->fileList.size() << ' ';
-		for (auto i : pRoot->fileList) 
-			cout << i << ' ';
-		cout << '\n';
+		cout << pRoot->fileList.size() << '\n';
+		for (auto i : pRoot->fileList)
+			cout << i << '\n';
 	}
 	for (auto i : pRoot->Next)
 	{
@@ -108,11 +107,13 @@ bool Trie::LoadTrie()
 		int total;
 		std::vector<std::string> fileList;
 		in >> total;
+		std::string tmp;
+		std::getline(in, tmp);
+
 		for (int i = 0; i < total; ++i)
 		{
-			std::string inFile;
-			in >> inFile;
-			fileList.push_back(inFile);
+			std::getline(in, tmp);
+			fileList.push_back(tmp);
 		}
 		AddKey(key, fileList);
 	}

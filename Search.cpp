@@ -67,7 +67,7 @@ std::vector<std::string> Search::ReadSingleFile(const std::string & fileName)
 {
 	std::vector<std::string> tokenVector;
 	std::ifstream inFile;
-	inFile.open(fileName.c_str());
+	inFile.open(fileName);
 	if (inFile.is_open()) {
 		std::string fileData;
 		//read everything into string
@@ -171,10 +171,11 @@ bool Search::CreateIndex()
 
 		if (wordsInFile.empty())
 		{
-			std::cout << "Can't load file";
-			return false;
+			std::cout << "Can't load file\n";
+			//return false;
 		}
 
+		wordsInFile = RemoveWeirdWord(wordsInFile);
 		wordsInFile = RemoveStopWord(wordsInFile);
 
 		for (int j = 0; j < (int)wordsInFile.size(); ++j)
