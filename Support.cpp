@@ -1,37 +1,29 @@
 #include "Support.h"
 
-bool isDelimiter(const char & c)
-{
-	std::vector <char> delimiter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/',
-		'&','[',']','+',':','`','@','%','^','=','_', '\\', '|' };
-	for (int i = 0; i < delimiter.size(); i++)
-		if (c == delimiter[i])
-			return true;
-	return false;
-}
-
 bool isNumber(const char& c)
 {
-	if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z'))
+	if (c < '0' || c > '9')
 		return false;
 	return true;
 }
 
-bool isNumberWithChar(std::string & s, bool& mixType)
+bool isNumberWithChar(std::string & s)
 {
+	if (s.empty()) return false;
+	if (s[0] == '$') s.erase(0, 1);
+	if (s.empty()) return false;
+	if (s.back() == '$') s.pop_back();
+	if (s.empty()) return false;
+
 	for (int i = 0; i < (int)s.size(); ++i)
 	{
-		if (('a' <= s[i] && s[i] <= 'z') || ('A' <= s[i] && s[i] <= 'Z'))
+		if (s[i] == '.' || s[i] == ',') continue;
+		if (s[i] < '0' || s[i] > '9')
 		{
-			mixType = isMixType(s);
 			return false;
 		}
-		if (s[i] == '$')
-		{
-			s.erase(0 + i, 1);
-		}
 	}
-		return true;
+	return true;
 	
 }
 

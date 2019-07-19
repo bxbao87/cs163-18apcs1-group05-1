@@ -7,7 +7,7 @@ Search::Search()
 
 	if (!LoadSynonym())
 		std::cerr << "Can't open synonym file\n";
-	if (!LoadStopWord(stopWord))
+	if (!LoadStopWord())
 		std::cerr << "Can't open stop word file\n";
 
 	if (!trie.LoadTrie())
@@ -30,6 +30,18 @@ Search::Search()
 
 Search::~Search()
 {
+}
+
+bool Search::IsStopWord(const std::string& word)
+{
+	if (stopWord.count(word) != 0) return true;
+	return false;
+}
+
+bool Search::IsDelimeter(const char& c)
+{
+	if (delimeter.count(c) != 0) return true;
+	else return false;
 }
 
 bool Search::IsWeirdWord(const std::string& word)
@@ -63,40 +75,32 @@ void Search::Run()
 {
 }
 
-std::vector<std::string> Search::ReadSingleFile(const std::string & fileName)
+void Search::ReadSingleFile(const std::string & fileName, std::vector<std::string>& tokenVector)
 {
-	std::vector<std::string> tokenVector;
-	std::ifstream inFile;
-	inFile.open(fileName);
+	std::ifstream inFile(fileName);
 	if (inFile.is_open()) {
 		std::string fileData;
 		//read everything into string
-		while (!inFile.eof()) {
-			std::string line;
-			getline(inFile, line);
-			fileData += " " + line;
-		}
-
-		std::stringstream ss(fileData);
 		std::string token;
-		//extract token from string stream
-		while (ss >> token) {
-			while ((int)token.size()>0 && isDelimiter(token.back())) //check for the last char is a delimiter or not
-				token.erase(token.end()-1);
-			while ((int)token.size()>0 && isDelimiter(token[0]))
+		while (inFile >> token)
+		{
+			if (IsWeirdWord(token)) continue;
+			if (IsStopWord(token)) continue;
+			while ((int)token.size() > 0 && IsDelimeter(token[0]))
 				token.erase(0, 1);
-			if (token != "")
+			while ((int)token.size() > 0 && IsDelimeter(token.back()))
+				token.pop_back();
+			if (!token.empty())
 				tokenVector.push_back(token);
 		}
+		
 		//eliminate duplicate element
 		std::sort(tokenVector.begin(), tokenVector.end());
 		tokenVector.erase(std::unique(tokenVector.begin(), tokenVector.end()), tokenVector.end());
 	}
 	else
-		std::cout << "File " << fileName << " is not found";
+		std::cout << "File " << fileName << " is not found\n";
 	inFile.close();
-
-	return tokenVector;
 }
 
 std::vector<std::string> Search::GetFilename(const std::string rootDirectory)
@@ -119,7 +123,7 @@ std::vector<std::string> Search::GetFilename(const std::string rootDirectory)
 	return pathVector;
 }
 
-bool Search::LoadStopWord(std::set<std::string>& stopword)
+bool Search::LoadStopWord()
 {
 	std::ifstream fin;
 	fin.open("Process/stopword.txt");
@@ -128,7 +132,7 @@ bool Search::LoadStopWord(std::set<std::string>& stopword)
 	while (!fin.eof())
 	{
 		fin >> word;
-		stopword.insert(word);
+		stopWord.insert(word);
 	}
 	fin.close();
 	return true;
@@ -166,7 +170,7 @@ bool Search::CreateIndex()
 {
 	std::vector<std::string> fileList;
 	fileList.clear();
-	fileList = GetFilename("Data");
+	GetFilename("Data", fileList);
 
 	if (fileList.empty())
 		return false;
@@ -174,7 +178,7 @@ bool Search::CreateIndex()
 	{
 		std::vector<std::string> wordsInFile;
 		wordsInFile.clear();
-		wordsInFile = ReadSingleFile(i);
+		ReadSingleFile(i, wordsInFile);
 
 		if (wordsInFile.empty())
 		{
@@ -182,25 +186,17 @@ bool Search::CreateIndex()
 			//return false;
 		}
 
-		wordsInFile = RemoveWeirdWord(wordsInFile);
-		wordsInFile = RemoveStopWord(wordsInFile);
-
 		for (int j = 0; j < (int)wordsInFile.size(); ++j)
 		{
-			bool mixType = false;
-			if (isNumberWithChar(wordsInFile[j], mixType))
+			if (isNumberWithChar(wordsInFile[j]))
 			{
 				double val = stod(wordsInFile[j]);
 				numIndex.AddNum(val, i);
 			}
 			else
 			{
-				if (!mixType)
-				{
-					trie.AddKey(wordsInFile[j], i);
-				}
+				if (!wordsInFile[j].empty()) trie.AddKey(wordsInFile[j], i);
 			}
-
 		}
 	}
 	return true;
