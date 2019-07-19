@@ -99,24 +99,19 @@ std::vector<std::string> Search::ReadSingleFile(const std::string & fileName)
 	return tokenVector;
 }
 
-std::vector<std::string> Search::GetFilename(const std::string rootDirectory)
+void Search::GetFilename(const std::string rootDirectory, std::vector <std::string> &pathVector)
 {
-	std::vector <std::string> pathVector;
 	std::stringstream ss;
-	for (auto & entry : std::experimental::filesystem::directory_iterator(rootDirectory))
-		ss << entry.path() << " ";
-	std::string path;
-	std::string token;
-	while (ss >> token) {
-		while (token.size() > 4 && (token[token.size() - 4] != '.' || token[token.size()-3] != 't')) {
+	for (auto & entry : std::experimental::filesystem::directory_iterator(rootDirectory)) {
+		ss << entry.path();
+		std::string token;
+		std::string path;
+		while (ss >> path)
 			path += token + " ";
-			ss >> token;
-		}
-		path += token;
 		pathVector.push_back(path);
-		path.clear();
+		ss.clear();
 	}
-	return pathVector;
+	return;
 }
 
 bool Search::LoadStopWord(std::set<std::string>& stopword)
