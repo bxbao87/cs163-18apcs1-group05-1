@@ -55,7 +55,7 @@ Trie::Trie()
 
 Trie::~Trie()
 {
-	SaveTrie();
+	delete pRoot;
 }
 
 void Trie::AddKey(const std::string& key, const std::string& inFile)
@@ -66,12 +66,12 @@ void Trie::AddKey(const std::string& key, const std::string& inFile)
 	cur->fileList.push_back(inFile);
 }
 
-void Trie::AddKey(const std::string& key, const std::vector<std::string> fileList)
+void Trie::AddKey(const std::string& key, std::vector<std::string>& fileList)
 {
 	bool newBranch = true;
 	Node* cur = TraverseTrie(pRoot, key, newBranch);
 	if (cur == nullptr) return;
-	cur->fileList = fileList;
+	swap(cur->fileList, fileList);
 }
 
 void Trie::AddManyKey(const std::vector<std::string>& keyList, const std::string& inFile)

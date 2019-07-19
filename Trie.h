@@ -25,7 +25,7 @@ public:
 	Trie();
 	~Trie();
 	void AddKey(const std::string& key, const std::string& inFile); // Add a key from a file to trie
-	void AddKey(const std::string& key, const std::vector<std::string> fileList); // Add a key and its fileList to trie
+	void AddKey(const std::string& key, std::vector<std::string>& fileList); // Add a key and its fileList to trie
 	void AddManyKey(const std::vector<std::string>& keyList, const std::string& inFile); // Add a list of key and their file
 
 	std::vector<std::string> GetKey(const std::string& key); // Return fileList of a key

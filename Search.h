@@ -24,7 +24,7 @@ public:
 
 	void Run(); // main function
 	void ReadSingleFile(const std::string &fileName, std::vector<std::string>& tokenVector);//Read a single file and return a vector string of tokens
-	std::vector<std::string> GetFilename(const std::string rootDirectory);//Return all file in rootDirectory folder
+	void GetFilename(const std::string rootDirectory, std::vector <std::string> &pathVector);//Return all file in rootDirectory folder
 	std::vector<std::string> RemoveStopWord(const std::vector<std::string>& words); // Remove stop word from words
 	std::vector<std::string> RemoveWeirdWord(const std::vector<std::string>& words); // Remove weird word containing weird character
 

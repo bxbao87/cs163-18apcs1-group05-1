@@ -7,7 +7,6 @@ NumIndex::NumIndex()
 
 NumIndex::~NumIndex()
 {
-	SaveNumIndex();
 }
 
 void NumIndex::SaveNumIndex()
