@@ -106,8 +106,15 @@ std::vector<std::string> Search::GetFilename(const std::string rootDirectory)
 	for (auto & entry : std::experimental::filesystem::directory_iterator(rootDirectory))
 		ss << entry.path() << " ";
 	std::string path;
-	while (ss >> path) {
+	std::string token;
+	while (ss >> token) {
+		while (token.size() > 4 && (token[token.size() - 4] != '.' || token[token.size()-3] != 't')) {
+			path += token + " ";
+			ss >> token;
+		}
+		path += token;
 		pathVector.push_back(path);
+		path.clear();
 	}
 	return pathVector;
 }
