@@ -39,18 +39,17 @@ bool isMixType(const std::string & s)
 }
 
 
-std::vector<std::string> AND(std::vector<std::string>& v1, std::vector<std::string>& v2)
+void AND(std::vector<int>& v1, std::vector<int>& v2,std::vector<int>& intersection)
 {
-	std::vector<std::string> intersection;
 
 	std::sort(v1.begin(), v1.end());
 	std::sort(v2.begin(), v2.end());
 	int index1 = 0, index2 = 0;
 	while (index1 < v1.size() && index2 < v2.size())
 	{
-		if (v1[index1].compare(v2[index2]) < 0)//v1[i] < v2[j]
+		if (v1[index1]<v2[index2])//v1[i] < v2[j]
 			++index1;
-		else if (v1[index1].compare(v2[index2]) > 0)//v1[i] > v2[j]
+		else if (v1[index1] > v2[index2])//v1[i] > v2[j]
 			++index2;
 		else
 		{
@@ -71,7 +70,6 @@ std::vector<std::string> AND(std::vector<std::string>& v1, std::vector<std::stri
 		++index2;
 	}
 
-	return intersection;
 }
 
 
@@ -98,38 +96,36 @@ void Tolower(std::string& s) // Change a string to lower case
 }
 
 
-std::vector<std::string> OR(const std::vector<std::string>& v1, const std::vector<std::string>& v2)
+void OR(const std::vector<int>& v1, const std::vector<int>& v2,std::vector<int>& res)
 {
-	std::vector<std::string> res;
 	res.clear();
 
-	std::set<std::string> tmp;
+	std::set<int> tmp;
 	tmp.clear();
 
-	std::string s;
+	//std::string s;
 
 	for (int i = 0; i <(int)v1.size() && i<(int)v2.size(); ++i)
 	{
-		s = v1[i];
-		tmp.insert(s);
-		s = v2[i];
-		tmp.insert(s);
+		//s = v1[i];
+		tmp.insert(v1[i]);
+		//s = v2[i];
+		tmp.insert(v2[i]);
 	}
 	for (int i =(int)v1.size(); i <(int)v2.size(); ++i)// if v1 is shorter than v2
 	{
-		s = v2[i];
-		tmp.insert(s);
+		//s = v2[i];
+		tmp.insert(v2[i]);
 	}
 	for (int i =(int)v2.size(); i <(int)v1.size(); ++i) // if v2 is shorter than v1
 	{
-		s = v1[i];
-		tmp.insert(s);
+		//s = v1[i];
+		tmp.insert(v1[i]);
 	}
-	for (std::set<std::string>::iterator it = tmp.begin(); it != tmp.end(); ++it)
+	for (std::set<int>::iterator it = tmp.begin(); it != tmp.end(); ++it)
 	{
 		res.push_back(*it);
 	}
-	return res;
 }
 
 bool isSub(const std::string & hist, const std::string & query)
