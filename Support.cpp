@@ -2,9 +2,9 @@
 
 bool isDelimiter(const char & c)
 {
-	std::vector <char> delimiter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/','&','[',']','+',':','`','@','%','^','=','_'};
-	for (int i = 0; i < delimiter.size(); i++)
-		if (c == delimiter[i])
+	std::vector <char> delimiter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/','&','[',']','+',':','`','@','%','^','=','_','|','\\',';'}
+	for (auto i: delimiter)
+		if (c == i)
 			return true;
 	return false;
 }
@@ -45,7 +45,7 @@ bool isMixType(const std::string & s)
 		if (flag == true && s[i]!='.' && s[i]!=',' && !isNumber(s[i]))
 			return true;
 		if (flag == false && isNumber(s[i]))
-			return false;
+			return true;
 	}
 	return false;
 }
@@ -57,7 +57,7 @@ bool isMixType(const std::string & s)
 		std::sort(v1.begin(), v1.end());
 		std::sort(v2.begin(), v2.end());
 		int index1 = 0, index2 = 0;
-		while (index1 < v1.size() && index2 < v2.size())
+		while (index1 <(int)v1.size() && index2 <(int)v2.size())
 		{
 			if (v1[index1].compare(v2[index2]) < 0)//v1[i] < v2[j]
 				++index1;
@@ -69,14 +69,14 @@ bool isMixType(const std::string & s)
 				++index1, ++index2;
 			}
 		}
-
-		while (index1 < v1.size()) {
+		
+		while (index1 <(int)v1.size()) {
 			if (v1[index1] == v2[v2.size() - 1])
 				intersection.push_back(v1[index1]);
 			++index1;
 		}
 
-		while (index2 < v2.size()) {
+		while (index2 <(int)v2.size()) {
 			if (v1[v1.size() - 1] == v2[index2])
 				intersection.push_back(v2[index2]);
 			++index2;
@@ -104,7 +104,7 @@ std::vector<std::string> splitSentence(const std::string& s) // split string int
 
 void Tolower(std::string& s) // Change a string to lower case
 {
-		for (int i = 0; i < s.length(); ++i)
+		for (int i = 0; i <(int)s.length(); ++i)
 			s[i] = tolower(s[i]);
 }
 
@@ -119,19 +119,19 @@ std::vector<std::string> OR(const std::vector<std::string>& v1, const std::vecto
 
 	std::string s;
 
-	for (int i = 0; i < v1.size() && i<v2.size(); ++i)
+	for (int i = 0; i <(int)v1.size() && i<(int)v2.size(); ++i)
 	{
 		s = v1[i];
 		tmp.insert(s);
 		s = v2[i];
 		tmp.insert(s);
 	}
-	for (int i = v1.size(); i < v2.size(); ++i)// if v1 is shorter than v2
+	for (int i =(int)v1.size(); i <(int)v2.size(); ++i)// if v1 is shorter than v2
 	{
 		s = v2[i];
 		tmp.insert(s);
 	}
-	for (int i = v2.size(); i < v1.size(); ++i) // if v2 is shorter than v1
+	for (int i =(int)v2.size(); i <(int)v1.size(); ++i) // if v2 is shorter than v1
 	{
 		s = v1[i];
 		tmp.insert(s);
