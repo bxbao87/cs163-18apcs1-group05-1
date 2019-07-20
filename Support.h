@@ -18,9 +18,8 @@
 #include <queue>
 
 
-bool isDelimiter(const char &c);//Check if char c is a delimiter . , ! ? ' " 
 bool isNumber(const char& c);// check if a string is a number (1,2,..) or not
-bool isNumberWithChar(std::string&s,bool& mixType);// check if string is number with $ and remove $ 
+bool isNumberWithChar(std::string&s);// check if string is number with $ and remove $ 
 bool isMixType(const std::string& s);// check if a string is mix number with char (Ex: 123abc)
 
 std::vector<std::string> AND(std::vector<std::string> &v1, std::vector<std::string> &v2);//AND operation
@@ -30,5 +29,9 @@ std::vector<std::string> splitSentence(const std::string& s);
 void Tolower(std::string& s); // Change a string to lower case
 
 bool isSub(const std::string &check, const std::string &query);// check if query is substring of check
+
+int IsWhichKind(const std::string& var); // ony accept string after trim, return 0 if it is weird, 1 if is number and 2 otherwise
+int ConvertCharToNum(const char& c);
+char ConvertNumToChar(const int& x);
 
 #endif
