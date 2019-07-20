@@ -280,4 +280,124 @@ std::string Search::InputKey(int x, int y) {
 	return resultStr;
 }
 
+//Extract command and split into smaller queries
+std::string Search::InfixToPostfix(const std::string & query)
+{
 
+	std::string output;
+	output.clear();
+	std::string newquery = PreProcess(query);
+
+	std::stringstream ss(newquery);
+	std::string token, subquery;
+	std::stack<std::string> st;
+
+	while (ss >> token) {
+		if (token == "AND" || token == "OR") {
+			if (subquery.size()) {
+				subquery.pop_back();
+				subquery += ",";
+			}
+			output += subquery;
+			subquery.clear();
+			while (st.size() && st.top() != "(") {
+				output += st.top() + ",";
+				st.pop();
+			}
+			st.push(token);
+		}
+		else if (IsOpenBracket(token)) {
+			st.push("(");
+			token.erase(token.begin());
+			if (token.size()) {
+				token += " ";
+			}
+			subquery += token;
+		}
+		else if (IsCloseBracket(token)) {
+			token.erase(token.end() - 1);
+			subquery += token;
+			if (subquery.size()) {
+				subquery.pop_back();
+				output += subquery + ",";
+			}
+			subquery.clear();
+			while (st.size() && st.top() != "(") {
+				output += st.top() + ",";
+				st.pop();
+			}
+			st.pop();//pop the string "("
+		}
+		else if (IsExactQuery(token)) {//If it is exact query get everything between "" and add it to subquery 
+			do {
+				subquery += token + " ";
+			} while (ss >> token && !IsExactQuery(token));
+			subquery += token;
+			output += subquery + ",";
+			subquery.clear();
+		}
+		else {
+			subquery += token + " ";
+		}
+	}
+
+	while (st.size()) {
+		output += st.top() + ",";
+		st.pop();
+	}
+	output.pop_back();
+	return output;
+}
+
+std::string Search::PreProcess(const std::string & query)
+{
+	std::string output(query);
+	int bracket = 0, quote = 0;
+	//open bracket +1, close bracket -1
+	//open quote +1, close quote 0;
+	for (int i = 0; i < (int)output.size(); i++) {
+		if (output[i] == '(') {
+			++bracket;
+			output.insert(output.begin() + i + 1, ' ');
+		}
+		else if (output[i] == ')') {
+			--bracket;
+			output.insert(output.begin() + i, ' ');
+			++i;
+		}
+		else if (output[i] == '\"') {
+			quote = 1 - quote;
+		}
+	}
+	for (int i = 0; i < bracket; i++) {
+		output += " )";
+	}
+	if (quote == 1) {
+		int i = 0;
+		while (i < (int)output.size() && output[i] != ')')
+			++i;
+		output.insert(output.begin() + i, '\"');
+	}
+	return output;
+}
+
+bool Search::IsExactQuery(const std::string & query)
+{
+	if (query[0] == '\"' || query[query.size() - 1] == '\"')
+		return true;
+	return false;
+}
+
+bool Search::IsOpenBracket(const std::string & query)
+{
+	if (query[0] == '(')
+		return true;
+	return false;
+}
+
+bool Search::IsCloseBracket(const std::string & query)
+{
+	if (query[query.size() - 1] == ')')
+		return true;
+	return false;
+}

@@ -16,6 +16,7 @@
 #include <ctime>
 #include <filesystem>
 #include <queue>
+#include <stack>
 
 
 bool isNumber(const char& c);// check if a string is a number (1,2,..) or not
