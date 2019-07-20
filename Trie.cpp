@@ -2,7 +2,6 @@
 
 Node::Node()
 {
-	//Next.clear();
 	for (int i = 0; i < 40; ++i) Next[i] = nullptr;
 	fileList.clear();
 }

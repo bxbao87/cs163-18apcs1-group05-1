@@ -5,7 +5,6 @@
 
 struct Node
 {
-	//std::map<char, Node*> Next;
 	Node* Next[40]; // a..z : 0..25, 0..9 : 26..35, - : 36, # : 37
 	std::vector<int> fileList;
 	Node();

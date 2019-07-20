@@ -7,6 +7,8 @@
 #include "NumIndex.h"
 #include "History.h"
 
+//#define CalcTime 
+
 class Search
 {
 private:
@@ -25,15 +27,15 @@ public:
 
 	void Run(); // main function
 	void ReadSingleFile(const std::string &fileName, std::vector<std::string>& tokenVector);//Read a single file and return a vector string of tokens
-	void GetFilename(const std::string rootDirectory, std::vector <std::string> &pathVector);//Return all file in rootDirectory folder
+	void GetFilename(const std::string rootDirectory, std::vector<std::string>& pathVector);//Return all file in rootDirectory folder
 	std::vector<std::string> RemoveStopWord(const std::vector<std::string>& words); // Remove stop word from words
 	std::vector<std::string> RemoveWeirdWord(const std::vector<std::string>& words); // Remove weird word containing weird character
 
 	bool IsStopWord(const std::string& word);
 	bool IsDelimeter(const char& c); //Check if char c is a delimiter . , ! ? ' " 
 	bool IsWeirdWord(const std::string& word); // Check if word has weird character
-	bool LoadSynonym(); // Load file synonym from synonym.txt
-	bool LoadStopWord(); // load stopword into set 
+	bool LoadSynonym(); // Load file synonym from synonym.txt into map synonym
+	bool LoadStopWord(); // load stopword from stopword.txt into set stopWord
 	//bool CreateIndexForAFile(const std::string& fileName); // create inverted index for a single file
 	bool CreateIndex(); // create inverted index
 

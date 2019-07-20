@@ -19,8 +19,15 @@ Search::Search()
 	}
 	else
 	{
+#ifdef CalcTime
+		auto startTime = clock();
+#endif
 		numIndex.LoadNumIndex();
 		trie.LoadTrie();
+#ifdef CalcTime
+		auto endTime = clock();
+		std::cerr << "Load Trie and numIndex Time: " << (double)(endTime - startTime) / CLOCKS_PER_SEC << "s\n";
+#endif
 	}
 }
 
@@ -81,28 +88,23 @@ void Search::ReadSingleFile(const std::string & fileName, std::vector<std::strin
 		std::set<std::string> tokenSet;
 		while (inFile >> token)
 		{
-			//if (IsWeirdWord(token)) continue;
 			while ((int)token.size() > 0 && IsDelimeter(token[0]))
 				token.erase(0, 1);
 			while ((int)token.size() > 0 && IsDelimeter(token.back()))
 				token.pop_back();
 			if (IsStopWord(token)) continue;
 			if (!token.empty())
-				//tokenVector.push_back(token);
 				tokenSet.insert(token);
 		}
 		
 		for (auto i : tokenSet) tokenVector.push_back(i);
-		//eliminate duplicate element
-		//std::sort(tokenVector.begin(), tokenVector.end());
-		//tokenVector.erase(std::unique(tokenVector.begin(), tokenVector.end()), tokenVector.end());
 	}
 	else
 		std::cout << "File " << fileName << " is not found\n";
 	inFile.close();
 }
 
-void Search::GetFilename(const std::string rootDirectory, std::vector <std::string> &pathVector)
+void Search::GetFilename(const std::string rootDirectory, std::vector<std::string>& pathVector)
 {
 	std::stringstream ss;
 	for (auto & entry : std::experimental::filesystem::directory_iterator(rootDirectory)) {
@@ -163,6 +165,9 @@ std::vector<std::string> Search::RemoveWeirdWord(const std::vector<std::string>&
 
 bool Search::CreateIndex()
 {
+#ifdef CalcTime
+	auto startTime = clock();
+#endif
 	GetFilename("Data", theFullListOfFile);
 
 	if (theFullListOfFile.empty())
@@ -195,6 +200,10 @@ bool Search::CreateIndex()
 		}
 		++cnt;
 	}
+#ifdef CalcTime
+	auto endTime = clock();
+	std::cerr << "Build Trie Time: " << (double)(endTime - startTime) / CLOCKS_PER_SEC << "s\n";
+#endif
 	return true;
 }
 
