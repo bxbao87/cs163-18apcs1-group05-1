@@ -39,37 +39,16 @@ bool isMixType(const std::string & s)
 }
 
 
-void AND(std::vector<int>& v1, std::vector<int>& v2,std::vector<int>& intersection)
+void AND(std::vector<int>& v1, const std::vector<int>& v2)
 {
-
-	std::sort(v1.begin(), v1.end());
-	std::sort(v2.begin(), v2.end());
-	int index1 = 0, index2 = 0;
-	while (index1 < v1.size() && index2 < v2.size())
+	std::set<int> intersection;
+	AddToSet(v1, intersection);
+	v1.clear();
+	for (auto i : v2)
 	{
-		if (v1[index1]<v2[index2])//v1[i] < v2[j]
-			++index1;
-		else if (v1[index1] > v2[index2])//v1[i] > v2[j]
-			++index2;
-		else
-		{
-			intersection.push_back(v1[index1]);
-			++index1, ++index2;
-		}
+		if (intersection.count(i) != 0) 
+			v1.push_back(i);
 	}
-
-	while (index1 < v1.size()) {
-		if (v1[index1] == v2[v2.size() - 1])
-			intersection.push_back(v1[index1]);
-		++index1;
-	}
-
-	while (index2 < v2.size()) {
-		if (v1[v1.size() - 1] == v2[index2])
-			intersection.push_back(v2[index2]);
-		++index2;
-	}
-
 }
 
 
@@ -91,41 +70,19 @@ std::vector<std::string> splitSentence(const std::string& s) // split string int
 
 void Tolower(std::string& s) // Change a string to lower case
 {
-		for (int i = 0; i <(int)s.length(); ++i)
-			s[i] = tolower(s[i]);
+	for (int i = 0; i <(int)s.length(); ++i)
+		s[i] = tolower(s[i]);
 }
 
 
-void OR(const std::vector<int>& v1, const std::vector<int>& v2,std::vector<int>& res)
+void OR(std::vector<int>& v1, const std::vector<int>& v2)
 {
-	res.clear();
-
-	std::set<int> tmp;
-	tmp.clear();
-
-	//std::string s;
-
-	for (int i = 0; i <(int)v1.size() && i<(int)v2.size(); ++i)
-	{
-		//s = v1[i];
-		tmp.insert(v1[i]);
-		//s = v2[i];
-		tmp.insert(v2[i]);
-	}
-	for (int i =(int)v1.size(); i <(int)v2.size(); ++i)// if v1 is shorter than v2
-	{
-		//s = v2[i];
-		tmp.insert(v2[i]);
-	}
-	for (int i =(int)v2.size(); i <(int)v1.size(); ++i) // if v2 is shorter than v1
-	{
-		//s = v1[i];
-		tmp.insert(v1[i]);
-	}
-	for (std::set<int>::iterator it = tmp.begin(); it != tmp.end(); ++it)
-	{
-		res.push_back(*it);
-	}
+	std::set<int> uni;
+	AddToSet(v1, uni);
+	AddToSet(v2, uni);
+	v1.clear();
+	for (auto i : uni)
+		v1.push_back(i);
 }
 
 bool isSub(const std::string & hist, const std::string & query)
@@ -133,6 +90,12 @@ bool isSub(const std::string & hist, const std::string & query)
 	if (hist.find(query) != std::string::npos)
 		return true;
 	return false;
+}
+
+void AddToSet(const std::vector<int>& a, std::set<int>& s)
+{
+	for (auto i : a)
+		s.insert(i);
 }
 
 int IsWhichKind(const std::string& var)
