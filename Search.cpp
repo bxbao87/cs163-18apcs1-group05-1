@@ -451,6 +451,51 @@ void Search::SearchExact(std::string &str) {
 
 }
 
+int Search::SwitchQuery(const std::string & subquery) {
+	//Do something here.
+	return 0;
+}
 
-
-
+std::vector <int> Search::Process(const std::string &query) {
+	//This function implement stack by using a vector
+	//st is a stack of vector <int> 
+	std::vector <std::vector <int>> st;
+	st.clear();
+	std::stringstream ss(query);
+	std::string subquery;
+	while (getline(ss, subquery, ',')) {
+		if (subquery != "AND" && subquery != "OR") {
+			int u = SwitchQuery(subquery);
+			switch (u) {
+			case 1:
+				//std::vector <int> res = Search(subquery);
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			case 5:
+				break;
+			default:
+				break;
+			}
+			//st.push_back(res);
+		}
+		else {
+			std::vector <int> v1 = st.back();
+			st.pop_back();
+			std::vector <int> v2 = st.back();
+			st.pop_back();
+			if (subquery == "AND")
+				//AND(v1, v2);
+				continue;
+			else if (subquery == "OR")
+				//OR(v1, v2);
+				continue;
+			st.push_back(v1);
+		}
+	}
+	return st.back();
+}
