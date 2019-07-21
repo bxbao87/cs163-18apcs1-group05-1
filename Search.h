@@ -49,6 +49,13 @@ public:
 	bool LoadListOfFile();
 	void SaveListOfFile();
 
+	// search exact query
+	void SearchExact(std::string &str);
+
+
+
+
+
 	std::string InputKey(int x, int y);
 
 };

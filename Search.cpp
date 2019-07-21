@@ -433,3 +433,37 @@ bool Search::IsCloseBracket(const std::string & query)
 		return true;
 	return false;
 }
+
+void Search::SearchExact(std::string &str) {
+	std::vector<std::string> words = splitSentence(str);
+	std::vector<int> res;
+	res.clear();
+	if (!words.empty()) {
+		res = trie.GetKey(words[0]);
+		for (std::vector<std::string>::iterator it = words.begin() + 1; it != words.end(); ++it) {
+			std::vector<int> lsFile = trie.GetKey(*it);
+			std::vector<int> tmp;
+			int a = 0, b = 0;
+			int lenA = res.size(), lenB = lsFile.size();
+			while (a < lenA&&b < lenB) {
+				if (res[a] == lsFile[b]) {
+					tmp.push_back(res[a]);
+					a++;
+					b++;
+				}
+				else if (res[a] < lsFile[b])
+					++a;
+				else ++b;
+			}
+			res = tmp;
+		}
+	}
+
+
+
+
+}
+
+
+
+
