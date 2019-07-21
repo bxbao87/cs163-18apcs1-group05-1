@@ -2,17 +2,13 @@
 
 Node::Node()
 {
-	Next.clear();
+	for (int i = 0; i < 40; ++i) Next[i] = nullptr;
 	fileList.clear();
 }
 
 Node::~Node()
 {
-	for (auto i : Next)
-	{
-		delete i.second;
-	}
-	Next.clear();
+	for (int i = 0; i < 40; ++i) delete Next[i];
 	fileList.clear();
 }
 
@@ -22,15 +18,13 @@ void Trie::PrintTrieTo(Node* pRoot, std::string key, std::ostream& cout)
 	if (!pRoot->fileList.empty())
 	{
 		cout << key << ' ';
-		cout << pRoot->fileList.size() << ' ';
-		for (auto i : pRoot->fileList) 
+		cout << pRoot->fileList.size() << '\n';
+		for (auto i : pRoot->fileList)
 			cout << i << ' ';
 		cout << '\n';
 	}
-	for (auto i : pRoot->Next)
-	{
-		PrintTrieTo(i.second, key + i.first, cout);
-	}
+	for (int i = 0; i < 40; ++i) 
+		PrintTrieTo(pRoot->Next[i], key + ConvertNumToChar(i), cout);
 }
 
 Node* Trie::TraverseTrie(Node*& pRoot, const std::string& key, const bool& newBranch)
@@ -39,12 +33,14 @@ Node* Trie::TraverseTrie(Node*& pRoot, const std::string& key, const bool& newBr
 	Node* cur = pRoot;
 	for (auto c : key)
 	{
-		if (cur->Next.count(c) == 0)
+		int value = ConvertCharToNum(c);
+		if (value == -1) return nullptr;
+		if (cur->Next[value] == nullptr)
 		{
 			if (!newBranch) return nullptr;
-			cur->Next[c] = new Node();
+			cur->Next[value] = new Node();
 		}
-		cur = cur->Next[c];
+		cur = cur->Next[value];
 	}
 	return cur;
 }
@@ -56,10 +52,10 @@ Trie::Trie()
 
 Trie::~Trie()
 {
-	SaveTrie();
+	delete pRoot;
 }
 
-void Trie::AddKey(const std::string& key, const std::string& inFile)
+void Trie::AddKey(const std::string& key, const int& inFile)
 {
 	bool newBranch = true;
 	Node* cur = TraverseTrie(pRoot, key, newBranch);
@@ -67,15 +63,15 @@ void Trie::AddKey(const std::string& key, const std::string& inFile)
 	cur->fileList.push_back(inFile);
 }
 
-void Trie::AddKey(const std::string& key, const std::vector<std::string> fileList)
+void Trie::AddKey(const std::string& key, std::vector<int>& fileList)
 {
 	bool newBranch = true;
 	Node* cur = TraverseTrie(pRoot, key, newBranch);
 	if (cur == nullptr) return;
-	cur->fileList = fileList;
+	swap(cur->fileList, fileList);
 }
 
-void Trie::AddManyKey(const std::vector<std::string>& keyList, const std::string& inFile)
+void Trie::AddManyKey(const std::vector<std::string>& keyList, const int& inFile)
 {
 	for (auto key : keyList)
 	{
@@ -83,12 +79,12 @@ void Trie::AddManyKey(const std::vector<std::string>& keyList, const std::string
 	}
 }
 
-std::vector<std::string> Trie::GetKey(const std::string& key)
+std::vector<int> Trie::GetKey(const std::string& key)
 {
 	bool newBranch = false;
 	Node* cur = TraverseTrie(pRoot, key, newBranch);
 	if (cur != nullptr) return cur->fileList;
-	else return std::vector<std::string>();
+	else return std::vector<int>();
 }
 
 void Trie::SaveTrie()
@@ -106,13 +102,16 @@ bool Trie::LoadTrie()
 	while (in >> key)
 	{
 		int total;
-		std::vector<std::string> fileList;
+		std::vector<int> fileList;
 		in >> total;
+
+		//if (total > 1000) std::cerr << key << ' ' << total << '\n';
+
+		int tmp;
 		for (int i = 0; i < total; ++i)
 		{
-			std::string inFile;
-			in >> inFile;
-			fileList.push_back(inFile);
+			in >> tmp;
+			fileList.push_back(tmp);
 		}
 		AddKey(key, fileList);
 	}

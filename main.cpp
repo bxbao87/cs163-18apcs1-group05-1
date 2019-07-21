@@ -4,12 +4,13 @@
 
 int main()
 {
-	Search bogoSearch;
-	bogoSearch.Run();
-	FrontEnd();
-	bogoSearch.InputKey(28, 21);
-
-	Sleep(10000);
-	//system("pause");
+	//Search bogoSearch;
+	//bogoSearch.Run();
+	//std::string query("la la land AND (\"made in China\" OR intitle:something good");
+	//std::cout << bogoSearch.InfixToPostfix(query);
+	//FrontEnd();
+	//bogoSearch.InputKey(28, 21);
+	//auto a = bogoSearch.GetFilename("Data");
+	system("pause");
 	return 0;
 }

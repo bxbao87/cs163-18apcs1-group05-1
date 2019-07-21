@@ -1,37 +1,25 @@
 #include "Support.h"
 
-bool isDelimiter(const char & c)
-{
-	std::vector <char> delimiter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/','&','[',']','+',':','`','@','%','^','=','_'};
-	for (int i = 0; i < delimiter.size(); i++)
-		if (c == delimiter[i])
-			return true;
-	return false;
-}
-
 bool isNumber(const char& c)
 {
-	if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z'))
+	if (c < '0' || c > '9')
 		return false;
 	return true;
 }
 
-bool isNumberWithChar(std::string & s, bool& mixType)
+bool isNumberWithChar(std::string & s)
 {
+	if (s.empty()) return false;
+
 	for (int i = 0; i < (int)s.size(); ++i)
 	{
-		if (('a' <= s[i] && s[i] <= 'z') || ('A' <= s[i] && s[i] <= 'Z'))
+		if (s[i] == '.' || s[i] == ',') continue;
+		if (s[i] < '0' || s[i] > '9')
 		{
-			mixType = isMixType(s);
 			return false;
 		}
-		if (s[i] == '$')
-		{
-			s.erase(0 + i, 1);
-		}
 	}
-		return true;
-	
+	return true;
 }
 
 bool isMixType(const std::string & s)
@@ -45,45 +33,23 @@ bool isMixType(const std::string & s)
 		if (flag == true && s[i]!='.' && s[i]!=',' && !isNumber(s[i]))
 			return true;
 		if (flag == false && isNumber(s[i]))
-			return false;
+			return true;
 	}
 	return false;
 }
 
-	std::vector<std::string> AND(std::vector<std::string>& v1, std::vector<std::string>& v2)
+
+void AND(std::vector<int>& v1, const std::vector<int>& v2)
+{
+	std::set<int> intersection;
+	AddToSet(v1, intersection);
+	v1.clear();
+	for (auto i : v2)
 	{
-		std::vector<std::string> intersection;
-
-		std::sort(v1.begin(), v1.end());
-		std::sort(v2.begin(), v2.end());
-		int index1 = 0, index2 = 0;
-		while (index1 < v1.size() && index2 < v2.size())
-		{
-			if (v1[index1].compare(v2[index2]) < 0)//v1[i] < v2[j]
-				++index1;
-			else if (v1[index1].compare(v2[index2]) > 0)//v1[i] > v2[j]
-				++index2;
-			else
-			{
-				intersection.push_back(v1[index1]);
-				++index1, ++index2;
-			}
-		}
-
-		while (index1 < v1.size()) {
-			if (v1[index1] == v2[v2.size() - 1])
-				intersection.push_back(v1[index1]);
-			++index1;
-		}
-
-		while (index2 < v2.size()) {
-			if (v1[v1.size() - 1] == v2[index2])
-				intersection.push_back(v2[index2]);
-			++index2;
-		}
-
-		return intersection;
+		if (intersection.count(i) != 0) 
+			v1.push_back(i);
 	}
+}
 
 
 std::vector<std::string> splitSentence(const std::string& s) // split string into vector<string>
@@ -104,43 +70,19 @@ std::vector<std::string> splitSentence(const std::string& s) // split string int
 
 void Tolower(std::string& s) // Change a string to lower case
 {
-		for (int i = 0; i < s.length(); ++i)
-			s[i] = tolower(s[i]);
+	for (int i = 0; i <(int)s.length(); ++i)
+		s[i] = tolower(s[i]);
 }
 
 
-std::vector<std::string> OR(const std::vector<std::string>& v1, const std::vector<std::string>& v2)
+void OR(std::vector<int>& v1, const std::vector<int>& v2)
 {
-	std::vector<std::string> res;
-	res.clear();
-
-	std::set<std::string> tmp;
-	tmp.clear();
-
-	std::string s;
-
-	for (int i = 0; i < v1.size() && i<v2.size(); ++i)
-	{
-		s = v1[i];
-		tmp.insert(s);
-		s = v2[i];
-		tmp.insert(s);
-	}
-	for (int i = v1.size(); i < v2.size(); ++i)// if v1 is shorter than v2
-	{
-		s = v2[i];
-		tmp.insert(s);
-	}
-	for (int i = v2.size(); i < v1.size(); ++i) // if v2 is shorter than v1
-	{
-		s = v1[i];
-		tmp.insert(s);
-	}
-	for (std::set<std::string>::iterator it = tmp.begin(); it != tmp.end(); ++it)
-	{
-		res.push_back(*it);
-	}
-	return res;
+	std::set<int> uni;
+	AddToSet(v1, uni);
+	AddToSet(v2, uni);
+	v1.clear();
+	for (auto i : uni)
+		v1.push_back(i);
 }
 
 bool isSub(const std::string & hist, const std::string & query)
@@ -148,4 +90,46 @@ bool isSub(const std::string & hist, const std::string & query)
 	if (hist.find(query) != std::string::npos)
 		return true;
 	return false;
+}
+
+void AddToSet(const std::vector<int>& a, std::set<int>& s)
+{
+	for (auto i : a)
+		s.insert(i);
+}
+
+int IsWhichKind(const std::string& var)
+{
+	if (var.empty()) return 0;
+	bool isNum = true;
+	for (auto i : var)
+	{
+		if (i < 0 || i > 255) return 0;
+		if (i == '.' || i == ',') continue;
+		if (i < '0' || i > '9')
+		{
+			isNum = false;
+			break;
+		}
+	}
+	if (isNum) return 1;
+	return 2;
+}
+
+int ConvertCharToNum(const char& c)
+{
+	if (c >= 'a' && c <= 'z') return c - 'a';
+	if (c >= '0' && c <= '9') return c - '0' + 26;
+	if (c == '-') return 36;
+	if (c == '#') return 37;
+	return -1;
+}
+
+char ConvertNumToChar(const int& x)
+{
+	if (x >= 0 && x <= 25) return (char)(x + 'a');
+	if (x >= 26 && x <= 35) return (char)(x - 26 + '0');
+	if (x == 36) return '-';
+	if (x == 37) return '#';
+	return '?';
 }

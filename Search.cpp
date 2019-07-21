@@ -7,20 +7,53 @@ Search::Search()
 
 	if (!LoadSynonym())
 		std::cerr << "Can't open synonym file\n";
-	if (!LoadStopWord(stopWord))
+	if (!LoadStopWord())
 		std::cerr << "Can't open stop word file\n";
 
-	if (!trie.LoadTrie())
+	if (!LoadListOfFile())
 	{
 		CreateIndex();
 		trie.SaveTrie();
 		numIndex.SaveNumIndex();
+		SaveListOfFile();
 	}
-	else numIndex.LoadNumIndex();
+	else
+	{
+#ifdef CalcTime
+		auto startTime = clock();
+#endif
+		numIndex.LoadNumIndex();
+		trie.LoadTrie();
+#ifdef CalcTime
+		auto endTime = clock();
+		std::cerr << "Load Trie and numIndex Time: " << (double)(endTime - startTime) / CLOCKS_PER_SEC << "s\n";
+#endif
+	}
 }
 
 Search::~Search()
 {
+}
+
+bool Search::IsStopWord(const std::string& word)
+{
+	if (stopWord.count(word) != 0) return true;
+	return false;
+}
+
+bool Search::IsDelimeter(const char& c)
+{
+	if (delimeter.count(c) != 0) return true;
+	else return false;
+}
+
+bool Search::IsWeirdWord(const std::string& word)
+{
+	for (auto c : word)
+	{
+		if (c < 0 || c > 255) return true;
+	}
+	return false;
 }
 
 bool Search::LoadSynonym()
@@ -45,56 +78,49 @@ void Search::Run()
 {
 }
 
-std::vector<std::string> Search::ReadSingleFile(const std::string & fileName)
+void Search::ReadSingleFile(const std::string & fileName, std::vector<std::string>& tokenVector)
 {
-	std::vector<std::string> tokenVector;
-	std::ifstream inFile;
-	inFile.open(fileName.c_str());
+	std::ifstream inFile(fileName);
 	if (inFile.is_open()) {
 		std::string fileData;
 		//read everything into string
-		while (!inFile.eof()) {
-			std::string line;
-			getline(inFile, line);
-			fileData += " " + line;
-		}
-
-		std::stringstream ss(fileData);
 		std::string token;
-		//extract token from string stream
-		while (ss >> token) {
-			while ((int)token.size()>0 && isDelimiter(token.back())) //check for the last char is a delimiter or not
-				token.erase(token.end()-1);
-			while ((int)token.size()>0 && isDelimiter(token[0]))
+		std::set<std::string> tokenSet;
+		while (inFile >> token)
+		{
+			while ((int)token.size() > 0 && IsDelimeter(token[0]))
 				token.erase(0, 1);
-			if (token != "")
-				tokenVector.push_back(token);
+			while ((int)token.size() > 0 && IsDelimeter(token.back()))
+				token.pop_back();
+			if (IsStopWord(token)) continue;
+			if (!token.empty())
+				tokenSet.insert(token);
 		}
-		//eliminate duplicate element
-		std::sort(tokenVector.begin(), tokenVector.end());
-		tokenVector.erase(std::unique(tokenVector.begin(), tokenVector.end()), tokenVector.end());
+		
+		for (auto i : tokenSet) tokenVector.push_back(i);
 	}
 	else
-		std::cout << "File " << fileName << " is not found";
+		std::cout << "File " << fileName << " is not found\n";
 	inFile.close();
-
-	return tokenVector;
 }
 
-std::vector<std::string> Search::GetFilename(const std::string rootDirectory)
+void Search::GetFilename(const std::string rootDirectory, std::vector<std::string>& pathVector)
 {
-	std::vector <std::string> pathVector;
 	std::stringstream ss;
-	for (auto & entry : std::experimental::filesystem::directory_iterator(rootDirectory))
-		ss << entry.path() << " ";
-	std::string path;
-	while (ss >> path) {
+	for (auto & entry : std::experimental::filesystem::directory_iterator(rootDirectory)) {
+		ss << entry.path();
+		std::string token;
+		std::string path;
+		while (ss >> token)
+			path += token + " ";
+		path.pop_back();
 		pathVector.push_back(path);
+		ss.clear();
 	}
-	return pathVector;
+	return;
 }
 
-bool Search::LoadStopWord(std::set<std::string>& stopword)
+bool Search::LoadStopWord()
 {
 	std::ifstream fin;
 	fin.open("Process/stopword.txt");
@@ -103,7 +129,7 @@ bool Search::LoadStopWord(std::set<std::string>& stopword)
 	while (!fin.eof())
 	{
 		fin >> word;
-		stopword.insert(word);
+		stopWord.insert(word);
 	}
 	fin.close();
 	return true;
@@ -126,48 +152,85 @@ std::vector<std::string> Search::RemoveStopWord(const std::vector<std::string>& 
 	return afterRemove;
 }
 
+std::vector<std::string> Search::RemoveWeirdWord(const std::vector<std::string>& words)
+{
+	std::vector<std::string> answer;
+	for (auto word : words)
+	{
+		if (!IsWeirdWord(word)) answer.push_back(word);
+	}
+	return answer;
+}
+
 
 bool Search::CreateIndex()
 {
-	std::vector<std::string> fileList;
-	fileList.clear();
-	fileList = GetFilename("Data");
+#ifdef CalcTime
+	auto startTime = clock();
+#endif
+	GetFilename("Data", theFullListOfFile);
 
-	if (fileList.empty())
+	if (theFullListOfFile.empty())
 		return false;
-	for (auto i : fileList)
+
+	int cnt = 0;
+	for (auto i : theFullListOfFile)
 	{
 		std::vector<std::string> wordsInFile;
 		wordsInFile.clear();
-		wordsInFile = ReadSingleFile(i);
+		ReadSingleFile(i, wordsInFile);
 
-		if (wordsInFile.empty())
-		{
-			std::cout << "Can't load file";
-			return false;
-		}
-
-		wordsInFile = RemoveStopWord(wordsInFile);
+		//if (wordsInFile.empty())
+		//{
+		//	std::cout << "Can't load file\n";
+		//	//return false;
+		//}
 
 		for (int j = 0; j < (int)wordsInFile.size(); ++j)
 		{
-			bool mixType = false;
-			if (isNumberWithChar(wordsInFile[j], mixType))
+			if (isNumberWithChar(wordsInFile[j]))
 			{
 				double val = stod(wordsInFile[j]);
-				numIndex.AddNum(val, i);
+				numIndex.AddNum(val, cnt);
 			}
 			else
 			{
-				if (!mixType)
-				{
-					trie.AddKey(wordsInFile[j], i);
-				}
+				if (!wordsInFile[j].empty()) trie.AddKey(wordsInFile[j], cnt);
 			}
-
 		}
+		++cnt;
 	}
+#ifdef CalcTime
+	auto endTime = clock();
+	std::cerr << "Build Trie Time: " << (double)(endTime - startTime) / CLOCKS_PER_SEC << "s\n";
+#endif
 	return true;
+}
+
+bool Search::LoadListOfFile()
+{
+	std::ifstream in("Process\\filename.txt");
+	if (!in.is_open()) return false;
+	int total;
+	in >> total;
+	std::string filename;
+	std::getline(in, filename);
+	for (int i = 0; i < total; ++i)
+	{
+		std::getline(in, filename);
+		theFullListOfFile.push_back(filename);
+	}
+	in.close();
+	return true;
+}
+
+void Search::SaveListOfFile()
+{
+	std::ofstream ou("Process\\filename.txt");
+	ou << theFullListOfFile.size() << '\n';
+	for (auto name : theFullListOfFile)
+		ou << name << '\n';
+	ou.close();
 }
 
 
@@ -249,4 +312,124 @@ std::string Search::InputKey(int x, int y) {
 	return resultStr;
 }
 
+//Extract command and split into smaller queries
+std::string Search::InfixToPostfix(const std::string & query)
+{
 
+	std::string output;
+	output.clear();
+	std::string newquery = PreProcess(query);
+
+	std::stringstream ss(newquery);
+	std::string token, subquery;
+	std::stack<std::string> st;
+
+	while (ss >> token) {
+		if (token == "AND" || token == "OR") {
+			if (subquery.size()) {
+				subquery.pop_back();
+				subquery += ",";
+			}
+			output += subquery;
+			subquery.clear();
+			while (st.size() && st.top() != "(") {
+				output += st.top() + ",";
+				st.pop();
+			}
+			st.push(token);
+		}
+		else if (IsOpenBracket(token)) {
+			st.push("(");
+			token.erase(token.begin());
+			if (token.size()) {
+				token += " ";
+			}
+			subquery += token;
+		}
+		else if (IsCloseBracket(token)) {
+			token.erase(token.end() - 1);
+			subquery += token;
+			if (subquery.size()) {
+				subquery.pop_back();
+				output += subquery + ",";
+			}
+			subquery.clear();
+			while (st.size() && st.top() != "(") {
+				output += st.top() + ",";
+				st.pop();
+			}
+			st.pop();//pop the string "("
+		}
+		else if (IsExactQuery(token)) {//If it is exact query get everything between "" and add it to subquery 
+			do {
+				subquery += token + " ";
+			} while (ss >> token && !IsExactQuery(token));
+			subquery += token;
+			output += subquery + ",";
+			subquery.clear();
+		}
+		else {
+			subquery += token + " ";
+		}
+	}
+
+	while (st.size()) {
+		output += st.top() + ",";
+		st.pop();
+	}
+	output.pop_back();
+	return output;
+}
+
+std::string Search::PreProcess(const std::string & query)
+{
+	std::string output(query);
+	int bracket = 0, quote = 0;
+	//open bracket +1, close bracket -1
+	//open quote +1, close quote 0;
+	for (int i = 0; i < (int)output.size(); i++) {
+		if (output[i] == '(') {
+			++bracket;
+			output.insert(output.begin() + i + 1, ' ');
+		}
+		else if (output[i] == ')') {
+			--bracket;
+			output.insert(output.begin() + i, ' ');
+			++i;
+		}
+		else if (output[i] == '\"') {
+			quote = 1 - quote;
+		}
+	}
+	for (int i = 0; i < bracket; i++) {
+		output += " )";
+	}
+	if (quote == 1) {
+		int i = 0;
+		while (i < (int)output.size() && output[i] != ')')
+			++i;
+		output.insert(output.begin() + i, '\"');
+	}
+	return output;
+}
+
+bool Search::IsExactQuery(const std::string & query)
+{
+	if (query[0] == '\"' || query[query.size() - 1] == '\"')
+		return true;
+	return false;
+}
+
+bool Search::IsOpenBracket(const std::string & query)
+{
+	if (query[0] == '(')
+		return true;
+	return false;
+}
+
+bool Search::IsCloseBracket(const std::string & query)
+{
+	if (query[query.size() - 1] == ')')
+		return true;
+	return false;
+}
