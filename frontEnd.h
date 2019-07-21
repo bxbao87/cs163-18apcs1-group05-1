@@ -22,6 +22,6 @@ void BogosearchSplash();
 void SearchScreen();
 
 void OutOfRange(std::string a);
-void DisplayHistory(const std::vector<std::string> &v);
+std::vector<std::string> DisplayHistory(const std::vector<std::string> &v);
 
 #endif

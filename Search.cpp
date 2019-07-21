@@ -173,7 +173,9 @@ bool Search::CreateIndex()
 
 std::string Search::InputKey(int x, int y) {
 	int key, len = 0;
-	std::string str, resultStr;
+	int moveCursor = -1;
+	std::string resultStr;
+	std::vector<std::string> lsHis;
 	History h;
 
 	Gotoxy(x, y);
@@ -181,30 +183,53 @@ std::string Search::InputKey(int x, int y) {
 	while (key != 13) {
 		if (key == 8 && len > 0)
 		{
+			moveCursor = -1;
 			--len;
-			str.pop_back();
 			resultStr.pop_back();
 			if (len > 110)
 				OutOfRange(resultStr);
 			else
 				std::cout << "\b \b";
-			DisplayHistory(h.GetHistory(str));
+			lsHis=DisplayHistory(h.GetHistory(resultStr));
 		}
-		else if (key == 0 || key == 224)
-			int ex = _getch();
 		else if (key != 0 && key != 224 && key != 8)
 		{
-			str += tolower((char)key);
+			moveCursor = -1;
 			resultStr += (char)key;
 			if (len > 110)
 				OutOfRange(resultStr);
 			else
 				std::cout << (char)key;
 			++len;
-			if (str != " ")
-				DisplayHistory(h.GetHistory(str));
+			if (resultStr != " ")
+				lsHis=DisplayHistory(h.GetHistory(resultStr));
 		}
-
+		else if (key == 0 || key == 224)
+		{
+			int ex = _getch();
+			int noHistory = lsHis.size();
+			if (noHistory > 0) {
+				if (ex == 72 && moveCursor > -1) {
+					Gotoxy(x, y + moveCursor + 2);
+					std::cout << lsHis[moveCursor--];
+					Color(112);
+					if (moveCursor != -1) {
+						Gotoxy(x, y + moveCursor + 2);
+						std::cout << lsHis[moveCursor];
+					}
+				}
+				else if (ex == 80 && moveCursor<noHistory-1) {
+					if (moveCursor != -1) {
+						Gotoxy(x, y + moveCursor + 2);
+						std::cout << lsHis[moveCursor];
+					}
+					Color(112);
+					Gotoxy(x, y + ++moveCursor + 2);
+					std::cout << lsHis[moveCursor];
+				}
+				Color(240);
+			}
+		}
 		if (len < 111)
 			Gotoxy(x + len, y);
 		else
@@ -212,7 +237,14 @@ std::string Search::InputKey(int x, int y) {
 		key = _getch();
 	}
 
-	h.Add(str);
+	if (moveCursor != -1) {
+		resultStr = lsHis[moveCursor];
+		Gotoxy(x, y);
+		std::cout << resultStr;
+		for (int j = resultStr.length(); j < 113; ++j)
+			std::cout << " ";
+	}
+	h.Add(resultStr);
 
 	return resultStr;
 }

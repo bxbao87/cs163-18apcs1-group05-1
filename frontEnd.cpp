@@ -339,7 +339,7 @@ void OutOfRange(std::string a) {
 		std::cout << a[i];
 }
 
-void DisplayHistory(const std::vector<std::string> &v) {
+std::vector<std::string> DisplayHistory(const std::vector<std::string> &v) {
 	int xC = 27, yC = 23;
 
 	Gotoxy(xC, yC);
@@ -348,15 +348,17 @@ void DisplayHistory(const std::vector<std::string> &v) {
 		for (int j = 0; j < 115; ++j)
 			std::cout << " ";
 	}
+	int t = 1;
+	std::vector<std::string> returnedVec;
 	if (!v.empty()) {
 
-		int t = 0;
-		for (int i = v.size() - 1; i >= 0 && t < 5; --i) {
+		for (int i = v.size() - 1; i >= 0 && t < 6; --i) {
 				Gotoxy(xC, yC);
 				std::cout << (char)179 << v[i];
 				Gotoxy(141, yC++);
 				std::cout << (char)179;
 				++t;
+				returnedVec.push_back(v[i]);
 		}
 
 	}
@@ -365,5 +367,6 @@ void DisplayHistory(const std::vector<std::string> &v) {
 	for (int i = 1; i < 114; ++i)
 		std::cout << (char)196;
 	std::cout << (char)217;
+	return returnedVec;
 }
 

@@ -6,10 +6,10 @@ int main()
 {
 	Search bogoSearch;
 	bogoSearch.Run();
-	//FrontEnd();
-	//bogoSearch.InputKey(28, 21);
+	FrontEnd();
+	bogoSearch.InputKey(28, 21);
 
-
-	system("pause");
+	Sleep(10000);
+	//system("pause");
 	return 0;
 }
