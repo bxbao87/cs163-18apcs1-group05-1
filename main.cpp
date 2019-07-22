@@ -4,13 +4,11 @@
 
 int main()
 {
-	//Search bogoSearch;
-	//bogoSearch.Run();
-	//std::string query("la la land AND (\"made in China\" OR intitle:something good");
-	//std::cout << bogoSearch.InfixToPostfix(query);
-	//FrontEnd();
-	//bogoSearch.InputKey(28, 21);
-	//auto a = bogoSearch.GetFilename("Data");
+	Search bogoSearch;
+	std::string query = "chat prayers";
+	auto tmp = bogoSearch.SearchExact(query);
+	for (auto i : tmp) std::cout << i << ' ';
+
 	system("pause");
 	return 0;
 }

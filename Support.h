@@ -32,10 +32,10 @@ void Tolower(std::string& s); // Change a string to lower case
 bool isSub(const std::string &check, const std::string &query);// check if query is substring of check
 
 void AddToSet(const std::vector<int>& a, std::set<int>& s); // Add elements of vector a into set s
+void AddToMap(const std::vector<int>& v, std::map<int, int> &mp);
 
 int IsWhichKind(const std::string& var); // ony accept string after trim, return 0 if it is weird, 1 if is number and 2 otherwise
 int ConvertCharToNum(const char& c);
 char ConvertNumToChar(const int& x);
 
-void AddToMap(std::vector<int>& v, std::map<int, int> &mp);
 #endif

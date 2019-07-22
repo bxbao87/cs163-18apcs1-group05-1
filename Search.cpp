@@ -434,29 +434,43 @@ bool Search::IsCloseBracket(const std::string & query)
 	return false;
 }
 
-void Search::SearchExact(std::string &str) {
-	std::vector<std::string> words = splitSentence(str);
+std::vector<int> Search::SearchExact(const std::string &phrase) {
+	std::vector<std::string> words = splitSentence(phrase);
 	std::vector<int> res;
 	res.clear();
-	if (!words.empty()) {
-		res = trie.GetKey(words[0]);
-		std::map<int, int> mp;
-		for (std::vector<int>::iterator i = res.begin(); i != res.end();++i)
-			mp[*i] = 1;
-		for (std::vector<std::string>::iterator it = words.begin() + 1; it != words.end(); ++it) {
-			res = trie.GetKey(*it);
+
+	if (words.empty()) return res;
+
+	words = RemoveStopWord(words);
+	std::map<int, int> mp;
+
+	for (auto word : words) 
+	{
+		if (!isNumberWithChar(word))
+		{
+			res = trie.GetKey(word);
 			AddToMap(res, mp);
 		}
-		res.clear();
-		int sz = words.size();
-		for (std::map<int, int>::iterator it = mp.begin(); it != mp.end(); ++it)
-			if (it->second == sz)
-				res.push_back(it->first);
 	}
 
+	res.clear();
+	int sz = (int)words.size();
+	for (auto i : mp) if (i.second == sz)
+	{
+		if (HaveExactString(i.first, phrase))
+			res.push_back(i.first);
+	}
 
+	return res;
+}
 
-
+bool Search::HaveExactString(const int& pos, const std::string& phrase)
+{
+	Document doc;
+	doc.SetFileName(theFullListOfFile[pos]);
+	doc.ReadFile();
+	if (doc.SearchForPhraseInContent(phrase) != -1) return true;
+	return false;
 }
 
 int Search::SwitchQuery(const std::string & subquery) {
