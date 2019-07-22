@@ -133,3 +133,10 @@ char ConvertNumToChar(const int& x)
 	if (x == 37) return '#';
 	return '?';
 }
+
+void AddToMap(std::vector<int>& v, std::map<int,int> &mp) {
+	for (std::vector<int>::iterator it = v.begin(); it != v.end(); ++it)
+		if (mp.find(*it) != mp.end())
+			mp[*it]++;
+	
+}

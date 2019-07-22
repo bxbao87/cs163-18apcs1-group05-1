@@ -37,4 +37,5 @@ int IsWhichKind(const std::string& var); // ony accept string after trim, return
 int ConvertCharToNum(const char& c);
 char ConvertNumToChar(const int& x);
 
+void AddToMap(std::vector<int>& v, std::map<int, int> &mp);
 #endif

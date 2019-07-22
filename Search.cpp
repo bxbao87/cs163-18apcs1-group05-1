@@ -440,10 +440,18 @@ void Search::SearchExact(std::string &str) {
 	res.clear();
 	if (!words.empty()) {
 		res = trie.GetKey(words[0]);
+		std::map<int, int> mp;
+		for (std::vector<int>::iterator i = res.begin(); i != res.end();++i)
+			mp[*i] = 1;
 		for (std::vector<std::string>::iterator it = words.begin() + 1; it != words.end(); ++it) {
-			std::vector<int> lsFile = trie.GetKey(*it);
-			AND(res, lsFile);
+			res = trie.GetKey(*it);
+			AddToMap(res, mp);
 		}
+		res.clear();
+		int sz = words.size();
+		for (std::map<int, int>::iterator it = mp.begin(); it != mp.end(); ++it)
+			if (it->second == sz)
+				res.push_back(it->first);
 	}
 
 
