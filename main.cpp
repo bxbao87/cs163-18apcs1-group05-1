@@ -11,6 +11,7 @@ int main()
 	//FrontEnd();
 	//bogoSearch.InputKey(28, 21);
 	//auto a = bogoSearch.GetFilename("Data");
+	//system("Start Data/1.txt");
 	system("pause");
 	return 0;
 }

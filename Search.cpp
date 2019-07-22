@@ -404,12 +404,6 @@ std::string Search::PreProcess(const std::string & query)
 	for (int i = 0; i < bracket; i++) {
 		output += " )";
 	}
-	if (quote == 1) {
-		int i = 0;
-		while (i < (int)output.size() && output[i] != ')')
-			++i;
-		output.insert(output.begin() + i, '\"');
-	}
 	return output;
 }
 
@@ -432,6 +426,28 @@ bool Search::IsCloseBracket(const std::string & query)
 	if (query[query.size() - 1] == ')')
 		return true;
 	return false;
+}
+
+bool Search::IsIntitleQuery(const std::string & query)
+{
+	std::string cmp(query, 0, 8);
+	return !cmp.compare("Intitle:");
+}
+
+bool Search::IsPlaceHolderQuery(const std::string & query)
+{
+	return (query.find(" * ") != query.npos);
+}
+
+bool Search::IsPlusQuery(const std::string & query)
+{
+	return query.find(" +") != query.npos;
+}
+
+bool Search::IsMinusQuery(const std::string & query)
+{
+	int i = query.find(" -");
+	return (i != query.npos && i+1 < (int)query.size() && query[i + 1] != ' ');
 }
 
 void Search::SearchExact(std::string &str) {
@@ -460,7 +476,16 @@ void Search::SearchExact(std::string &str) {
 }
 
 int Search::SwitchQuery(const std::string & subquery) {
-	//Do something here.
+	if (IsExactQuery(subquery))
+		return 1;
+	if (IsIntitleQuery(subquery))
+		return 2;
+	if (IsPlaceHolderQuery(subquery))
+		return 3;
+	if (IsPlusQuery(subquery))
+		return 4;
+	if (IsMinusQuery(subquery))
+		return 5;
 	return 0;
 }
 
@@ -475,18 +500,29 @@ std::vector <int> Search::Process(const std::string &query) {
 		if (subquery != "AND" && subquery != "OR") {
 			int u = SwitchQuery(subquery);
 			switch (u) {
-			case 1:
-				//std::vector <int> res = Search(subquery);
+			case 1://Exact query 
+				//Process Exact query here
+
 				break;
-			case 2:
+			case 2://Intitle query
+				//Process Intitle query here
+
 				break;
-			case 3:
+			case 3://Placeholder query
+				//Process placeholder here
+
 				break;
-			case 4:
+			case 4://Plus query
+				//Process plus query 
+
 				break;
-			case 5:
+			case 5://Minus query
+				//Process minus query
+
 				break;
 			default:
+				//Process normal query
+
 				break;
 			}
 			//st.push_back(res);
