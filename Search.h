@@ -45,6 +45,9 @@ public:
 	bool IsExactQuery(const std::string & query);//check if it there is a quote in query
 	bool IsOpenBracket(const std::string & query); //check if there is a open bracket in the query
 	bool IsCloseBracket(const std::string & query);//check if there is a close bracket in the query
+	//Process subqueries
+	int SwitchQuery(const std::string & subquery);
+	std::vector <int> Process(const std::string &query);
 
 	bool LoadListOfFile();
 	void SaveListOfFile();
