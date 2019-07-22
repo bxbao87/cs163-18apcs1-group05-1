@@ -6,6 +6,7 @@
 #include "frontEnd.h"
 #include "NumIndex.h"
 #include "History.h"
+#include "Document.h"
 
 //#define CalcTime 
 
@@ -57,11 +58,8 @@ public:
 	void SaveListOfFile();
 
 	// search exact query
-	void SearchExact(std::string &str);
-
-
-
-
+	std::vector<int> SearchExact(const std::string &phrase);
+	bool HaveExactString(const int& pos, const std::string& phrase);
 
 	std::string InputKey(int x, int y);
 

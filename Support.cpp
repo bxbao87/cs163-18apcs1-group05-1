@@ -98,6 +98,11 @@ void AddToSet(const std::vector<int>& a, std::set<int>& s)
 		s.insert(i);
 }
 
+void AddToMap(const std::vector<int>& v, std::map<int,int> &mp) {
+	for (auto i : v)
+		++mp[i];
+}
+
 int IsWhichKind(const std::string& var)
 {
 	if (var.empty()) return 0;
@@ -134,9 +139,3 @@ char ConvertNumToChar(const int& x)
 	return '?';
 }
 
-void AddToMap(std::vector<int>& v, std::map<int,int> &mp) {
-	for (std::vector<int>::iterator it = v.begin(); it != v.end(); ++it)
-		if (mp.find(*it) != mp.end())
-			mp[*it]++;
-	
-}
