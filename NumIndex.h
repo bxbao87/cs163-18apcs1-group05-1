@@ -16,6 +16,9 @@ public:
 	bool LoadNumIndex(); // Load the numIndex from Process/index_num.txt
 	void AddNum(const double& val, const int& inFile); // Add val from inFile
 	void AddNum(const double& val, const std::vector<int>& fileList); // Add val from fileList
+	void GetNumKey(std::vector<int>& fileList, const double& key);// Get a fileList that contain val
+	void GetRange(std::vector<int>& result, const double& key1, const double& key2);
+
 };
 
 #endif

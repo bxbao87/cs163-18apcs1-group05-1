@@ -46,9 +46,13 @@ public:
 	bool IsExactQuery(const std::string & query);//check if it there is a quote in query
 	bool IsOpenBracket(const std::string & query); //check if there is a open bracket in the query
 	bool IsCloseBracket(const std::string & query);//check if there is a close bracket in the query
+	bool IsIntitleQuery(const std::string & query);
+	bool IsPlaceHolderQuery(const std::string & query);
+	bool IsPlusQuery(const std::string & query);
+	bool IsMinusQuery(const std::string & query);
 	//Process subqueries
 	int SwitchQuery(const std::string & subquery);
-	std::vector <int> Process(const std::string &query);
+	std::vector <int> Process(const std::string &query);//Need to changes data structure corresponding to OR and AND ds
 
 	bool LoadListOfFile();
 	void SaveListOfFile();
@@ -56,6 +60,8 @@ public:
 	// search exact query
 	std::vector<int> SearchExact(const std::string &phrase);
 	bool HaveExactString(const int& pos, const std::string& phrase);
+	bool SearchNumber(const double& key,std::vector<int>& result ); // Search number
+	bool SearchRange(const double& key1, const double& key2,std::vector<int>& result);// Search range
 
 	std::string InputKey(int x, int y);
 
