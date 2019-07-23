@@ -5,7 +5,7 @@
 int main()
 {
 	Search bogoSearch;
-	std::string query = "chat prayers";
+	std::string query = "VU LAN CELEBRATION IN VIETNAM";
 	auto tmp = bogoSearch.SearchExact(query);
 	for (auto i : tmp) std::cout << i << ' ';
 

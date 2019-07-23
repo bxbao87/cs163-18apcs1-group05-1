@@ -88,6 +88,7 @@ void Search::ReadSingleFile(const std::string & fileName, std::vector<std::strin
 		std::set<std::string> tokenSet;
 		while (inFile >> token)
 		{
+			Tolower(token);
 			while ((int)token.size() > 0 && IsDelimeter(token[0]))
 				token.erase(0, 1);
 			while ((int)token.size() > 0 && IsDelimeter(token.back()))
@@ -441,6 +442,8 @@ std::vector<int> Search::SearchExact(const std::string &phrase) {
 
 	if (words.empty()) return res;
 
+	for (auto& word : words) 
+		Tolower(word);
 	words = RemoveStopWord(words);
 	std::map<int, int> mp;
 
@@ -451,13 +454,17 @@ std::vector<int> Search::SearchExact(const std::string &phrase) {
 			res = trie.GetKey(word);
 			AddToMap(res, mp);
 		}
+		else
+		{
+			// something goes here
+		}
 	}
 
 	res.clear();
 	int sz = (int)words.size();
 	for (auto i : mp) if (i.second == sz)
 	{
-		if (HaveExactString(i.first, phrase))
+		if (HaveExactString(i.first, phrase)) // check if this file has exact string
 			res.push_back(i.first);
 	}
 
@@ -469,7 +476,7 @@ bool Search::HaveExactString(const int& pos, const std::string& phrase)
 	Document doc;
 	doc.SetFileName(theFullListOfFile[pos]);
 	doc.ReadFile();
-	if (doc.SearchForPhraseInContent(phrase) != -1) return true;
+	if (doc.SearchForPhraseInContent(phrase) != -1 || doc.SearchForPhraseInTitle(phrase) != -1) return true;
 	return false;
 }
 

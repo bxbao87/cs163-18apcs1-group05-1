@@ -5,7 +5,7 @@
 
 struct Node
 {
-	Node* Next[40]; // a..z : 0..25, 0..9 : 26..35, - : 36, # : 37
+	Node* Next[40]; // a..z : 0..25, 0..9 : 26..35, - : 36, # : 37, ' : 38
 	std::vector<int> fileList;
 	Node();
 	~Node();
