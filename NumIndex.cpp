@@ -53,3 +53,29 @@ void NumIndex::AddNum(const double& val, const std::vector<int>& fileList)
 {
 	numList[val] = fileList;
 }
+
+void NumIndex::GetNumKey(std::vector<int>& fileList, const double & key)
+{
+	fileList.clear();
+	auto it = numList.find(key);
+	if (it != numList.end())
+		fileList = it->second;
+}
+
+void NumIndex::GetRange(std::vector<int>& result, const double & key1, const double & key2)
+{
+	std::set<int> process;
+	process.clear();
+	result.clear();
+	auto it = numList.lower_bound(key1);
+	for (it; it->first <= key2; ++it)
+	{
+		std::vector<int> tmp;
+		GetNumKey(tmp, it->first);
+		for (auto i : tmp)
+			process.insert(i);
+	}
+
+	for (auto i : process)
+		result.push_back(i);
+}

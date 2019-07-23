@@ -60,6 +60,8 @@ public:
 	// search exact query
 	std::vector<int> SearchExact(const std::string &phrase);
 	bool HaveExactString(const int& pos, const std::string& phrase);
+	bool SearchNumber(const double& key,std::vector<int>& result ); // Search number
+	bool SearchRange(const double& key1, const double& key2,std::vector<int>& result);// Search range
 
 	std::string InputKey(int x, int y);
 

@@ -489,6 +489,23 @@ bool Search::HaveExactString(const int& pos, const std::string& phrase)
 	return false;
 }
 
+bool Search::SearchNumber(const double & key,std::vector<int>& result)
+{
+	numIndex.GetNumKey(result, key);
+	if (result.empty())
+		return false;
+	return true;
+	
+}
+
+bool Search::SearchRange(const double & key1, const double & key2,std::vector<int>& result)
+{
+	numIndex.GetRange(result, key1, key2);
+	if (result.empty())
+		return false;
+	return true;
+}
+
 int Search::SwitchQuery(const std::string & subquery) {
 	if (IsExactQuery(subquery))
 		return 1;
