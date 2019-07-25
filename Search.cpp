@@ -608,6 +608,22 @@ void Search::PreProcessRangeQuery(const std::string query, double & lo, double &
 	return;
 }
 
+
+std::vector<int> Search::SearchSynonym(const std::string &phrase) {
+	std::vector<std::string> syn = synonym[phrase];
+	std::vector<int> res;
+	std::set<int> st;
+	for (auto i : syn) {
+		res = trie.GetKey(i);
+		for (auto j : res)
+			st.insert(j);
+	}
+	res.clear();
+	for (auto i : st)
+		res.push_back(i);
+	return res;
+}
+
 int Search::SwitchQuery(const std::string & subquery) {
 	if (IsExactQuery(subquery))
 		return 1;

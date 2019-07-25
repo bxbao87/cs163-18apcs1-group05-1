@@ -65,6 +65,7 @@ public:
 	bool SearchNumber(const double& key,std::vector<int>& result ); // Search number
 	bool SearchRange(const double& key1, const double& key2,std::vector<int>& result);// Search range
 	void PreProcessRangeQuery(const std::string query, double &lo, double &hi);//Return range of the query
+	std::vector<int> SearchSynonym(const std::string &phrase);
 	std::string InputKey(int x, int y);
 
 	void Debug(std::vector <int> v);
