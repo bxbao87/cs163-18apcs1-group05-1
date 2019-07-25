@@ -22,6 +22,7 @@
 bool isNumber(const char& c);// check if a string is a number (1,2,..) or not
 bool isNumberWithChar(std::string&s);// check if string is number with $ and remove $ 
 bool isMixType(const std::string& s);// check if a string is mix number with char (Ex: 123abc)
+bool isNumberWithCharExtended(const std::string &s);// check if a string have number $ and %
 
 void AND(std::vector<int> &v1, const std::vector<int> &v2);//AND operation after AND, the result will be in v1
 void OR(std::vector<int>& v1, const std::vector<int>& v2);// OR operator

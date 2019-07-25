@@ -38,6 +38,21 @@ bool isMixType(const std::string & s)
 	return false;
 }
 
+bool isNumberWithCharExtended(const std::string & s)
+{
+	if (s.empty()) return false;
+
+	for (int i = 0; i < (int)s.size(); ++i)
+	{
+		if (s[i] == '.' || s[i] == ',' || s[i] == '%' || s[i] == '$') continue;
+		if (s[i] < '0' || s[i] > '9')
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
 
 void AND(std::vector<int>& v1, const std::vector<int>& v2)
 {
