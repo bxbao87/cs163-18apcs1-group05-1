@@ -127,6 +127,7 @@ int ConvertCharToNum(const char& c)
 	if (c >= '0' && c <= '9') return c - '0' + 26;
 	if (c == '-') return 36;
 	if (c == '#') return 37;
+	if (c == '\'') return 38;
 	return -1;
 }
 
@@ -136,6 +137,7 @@ char ConvertNumToChar(const int& x)
 	if (x >= 26 && x <= 35) return (char)(x - 26 + '0');
 	if (x == 36) return '-';
 	if (x == 37) return '#';
+	if (x == 38) return '\'';
 	return '?';
 }
 

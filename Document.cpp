@@ -25,7 +25,7 @@ void Document::ReadFile()
 	in.close();
 }
 
-void Document::DisplayFile()
+void Document::OpenFile()
 {
 	std::string command = "start " + fileName;
 	system(command.c_str());
@@ -34,6 +34,13 @@ void Document::DisplayFile()
 int Document::SearchForPhraseInContent(const std::string& phrase)
 {
 	auto pos = content.find(phrase);
+	if (pos == std::string::npos) return -1;
+	else return (int)pos;
+}
+
+int Document::SearchForPhraseInTitle(const std::string& phrase)
+{
+	auto pos = title.find(phrase);
 	if (pos == std::string::npos) return -1;
 	else return (int)pos;
 }
