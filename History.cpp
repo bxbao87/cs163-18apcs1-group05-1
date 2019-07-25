@@ -60,7 +60,7 @@ std::vector<std::string> History::GetHistory(const std::string & searchKeyword)
 {
 	std::vector <std::string> resultVector;
 
-	for (int i = 0; i < history.size(); i++)
+	for (int i = 0; i < (int)history.size(); i++)
 	{
 		std::string cur = history.front();
 

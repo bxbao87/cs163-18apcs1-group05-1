@@ -513,33 +513,31 @@ std::vector <int> Search::Process(const std::string &query) {
 	while (getline(ss, subquery, ',')) {
 		if (subquery != "AND" && subquery != "OR") {
 			int u = SwitchQuery(subquery);
+			std::vector <int> res;
 			switch (u) {
 			case 1://Exact query 
 				//Process Exact query here
-
+				subquery.pop_back();
+				subquery.erase(0,1);
+				res = SearchExact(subquery);
 				break;
 			case 2://Intitle query
 				//Process Intitle query here
-
 				break;
 			case 3://Placeholder query
 				//Process placeholder here
-
 				break;
 			case 4://Plus query
 				//Process plus query 
-
 				break;
 			case 5://Minus query
 				//Process minus query
-
 				break;
 			default:
 				//Process normal query
-
 				break;
 			}
-			//st.push_back(res);
+			st.push_back(res);
 		}
 		else {
 			std::vector <int> v1 = st.back();
@@ -547,11 +545,9 @@ std::vector <int> Search::Process(const std::string &query) {
 			std::vector <int> v2 = st.back();
 			st.pop_back();
 			if (subquery == "AND")
-				//AND(v1, v2);
-				continue;
+				AND(v1, v2);
 			else if (subquery == "OR")
-				//OR(v1, v2);
-				continue;
+				OR(v1, v2);
 			st.push_back(v1);
 		}
 	}
