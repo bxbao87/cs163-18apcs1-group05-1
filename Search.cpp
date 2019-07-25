@@ -273,10 +273,11 @@ std::string Search::InputKey(int x, int y) {
 			int ex = _getch();
 			int noHistory = lsHis.size();
 			if (noHistory > 0) {
+				Color(8);
 				if (ex == 72 && moveCursor > -1) {
 					Gotoxy(x, y + moveCursor + 2);
 					std::cout << lsHis[moveCursor--];
-					Color(112);
+					Color(6);
 					if (moveCursor != -1) {
 						Gotoxy(x, y + moveCursor + 2);
 						std::cout << lsHis[moveCursor];
@@ -287,11 +288,11 @@ std::string Search::InputKey(int x, int y) {
 						Gotoxy(x, y + moveCursor + 2);
 						std::cout << lsHis[moveCursor];
 					}
-					Color(112);
+					Color(6);
 					Gotoxy(x, y + ++moveCursor + 2);
 					std::cout << lsHis[moveCursor];
 				}
-				Color(240);
+				Color(15);
 			}
 		}
 		if (len < 111)
