@@ -14,9 +14,17 @@ int main()
 	//bogoSearch.InputKey(28, 21);
 	//auto a = bogoSearch.GetFilename("Data");
 	//system("Start Data/1.txt");
-	std::string query = "VU LAN CELEBRATION IN VIETNAM";
-	auto tmp = bogoSearch.SearchExact(query);
-	for (auto i : tmp) std::cout << i << ' ';
-	system("pause");
+
+	while (true) {
+		std::cout << "Search normal" << std::endl;
+		std::string query;
+		getline(std::cin, query);
+		query = bogoSearch.InfixToPostfix(query);
+		std::cout << query;
+		auto v = bogoSearch.Process(query);
+		std::cout << v.size() << std::endl;
+		bogoSearch.Debug(v);
+		system("pause");
+	}
 	return 0;
 }

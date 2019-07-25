@@ -271,7 +271,7 @@ std::string Search::InputKey(int x, int y) {
 		else if (key == 0 || key == 224)
 		{
 			int ex = _getch();
-			int noHistory = lsHis.size();
+			int noHistory = (int)lsHis.size();
 			if (noHistory > 0) {
 				if (ex == 72 && moveCursor > -1) {
 					Gotoxy(x, y + moveCursor + 2);
@@ -305,12 +305,20 @@ std::string Search::InputKey(int x, int y) {
 		resultStr = lsHis[moveCursor];
 		Gotoxy(x, y);
 		std::cout << resultStr;
-		for (int j = resultStr.length(); j < 113; ++j)
+		for (int j = (int)resultStr.length(); j < 113; ++j)
 			std::cout << " ";
 	}
 	h.Add(resultStr);
 
 	return resultStr;
+}
+
+void Search::Debug(std::vector<int> v)
+{
+	for (auto i : v) {
+		std::cout << theFullListOfFile[i] << std::endl;
+	}
+	return;
 }
 
 //Extract command and split into smaller queries
@@ -365,7 +373,11 @@ std::string Search::InfixToPostfix(const std::string & query)
 			do {
 				subquery += token + " ";
 			} while (ss >> token && !IsExactQuery(token));
-			subquery += token;
+			if (token[0] == '\"') {
+				subquery.pop_back();
+			}
+			else 
+				subquery += token;
 			output += subquery + ",";
 			subquery.clear();
 		}
@@ -374,11 +386,15 @@ std::string Search::InfixToPostfix(const std::string & query)
 		}
 	}
 
+	if (subquery.size()) {
+		subquery.pop_back();
+		output += subquery + ",";
+	}
+
 	while (st.size()) {
 		output += st.top() + ",";
 		st.pop();
 	}
-	output.pop_back();
 	return output;
 }
 
@@ -447,8 +463,13 @@ bool Search::IsPlusQuery(const std::string & query)
 
 bool Search::IsMinusQuery(const std::string & query)
 {
-	int i = query.find(" -");
+	int i = (int)query.find(" -");
 	return (i != query.npos && i+1 < (int)query.size() && query[i + 1] != ' ');
+}
+
+bool Search::IsRangeQuery(const std::string & query)
+{
+	return (query.find("..") != query.npos);
 }
 
 std::vector<int> Search::SearchExact(const std::string &phrase) {
@@ -487,6 +508,61 @@ std::vector<int> Search::SearchExact(const std::string &phrase) {
 	return res;
 }
 
+std::vector<int> Search::SearchNormal(const std::string & phrase)
+{
+	std::vector<std::string> words = splitSentence(phrase);
+	std::vector<int> res;
+	res.clear();
+
+	if (words.empty()) return res;
+
+	for (auto& word : words)
+		Tolower(word);
+	words = RemoveStopWord(words);
+
+	std::map<int, int> mp;
+
+	for (auto word : words)
+	{
+		if (!isNumberWithCharExtended(word))
+		{
+			//Search synonym
+			if (word[0] == '~') {
+				continue;
+				//Search for synonym
+			}
+			else {
+				//normal search
+				res = trie.GetKey(word);
+				AddToMap(res, mp);
+			}
+		}
+		else
+		{
+			if (IsRangeQuery(word)) {
+				double l, r;
+				PreProcessRangeQuery(word, l, r);
+				SearchRange(l, r, res);
+				AddToMap(res, mp);
+			}
+			else{
+				while (!isdigit(word[0]))
+					word.erase(word.begin());
+				while (!isdigit(word[word.size() - 1]))
+					word.pop_back();
+				double number = stod(word);
+				SearchNumber(number, res);
+			}
+		}
+	}
+	res.clear();
+	for (auto i : mp) 
+		res.push_back(i.first);
+
+	return res;
+
+}
+
 bool Search::HaveExactString(const int& pos, const std::string& phrase)
 {
 	Document doc;
@@ -511,6 +587,25 @@ bool Search::SearchRange(const double & key1, const double & key2,std::vector<in
 	if (result.empty())
 		return false;
 	return true;
+}
+
+void Search::PreProcessRangeQuery(const std::string query, double & lo, double & hi)
+{
+	int i = (int)query.find("..");
+	std::string left(query, 0, i);
+	while (!isdigit(left[0]))
+		left.erase(0, 1);
+	while (!isdigit(left[left.size() - 1]))
+		left.erase(left.end()-1);
+	lo = std::stod(left);
+
+	std::string right(query, i+2, (int)query.size()-1);
+	while (!isdigit(right[0]))
+		right.erase(0, 1);
+	while (!isdigit(right[right.size() - 1]))
+		right.erase(right.end()-1);
+	hi = std::stod(right);
+	return;
 }
 
 int Search::SwitchQuery(const std::string & subquery) {
@@ -558,7 +653,7 @@ std::vector <int> Search::Process(const std::string &query) {
 				//Process minus query
 				break;
 			default:
-				//Process normal query
+				res = SearchNormal(subquery);
 				break;
 			}
 			st.push_back(res);
