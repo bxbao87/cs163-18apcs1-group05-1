@@ -24,6 +24,10 @@ public:
 	int SearchForPhraseInTitle(const std::string& phrase); // Retunr the position of the phrase need to be searched in title
 
 	void Display(int x, int y);
+
+	void GetParagraphForShowing(const std::vector<std::string>& keyword);
+	void debug();
 };
+
 
 #endif

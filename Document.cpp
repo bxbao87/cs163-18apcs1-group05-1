@@ -46,7 +46,7 @@ int Document::SearchForPhraseInTitle(const std::string& phrase)
 	else return (int)pos;
 }
 
-void Document::Display(int x, int y) {
+void Document::Display(int x, int y) {// not finished
 	Gotoxy(x, y);
 	Color(9);
 	std::cout << fileName;
@@ -71,3 +71,54 @@ void Document::Display(int x, int y) {
 			std::cout << i.first;
 	}
 }
+
+void Document::GetParagraphForShowing(const std::vector<std::string>& keyword)
+{
+	std::vector<int> pos;
+	pos.clear();
+	for (auto i : keyword)
+	{
+		auto cur = content.find(i);
+		if (cur != std::string::npos)
+			pos.push_back((int)cur);
+	}
+
+	int minPos = pos[0];
+	for (auto i : pos)
+		if (i < minPos)
+			minPos = i;
+
+	int count = 0,len=0;
+	for (int i =minPos; count < 50; ++i)
+	{
+		std::cout << content[i];
+		if ((content[i] == ' ' && content[i - 1] != ' ') || 
+			(content[i] == '\n' && content[i - 1] != '\n' && content[i-1]!=' '))
+		{
+			++count;
+		}
+		++len;
+	}
+
+	std::string toDisplay = content.substr(minPos, len);
+	std::cout << toDisplay << '\n';
+	std::vector<std::string> splitToDisplay = splitSentence(toDisplay);
+	paragraphForShowing.clear();
+	for (auto i : splitToDisplay)
+	{
+		std::pair<std::string, bool> word;
+		word.first = i;
+		if (std::find(keyword.begin(), keyword.end(), i) != keyword.end())
+			word.second = true;
+		paragraphForShowing.push_back(word);
+	}
+
+}
+
+void Document::debug()
+{
+	std::cout << "size: " << paragraphForShowing.size() << '\n';
+	for (auto i : paragraphForShowing)
+		std::cout << i.first << ' ';
+}
+
