@@ -16,6 +16,8 @@ int main()
 	//system("Start Data/1.txt");
 
 	while (true) {
+		SetWindow(168, 44);
+		system("cls");
 		std::cout << "Search normal" << std::endl;
 		std::string query;
 
@@ -31,14 +33,17 @@ int main()
 		CreateVectorDoc(fileList, result);
 		/*std::cout << v.size() << std::endl;
 		bogoSearch.Debug(v);*/
-
+		int t = 0;
+		std::cout << result.size() << std::endl;
+		Sleep(1000);
 		for (auto i:result)
 		{
 			i.GetParagraphForShowing(keyword, tmp);
-			i.debug();
+			i.DisplayResult(5, 5 + t++ * 10);
 			std::cout << '\n';
+			Sleep(2000);
 		}
-		
+		_getch();
 		/*for(auto i:v)
 		system("pause");*/
 	}
