@@ -22,6 +22,9 @@ public:
 
 	int SearchForPhraseInContent(const std::string& phrase); // Return the position of the phrase need to be searched in content
 	int SearchForPhraseInTitle(const std::string& phrase); // Retunr the position of the phrase need to be searched in title
+	void GetParagraphForShowing(const std::vector<std::string>& keyword);
+	void debug();
 };
+
 
 #endif
