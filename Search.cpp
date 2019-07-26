@@ -314,6 +314,16 @@ std::string Search::InputKey(int x, int y) {
 	return resultStr;
 }
 
+void Search::GetFileNameByInt(const std::vector<int>& toGet, std::vector<std::string>& fileName)
+{
+	fileName.clear();
+	for (auto i : toGet)
+	{
+		std::string file = theFullListOfFile[i];
+		fileName.push_back(file);
+	}
+}
+
 void Search::Debug(std::vector<int> v)
 {
 	for (auto i : v) {

@@ -69,6 +69,7 @@ public:
 	std::vector<int> SearchPlus(const std::string &phrase);
 	std::vector<int> SearchMinus(const std::string &phrase);
 	std::string InputKey(int x, int y);
+	void GetFileNameByInt(const std::vector<int>& toGet, std::vector<std::string>& fileName);
 
 	void Debug(std::vector <int> v);
 };
