@@ -6,8 +6,7 @@
 int main()
 {
 	Search bogoSearch;
-	//Search bogoSearch;
-	//bogoSearch.Run();
+	bogoSearch.Run();
 	//std::string query("la la land AND (\"made in China\" OR intitle:something good");
 	//std::cout << bogoSearch.InfixToPostfix(query);
 	//FrontEnd();
@@ -34,5 +33,7 @@ int main()
 	std::vector<std::string> keyword = {"ivory"};
 	doc.GetParagraphForShowing(keyword);
 	doc.debug();*/
+
+	system("pause");
 	return 0;
 }

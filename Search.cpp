@@ -5,29 +5,28 @@ Search::Search()
 	system("md Process");
 	system("md Data");
 
+#ifdef CalcTime
+	auto startTime = clock();
+#endif
 	if (!LoadSynonym())
 		std::cerr << "Can't open synonym file\n";
 	if (!LoadStopWord())
 		std::cerr << "Can't open stop word file\n";
 
-	if (!LoadListOfFile())
+	bool loadListOfFile = LoadListOfFile();
+	bool loadTrie = trie.LoadTrie();
+	bool loadNumIndex = numIndex.LoadNumIndex();
+#ifdef CalcTime
+	auto endTime = clock();
+	std::cerr << "Load Time: " << (double)(endTime - startTime) / CLOCKS_PER_SEC << '\n';
+#endif
+
+	if (!(loadListOfFile && loadTrie && loadNumIndex))
 	{
 		CreateIndex();
+		SaveListOfFile();
 		trie.SaveTrie();
 		numIndex.SaveNumIndex();
-		SaveListOfFile();
-	}
-	else
-	{
-#ifdef CalcTime
-		auto startTime = clock();
-#endif
-		numIndex.LoadNumIndex();
-		trie.LoadTrie();
-#ifdef CalcTime
-		auto endTime = clock();
-		std::cerr << "Load Trie and numIndex Time: " << (double)(endTime - startTime) / CLOCKS_PER_SEC << "s\n";
-#endif
 	}
 }
 
@@ -76,6 +75,19 @@ bool Search::LoadSynonym()
 
 void Search::Run()
 {
+	std::string query = "baby shark";
+	auto tmp = SearchNormal(query);
+	std::vector<std::string> testQuery;
+	testQuery.push_back(query);
+
+	for (auto i : tmp) std::cout << i << ' ';
+	std::cout << '\n';
+	std::cout << '\n';
+
+	tmp = Ranking(tmp, testQuery);
+
+	for (auto i : tmp) std::cout << i << ' ';
+	std::cout << '\n';
 }
 
 void Search::ReadSingleFile(const std::string & fileName, std::vector<std::string>& tokenVector)
@@ -314,12 +326,67 @@ std::string Search::InputKey(int x, int y) {
 	return resultStr;
 }
 
-void Search::Debug(std::vector<int> v)
+void Search::Debug(std::vector<int>& v)
 {
 	for (auto i : v) {
 		std::cout << theFullListOfFile[i] << std::endl;
 	}
 	return;
+}
+
+std::vector<int> Search::Ranking(std::vector<int>& finalList, std::vector<std::string>& subQuery)
+{
+	std::set<int> fileList;
+	AddToSet(finalList, fileList);
+
+	std::vector<int> result;
+	std::map<int, int> rank;
+
+	for (auto& query : subQuery)
+	{
+		std::vector<std::string> words = splitSentence(query);
+		for (auto& word : words)
+			Tolower(word);
+		words = RemoveStopWord(words);
+
+		for (auto word : words)
+		{
+			if (!isNumberWithChar(word))
+			{
+				result = trie.GetKey(word);
+				for (auto& fileIndex : result)
+					if (fileList.count(fileIndex) != 0)
+						++rank[fileIndex];
+			}
+			else
+			{
+				double num = stod(word);
+				result.clear();
+				bool haveNum = SearchNumber(num, result);
+				if (haveNum)
+				{
+					for (auto& fileIndex : result)
+						if (fileList.count(fileIndex) != 0)
+							++rank[fileIndex];
+				}
+			}
+		}
+	}
+
+	std::vector<std::pair<int, int> > score;
+	for (auto& fileAndScore : rank)
+	{
+		int fileIndex = fileAndScore.first;
+		int numberOfOccurence = fileAndScore.second;
+		score.push_back(std::make_pair(numberOfOccurence, fileIndex));
+	}
+	std::sort(score.begin(), score.end(), std::greater<std::pair<int, int> >());
+
+	result.clear();
+	for (auto i : score)
+		result.push_back(i.second);
+
+	return result;
 }
 
 //Extract command and split into smaller queries
@@ -494,7 +561,10 @@ std::vector<int> Search::SearchExact(const std::string &phrase) {
 		}
 		else
 		{
-			// something goes here
+			double num = stod(word);
+			res.clear();
+			bool haveNum = SearchNumber(num, res);
+			if (haveNum) AddToMap(res, mp);
 		}
 	}
 

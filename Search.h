@@ -68,7 +68,9 @@ public:
 	std::vector<int> SearchSynonym(const std::string &phrase);
 	std::string InputKey(int x, int y);
 
-	void Debug(std::vector <int> v);
+	void Debug(std::vector <int>& v);
+
+	std::vector<int> Ranking(std::vector<int>& finalList, std::vector<std::string>& subQuery);
 };
 
 #endif
