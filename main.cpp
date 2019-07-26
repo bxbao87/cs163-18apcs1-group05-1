@@ -6,8 +6,7 @@
 int main()
 {
 	Search bogoSearch;
-	//Search bogoSearch;
-	//bogoSearch.Run();
+	bogoSearch.Run();
 	//std::string query("la la land AND (\"made in China\" OR intitle:something good");
 	//std::cout << bogoSearch.InfixToPostfix(query);
 	//FrontEnd();
@@ -15,18 +14,18 @@ int main()
 	//auto a = bogoSearch.GetFilename("Data");
 	//system("Start Data/1.txt");
 
-	while (true) {
-		SetWindow(168, 44);
-		system("cls");
-		std::cout << "Search normal" << std::endl;
-		std::string query;
-
-		getline(std::cin, query);
-		std::vector<std::string> keyword = splitSentence(query);
-		std::string tmp = query;
-		query = bogoSearch.InfixToPostfix(query);
-		std::cout << query << '\n';
-		auto v = bogoSearch.Process(query);
+	// while (true) {
+	// 	std::cout << "Search normal" << std::endl;
+	// 	std::string query;
+	// 	getline(std::cin, query);
+	// 	std::vector<std::string> keyword = splitSentence(query);
+	// 	std::string tmp = query;
+	// 	query = bogoSearch.InfixToPostfix(query);
+	// 	std::cout << query << '\n';
+	// 	auto v = bogoSearch.Process(query);
+	// 	std::cout << v.size() << std::endl;
+	// 	bogoSearch.Debug(v);
+	// }
 		std::vector<std::string> fileList;
 		bogoSearch.GetFileNameByInt(v, fileList);
 		std::vector<Document> result;
@@ -61,11 +60,12 @@ int main()
 			std::cout << '\n';
 	
 		}*/
-
 	/*Document doc("Data/03.txt");
 	doc.ReadFile();
 	std::vector<std::string> keyword = {"Vietnam","News","Agency"};
 	doc.GetParagraphForShowing(keyword,"Vietnam News Agency");
 	doc.debug();*/
+
+	system("pause");
 	return 0;
 }

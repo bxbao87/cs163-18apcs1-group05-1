@@ -5,29 +5,28 @@ Search::Search()
 	system("md Process");
 	system("md Data");
 
+#ifdef CalcTime
+	auto startTime = clock();
+#endif
 	if (!LoadSynonym())
 		std::cerr << "Can't open synonym file\n";
 	if (!LoadStopWord())
 		std::cerr << "Can't open stop word file\n";
 
-	if (!LoadListOfFile())
+	bool loadListOfFile = LoadListOfFile();
+	bool loadTrie = trie.LoadTrie();
+	bool loadNumIndex = numIndex.LoadNumIndex();
+#ifdef CalcTime
+	auto endTime = clock();
+	std::cerr << "Load Time: " << (double)(endTime - startTime) / CLOCKS_PER_SEC << '\n';
+#endif
+
+	if (!(loadListOfFile && loadTrie && loadNumIndex))
 	{
 		CreateIndex();
+		SaveListOfFile();
 		trie.SaveTrie();
 		numIndex.SaveNumIndex();
-		SaveListOfFile();
-	}
-	else
-	{
-#ifdef CalcTime
-		auto startTime = clock();
-#endif
-		numIndex.LoadNumIndex();
-		trie.LoadTrie();
-#ifdef CalcTime
-		auto endTime = clock();
-		std::cerr << "Load Trie and numIndex Time: " << (double)(endTime - startTime) / CLOCKS_PER_SEC << "s\n";
-#endif
 	}
 }
 
@@ -76,6 +75,19 @@ bool Search::LoadSynonym()
 
 void Search::Run()
 {
+	std::string query = "baby shark";
+	auto tmp = SearchNormal(query);
+	std::vector<std::string> testQuery;
+	testQuery.push_back(query);
+
+	for (auto i : tmp) std::cout << i << ' ';
+	std::cout << '\n';
+	std::cout << '\n';
+
+	tmp = Ranking(tmp, testQuery);
+
+	for (auto i : tmp) std::cout << i << ' ';
+	std::cout << '\n';
 }
 
 void Search::ReadSingleFile(const std::string & fileName, std::vector<std::string>& tokenVector)
@@ -332,6 +344,61 @@ void Search::Debug(std::vector<int> v)
 	return;
 }
 
+std::vector<int> Search::Ranking(std::vector<int>& finalList, std::vector<std::string>& subQuery)
+{
+	std::set<int> fileList;
+	AddToSet(finalList, fileList);
+
+	std::vector<int> result;
+	std::map<int, int> rank;
+
+	for (auto& query : subQuery)
+	{
+		std::vector<std::string> words = splitSentence(query);
+		for (auto& word : words)
+			Tolower(word);
+		words = RemoveStopWord(words);
+
+		for (auto word : words)
+		{
+			if (!isNumberWithChar(word))
+			{
+				result = trie.GetKey(word);
+				for (auto& fileIndex : result)
+					if (fileList.count(fileIndex) != 0)
+						++rank[fileIndex];
+			}
+			else
+			{
+				double num = stod(word);
+				result.clear();
+				bool haveNum = SearchNumber(num, result);
+				if (haveNum)
+				{
+					for (auto& fileIndex : result)
+						if (fileList.count(fileIndex) != 0)
+							++rank[fileIndex];
+				}
+			}
+		}
+	}
+
+	std::vector<std::pair<int, int> > score;
+	for (auto& fileAndScore : rank)
+	{
+		int fileIndex = fileAndScore.first;
+		int numberOfOccurence = fileAndScore.second;
+		score.push_back(std::make_pair(numberOfOccurence, fileIndex));
+	}
+	std::sort(score.begin(), score.end(), std::greater<std::pair<int, int> >());
+
+	result.clear();
+	for (auto i : score)
+		result.push_back(i.second);
+
+	return result;
+}
+
 //Extract command and split into smaller queries
 std::string Search::InfixToPostfix(const std::string & query)
 {
@@ -504,7 +571,10 @@ std::vector<int> Search::SearchExact(const std::string &phrase) {
 		}
 		else
 		{
-			// something goes here
+			double num = stod(word);
+			res.clear();
+			bool haveNum = SearchNumber(num, res);
+			if (haveNum) AddToMap(res, mp);
 		}
 	}
 
@@ -539,8 +609,9 @@ std::vector<int> Search::SearchNormal(const std::string & phrase)
 		{
 			//Search synonym
 			if (word[0] == '~') {
-				continue;
-				//Search for synonym
+				word.erase(word.begin());
+				res = SearchSynonym(word);
+				AddToMap(res, mp);
 			}
 			else {
 				//normal search
@@ -635,6 +706,29 @@ std::vector<int> Search::SearchSynonym(const std::string &phrase) {
 	return res;
 }
 
+std::vector<int> Search::SearchPlus(const std::string & phrase)
+{
+	int i = phrase.find("+");
+	std::string left(phrase, 0, i);
+	std::string tmp(phrase.begin() + i + 1, phrase.end());
+	left += tmp;
+	std::vector <int> res = SearchExact(left);
+	return res;
+}
+
+std::vector<int> Search::SearchMinus(const std::string & phrase)
+{
+	int i = phrase.find("-");
+	std::string left(phrase, 0, i);
+	left.pop_back();
+	std::vector<int> res = SearchExact(left);
+	std::string tmp(phrase.begin() + i + 1, phrase.end());
+	left += " " + tmp;
+	std::vector<int> complement = SearchExact(left);
+	NOT(res, complement);
+	return res;
+}
+
 int Search::SwitchQuery(const std::string & subquery) {
 	if (IsExactQuery(subquery))
 		return 1;
@@ -674,10 +768,12 @@ std::vector <int> Search::Process(const std::string &query) {
 				//Process placeholder here
 				break;
 			case 4://Plus query
-				//Process plus query 
+				//Process plus query
+				res = SearchPlus(subquery);
 				break;
 			case 5://Minus query
 				//Process minus query
+				res = SearchMinus(subquery);
 				break;
 			default:
 				res = SearchNormal(subquery);
