@@ -15,7 +15,7 @@ int main()
 	//auto a = bogoSearch.GetFilename("Data");
 	//system("Start Data/1.txt");
 
-	/*while (true) {
+	while (true) {
 		std::cout << "Search normal" << std::endl;
 		std::string query;
 		getline(std::cin, query);
@@ -24,15 +24,13 @@ int main()
 		auto v = bogoSearch.Process(query);
 		std::cout << v.size() << std::endl;
 		bogoSearch.Debug(v);
-		for(auto i:v)
-		system("pause");
 	}
-	*/
 
 	/*Document doc("Data/03.txt");
 	doc.ReadFile();
 	std::vector<std::string> keyword = {"ivory"};
 	doc.GetParagraphForShowing(keyword);
 	doc.debug();*/
+	system("pause");
 	return 0;
 }

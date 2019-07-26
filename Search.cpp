@@ -529,8 +529,9 @@ std::vector<int> Search::SearchNormal(const std::string & phrase)
 		{
 			//Search synonym
 			if (word[0] == '~') {
-				continue;
-				//Search for synonym
+				word.erase(word.begin());
+				res = SearchSynonym(word);
+				AddToMap(res, mp);
 			}
 			else {
 				//normal search
@@ -625,6 +626,29 @@ std::vector<int> Search::SearchSynonym(const std::string &phrase) {
 	return res;
 }
 
+std::vector<int> Search::SearchPlus(const std::string & phrase)
+{
+	int i = phrase.find("+");
+	std::string left(phrase, 0, i);
+	std::string tmp(phrase.begin() + i + 1, phrase.end());
+	left += tmp;
+	std::vector <int> res = SearchExact(left);
+	return res;
+}
+
+std::vector<int> Search::SearchMinus(const std::string & phrase)
+{
+	int i = phrase.find("-");
+	std::string left(phrase, 0, i);
+	left.pop_back();
+	std::vector<int> res = SearchExact(left);
+	std::string tmp(phrase.begin() + i + 1, phrase.end());
+	left += " " + tmp;
+	std::vector<int> complement = SearchExact(left);
+	NOT(res, complement);
+	return res;
+}
+
 int Search::SwitchQuery(const std::string & subquery) {
 	if (IsExactQuery(subquery))
 		return 1;
@@ -664,10 +688,12 @@ std::vector <int> Search::Process(const std::string &query) {
 				//Process placeholder here
 				break;
 			case 4://Plus query
-				//Process plus query 
+				//Process plus query
+				res = SearchPlus(subquery);
 				break;
 			case 5://Minus query
 				//Process minus query
+				res = SearchMinus(subquery);
 				break;
 			default:
 				res = SearchNormal(subquery);
