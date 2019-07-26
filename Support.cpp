@@ -89,6 +89,14 @@ void Tolower(std::string& s) // Change a string to lower case
 		s[i] = tolower(s[i]);
 }
 
+std::string TolowerExtend(std::string & s)
+{
+	std::string tmp = s;
+	for (int i = 0; i < (int)tmp.length(); ++i)
+		tmp[i] = tolower(tmp[i]);
+	return tmp;
+}
+
 
 void OR(std::vector<int>& v1, const std::vector<int>& v2)
 {

@@ -29,6 +29,7 @@ void OR(std::vector<int>& v1, const std::vector<int>& v2);// OR operator
 
 std::vector<std::string> splitSentence(const std::string& s);
 void Tolower(std::string& s); // Change a string to lower case
+std::string TolowerExtend(std::string& s);
 
 bool isSub(const std::string &check, const std::string &query);// check if query is substring of check
 

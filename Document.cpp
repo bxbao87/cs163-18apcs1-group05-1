@@ -45,52 +45,97 @@ int Document::SearchForPhraseInTitle(const std::string& phrase)
 	else return (int)pos;
 }
 
-void Document::GetParagraphForShowing(const std::vector<std::string>& keyword)
+void Document::GetParagraphForShowing(std::vector<std::string>& keyword, const std::string& phrase)
 {
-	std::vector<int> pos;
-	pos.clear();
-	for (auto i : keyword)
-	{
-		auto cur = content.find(i);
-		if (cur != std::string::npos)
-			pos.push_back((int)cur);
-	}
-
-	int minPos = pos[0];
-	for (auto i : pos)
-		if (i < minPos)
-			minPos = i;
-
-	int count = 0,len=0;
-	for (int i =minPos; count < 50; ++i)
-	{
-		std::cout << content[i];
-		if ((content[i] == ' ' && content[i - 1] != ' ') || 
-			(content[i] == '\n' && content[i - 1] != '\n' && content[i-1]!=' '))
-		{
-			++count;
-		}
-		++len;
-	}
-
-	std::string toDisplay = content.substr(minPos, len);
-	std::cout << toDisplay << '\n';
-	std::vector<std::string> splitToDisplay = splitSentence(toDisplay);
 	paragraphForShowing.clear();
-	for (auto i : splitToDisplay)
+	int posP = SearchForPhraseInContent(phrase);
+	if (posP != -1)
 	{
-		std::pair<std::string, bool> word;
-		word.first = i;
-		if (std::find(keyword.begin(), keyword.end(), i) != keyword.end())
-			word.second = true;
-		paragraphForShowing.push_back(word);
+		int count = 0, len = 0;
+		for (int i = posP; count < 50; ++i)
+		{
+
+			if ((content[i] == ' ' && content[i - 1] != ' ') ||
+				(content[i] == '\n' && content[i - 1] != '\n' && content[i - 1] != ' '))
+			{
+				++count;
+			}
+			++len;
+		}
+
+		std::string toDisplay = content.substr(posP, len);
+		std::vector<std::string> splitToDisplay = splitSentence(toDisplay);
+
+		for (auto i : splitToDisplay)
+		{
+			std::pair<std::string, bool> word;
+			word.first = i;
+			if (std::find(keyword.begin(), keyword.end(), i) != keyword.end())
+				word.second = true;
+			paragraphForShowing.push_back(word);
+		}
+
+	}
+	else
+	{
+		std::vector<std::string> wordsContent = splitSentence(content);
+		std::vector<std::string> toloweredContent;
+		toloweredContent.clear();
+		for (auto i : wordsContent)
+		{
+			std::string tmp = TolowerExtend(i);
+			toloweredContent.push_back(tmp);
+		}
+		for (auto& i :keyword)
+			Tolower(i);
+		std::vector<int> pos;
+		pos.clear();
+		for (auto i : keyword)
+		{
+			auto it = std::find(toloweredContent.begin(),toloweredContent.end(), i);
+			if (it != toloweredContent.end())
+			{
+				int d = std::distance(toloweredContent.begin(), it);
+				pos.push_back(d);
+			}
+		}
+		if (pos.empty())
+			return;
+		int min = pos[0], cnt = 0;
+		for (auto i : pos)
+			if (i < min)
+				min = i;
+		for (int i=min; i < (int)wordsContent.size() && cnt < 50; ++i)
+		{
+			std::pair<std::string, bool> word;
+			word.first = wordsContent[i];
+			if (std::find(keyword.begin(), keyword.end(), toloweredContent[i]) != keyword.end())
+				word.second = true;
+			paragraphForShowing.push_back(word);
+			++cnt;
+		}
+
 	}
 
 }
 
 void Document::debug()
 {
+	if (paragraphForShowing.empty())
+		return;
 	std::cout << "size: " << paragraphForShowing.size() << '\n';
+	std::cout << fileName << '\n';
 	for (auto i : paragraphForShowing)
 		std::cout << i.first << ' ';
 }
+
+void CreateVectorDoc(const std::vector<std::string>& fileName, std::vector<Document>& result)
+{
+	for (auto i : fileName)
+	{
+		Document tmp(i);
+		tmp.ReadFile();
+		result.push_back(tmp);
+	}
+}
+

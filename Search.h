@@ -67,6 +67,7 @@ public:
 	void PreProcessRangeQuery(const std::string query, double &lo, double &hi);//Return range of the query
 	std::vector<int> SearchSynonym(const std::string &phrase);
 	std::string InputKey(int x, int y);
+	void GetFileNameByInt(const std::vector<int>& toGet, std::vector<std::string>& fileName);
 
 	void Debug(std::vector <int> v);
 };

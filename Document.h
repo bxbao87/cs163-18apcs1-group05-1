@@ -22,9 +22,12 @@ public:
 
 	int SearchForPhraseInContent(const std::string& phrase); // Return the position of the phrase need to be searched in content
 	int SearchForPhraseInTitle(const std::string& phrase); // Retunr the position of the phrase need to be searched in title
-	void GetParagraphForShowing(const std::vector<std::string>& keyword);
+	void GetParagraphForShowing(std::vector<std::string>& keyword,const std::string& phrase);// if the exact
+	//phrase doesn't exist, then get by keyword
 	void debug();
 };
+
+void CreateVectorDoc(const std::vector<std::string>& fileName, std::vector<Document>& result);
 
 
 #endif
