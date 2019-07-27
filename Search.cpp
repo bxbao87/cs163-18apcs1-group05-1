@@ -75,19 +75,27 @@ bool Search::LoadSynonym()
 
 void Search::Run()
 {
-	std::string query = "baby shark";
-	auto tmp = SearchNormal(query);
-	std::vector<std::string> testQuery;
-	testQuery.push_back(query);
+	FrontEnd();
 
-	for (auto i : tmp) std::cout << i << ' ';
-	std::cout << '\n';
-	std::cout << '\n';
+	std::string query = "";
+	while (InputKey(query))
+	{
+		query = InfixToPostfix(query);
+		std::vector<int> result = Process(query);
+		
+		std::vector<Document> docs;
+		int total = min((int)result.size(), 5);
 
-	tmp = Ranking(tmp, testQuery);
+		for (int i = 0; i < total; ++i)
+			docs.push_back(Document(theFullListOfFile[result[i]]));
 
-	for (auto i : tmp) std::cout << i << ' ';
-	std::cout << '\n';
+		for (auto& doc : docs)
+			doc.ReadFile();
+
+		// display
+	}
+
+	ExitScreen();
 }
 
 void Search::ReadSingleFile(const std::string & fileName, std::vector<std::string>& tokenVector)

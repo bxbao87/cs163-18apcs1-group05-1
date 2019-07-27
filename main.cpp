@@ -11,6 +11,6 @@ int main() {
 		str.clear();
 	}
 	_getch();
-	 
+
 	return 0;
 }
