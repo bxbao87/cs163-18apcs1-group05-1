@@ -81,7 +81,7 @@ void Search::Run()
 	while (InputKey(query))
 	{
 		query = InfixToPostfix(query);
-		std::cout << "May qua no thoat roi chu khong la no bay mau cmnr" << "\n";
+		//std::cout << "May qua no thoat roi chu khong la no bay mau cmnr" << "\n";
 		std::vector<int> result = Process(query);
 		
 		std::vector<Document> docs;
@@ -101,7 +101,7 @@ void Search::Run()
 		}
 
 		int chosen = ChooseLink(total);
-		docs[chosen].DisplayFile();
+		if (chosen != -1) docs[chosen].DisplayFile();
 
 		_getch();
 
