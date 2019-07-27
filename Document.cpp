@@ -142,7 +142,7 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 				auto it = std::find(toloweredContent.begin(), toloweredContent.end(), i);
 				if (it != toloweredContent.end())
 				{
-					int d = std::distance(toloweredContent.begin(), it);
+					int d = (int)std::distance(toloweredContent.begin(), it);
 					pos.push_back(d);
 				}
 			}

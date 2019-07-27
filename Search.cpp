@@ -548,6 +548,7 @@ std::vector<std::string> Search::SplitQuery(const std::string& query)
 			if (subquery.size()) {
 				subquery.pop_back();
 			}
+			TrimQuery(subquery);
 			output.push_back(subquery);
 			subquery.clear();
 		}
@@ -563,6 +564,7 @@ std::vector<std::string> Search::SplitQuery(const std::string& query)
 			subquery += token;
 			if (subquery.size()) {
 				subquery.pop_back();
+				TrimQuery(subquery);
 				output.push_back(subquery);
 			}
 			subquery.clear();
@@ -588,9 +590,35 @@ std::vector<std::string> Search::SplitQuery(const std::string& query)
 
 	if (subquery.size()) {
 		subquery.pop_back();
+		TrimQuery(subquery);
 		output.push_back(subquery);
 	}
 	return output;
+}
+
+void Search::TrimQuery(std::string & query)
+{
+	if (IsRangeQuery(query)) {
+		int i = (int)query.find("..");
+		if (i != query.npos)
+			query.erase(i, 2);
+	}
+	else if (IsPlusQuery(query)) {
+		int i = (int)query.find("+");
+		if (i != query.npos)
+			query.erase(i, 1);
+	}
+	else if (IsMinusQuery(query)) {
+		int i = (int)query.find("-");
+		if (i != query.npos)
+			query.erase(i);//erase from the - character till end
+		if (query.back() == ' ')
+			query.pop_back();
+	}
+	else if (IsExactQuery(query)) {
+		query.pop_back();
+		query.erase(0, 1);
+	}
 }
 
 bool Search::IsExactQuery(const std::string & query)
@@ -800,7 +828,7 @@ std::vector<int> Search::SearchSynonym(const std::string &phrase) {
 
 std::vector<int> Search::SearchPlus(const std::string & phrase)
 {
-	int i = phrase.find("+");
+	int i = (int)phrase.find("+");
 	std::string left(phrase, 0, i);
 	std::string tmp(phrase.begin() + i + 1, phrase.end());
 	left += tmp;
@@ -810,7 +838,7 @@ std::vector<int> Search::SearchPlus(const std::string & phrase)
 
 std::vector<int> Search::SearchMinus(const std::string & phrase)
 {
-	int i = phrase.find("-");
+	int i = (int)phrase.find("-");
 	std::string left(phrase, 0, i);
 	left.pop_back();
 	std::vector<int> res = SearchExact(left);
@@ -819,6 +847,25 @@ std::vector<int> Search::SearchMinus(const std::string & phrase)
 	std::vector<int> complement = SearchExact(left);
 	NOT(res, complement);
 	return res;
+}
+
+std::vector<int> Search::SearchPlaceHolder(const std::string & phrase)
+{
+	//Extract 2 part of the query
+	int i = phrase.find(" * ");
+	if (i != phrase.npos) {
+		std::string left(phrase, 0, i);
+		if (i + 3 < (int)phrase.size()) {
+			std::string right(phrase.begin() + i + 3, phrase.end());
+			//Search exact 2 strings
+			std::vector<int> v1 = SearchExact(left);
+			std::vector<int> v2 = SearchExact(right);
+			AND(v1, v2);
+			return v1;
+		}
+	}
+	else
+		return std::vector<int>();
 }
 
 int Search::SwitchQuery(const std::string & subquery) {
@@ -858,6 +905,7 @@ std::vector <int> Search::Process(const std::string &query) {
 				break;
 			case 3://Placeholder query
 				//Process placeholder here
+				res = SearchPlaceHolder(subquery);
 				break;
 			case 4://Plus query
 				//Process plus query
