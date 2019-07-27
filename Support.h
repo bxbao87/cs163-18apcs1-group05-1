@@ -40,4 +40,6 @@ int IsWhichKind(const std::string& var); // ony accept string after trim, return
 int ConvertCharToNum(const char& c);
 char ConvertNumToChar(const int& x);
 
+bool IsNothing(std::string &str);
+
 #endif

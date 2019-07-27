@@ -247,16 +247,16 @@ void Search::SaveListOfFile()
 }
 
 
-std::string Search::InputKey(int x, int y) {
+bool Search::InputKey(std::string &resultStr) {
+	int x = 28, y = 21;
 	int key, len = 0;
 	int moveCursor = -1;
-	std::string resultStr;
 	std::vector<std::string> lsHis;
 	History h;
 
 	Gotoxy(x, y);
 	key = _getch();
-	while (key != 13) {
+	while ((key != 13 && IsNothing(resultStr)) ||key!=27) {
 		if (key == 8 && len > 0)
 		{
 			moveCursor = -1;
@@ -313,7 +313,8 @@ std::string Search::InputKey(int x, int y) {
 			Gotoxy(x + 111, y);
 		key = _getch();
 	}
-
+	if (key == 27)
+		return false;
 	if (moveCursor != -1) {
 		resultStr = lsHis[moveCursor];
 		Gotoxy(x, y);
@@ -323,7 +324,7 @@ std::string Search::InputKey(int x, int y) {
 	}
 	h.Add(resultStr);
 
-	return resultStr;
+	return true;
 }
 
 void Search::GetFileNameByInt(const std::vector<int>& toGet, std::vector<std::string>& fileName)
@@ -336,7 +337,7 @@ void Search::GetFileNameByInt(const std::vector<int>& toGet, std::vector<std::st
 	}
 }
 
-void Search::Debug(std::vector<int> v)
+void Search::Debug(std::vector<int>& v)
 {
 	for (auto i : v) {
 		std::cout << theFullListOfFile[i] << std::endl;

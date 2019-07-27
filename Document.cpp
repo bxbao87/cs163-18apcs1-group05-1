@@ -17,7 +17,10 @@ void Document::SetFileName(const std::string& name)
 void Document::ReadFile()
 {	
 	std::ifstream in(fileName);
-	std::getline(in, title);
+	while (getline(in, title))
+		if (title != "")
+			break;
+
 	std::string tmp;
 	while (std::getline(in, tmp))
 	{
