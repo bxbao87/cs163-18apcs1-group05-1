@@ -334,7 +334,7 @@ void SearchScreen() {
 }
 
 void ExitScreen() {
-
+	system("cls");
 	Color(11);
 	Gotoxy(0, 5);
 	std::cout << R"(
