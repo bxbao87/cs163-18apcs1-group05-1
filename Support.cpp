@@ -108,6 +108,15 @@ void OR(std::vector<int>& v1, const std::vector<int>& v2)
 		v1.push_back(i);
 }
 
+void NOT(std::vector<int>& res, const std::vector<int>& complement)
+{
+	for (auto i : complement) {
+		auto it = find(res.begin(), res.end(), i);
+		if (it != res.end())
+			res.erase(it);
+	}
+}
+
 bool isSub(const std::string & hist, const std::string & query)
 {
 	if (hist.find(query) != std::string::npos)
@@ -164,3 +173,11 @@ char ConvertNumToChar(const int& x)
 	return '?';
 }
 
+bool IsNothing(std::string &str) {
+	int len = str.length();
+	for (int i = 0; i < len; ++i) {
+		if (str[i] != ' ')
+			return false;
+	}
+	return true;
+}

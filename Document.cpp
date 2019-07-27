@@ -15,9 +15,12 @@ void Document::SetFileName(const std::string& name)
 }
 
 void Document::ReadFile()
-{
+{	
 	std::ifstream in(fileName);
-	std::getline(in, title);
+	while (getline(in, title))
+		if (title != "")
+			break;
+
 	std::string tmp;
 	while (std::getline(in, tmp))
 	{
@@ -46,17 +49,17 @@ int Document::SearchForPhraseInTitle(const std::string& phrase)
 	else return (int)pos;
 }
 
-void Document::Display(int x, int y) {// not finished
+void Document::DisplayResult(int x, int y) {// not finished
 	Gotoxy(x, y);
 	Color(9);
-	std::cout << fileName;
-	Gotoxy(x, y + 1);
+	std::cout << "File: " << fileName;
+	Gotoxy(x, ++y);
 	Color(14);
-	std::cout << title;
-	Gotoxy(x, y + 2);
+	std::cout << "Title: " << title;
+	Gotoxy(x, ++y);
 	int len = 0;
 	for (auto i : paragraphForShowing) {
-		if (len + i.first.length() > 140)
+		if (len + i.first.length() > 120)
 		{
 			Gotoxy(x, ++y);
 			len = 0;
@@ -66,9 +69,10 @@ void Document::Display(int x, int y) {// not finished
 			Color(12);
 			std::cout << i.first;
 			Color(15);
+			std::cout << " ";
 		}
 		else
-			std::cout << i.first;
+			std::cout << i.first << " ";
 	}
 }
 
@@ -78,7 +82,7 @@ bool Document::IsDelimeter(const char & c, const std::set<char>& delimeter)
 	else return false;
 }
 
-void Document::GetParagraphForShowing(std::vector<std::string>& keyword,const std::string& phrase)
+void Document::GetParagraphForShowing(std::vector<std::string>& keyword, const std::string& phrase)
 {
 	paragraphForShowing.clear();
 	int posP = SearchForPhraseInContent(phrase);
@@ -179,3 +183,26 @@ void CreateVectorDoc(const std::vector<std::string>& fileName, std::vector<Docum
 	}
 }
 
+void Document::DisplayFile() {
+	int y = 5;
+	Gotoxy(20, y);
+	Color(9);
+	std::cout << "File: " << fileName;
+	Gotoxy(20, ++y);
+	Color(14);
+	std::cout << "Title: " << title;
+	Color(15);
+	std::vector<std::string> a;
+	a = splitSentence(content);
+	int len = 0;
+	Gotoxy(20, ++y);
+	for (auto i : a) {
+		len += i.length();
+		if (len > 120)
+		{
+			len = i.length();
+			Gotoxy(20, ++y);
+		}
+		std::cout << i << " ";
+	}
+}

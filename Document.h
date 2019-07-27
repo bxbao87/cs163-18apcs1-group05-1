@@ -28,7 +28,8 @@ public:
 	//phrase doesn't exist, then get by keyword
 
 
-	void Display(int x, int y);
+	void DisplayResult(int x, int y);
+	void DisplayFile();
 
 	void debug();
 };
