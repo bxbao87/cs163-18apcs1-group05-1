@@ -345,7 +345,7 @@ void Search::GetFileNameByInt(const std::vector<int>& toGet, std::vector<std::st
 	}
 }
 
-void Search::Debug(std::vector<int>& v)
+void Search::Debug(std::vector<int> &v)
 {
 	for (auto i : v) {
 		std::cout << theFullListOfFile[i] << std::endl;
