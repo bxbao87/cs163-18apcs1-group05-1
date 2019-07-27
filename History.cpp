@@ -51,8 +51,10 @@ void History::WriteHistory()
 
 void History::Add(const std::string & query)
 {
+	if (IsNothing(query))
+		return;
 	history.push(query);
-	if (history.size() > 20)
+	while (history.size() > 20)
 		history.pop();
 }
 
