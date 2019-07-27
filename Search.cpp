@@ -81,6 +81,7 @@ void Search::Run()
 	while (InputKey(query))
 	{
 		query = InfixToPostfix(query);
+		std::cout << "May qua no thoat roi chu khong la no bay mau cmnr" << "\n";
 		std::vector<int> result = Process(query);
 		
 		std::vector<Document> docs;
@@ -92,7 +93,20 @@ void Search::Run()
 		for (auto& doc : docs)
 			doc.ReadFile();
 
-		// display
+		int x = 20, y = 31, step = 10;
+		for (auto& doc : docs)
+		{
+			doc.DisplayResult(x, y);
+			y += step;
+		}
+
+		int chosen = ChooseLink(total);
+		docs[chosen].DisplayFile();
+
+		_getch();
+
+		SearchScreen();
+		query.clear();
 	}
 
 	ExitScreen();

@@ -57,9 +57,10 @@ void Document::DisplayResult(int x, int y) {// not finished
 	Color(14);
 	std::cout << "Title: " << title;
 	Gotoxy(x, ++y);
+	Color(15);
 	int len = 0;
 	for (auto i : paragraphForShowing) {
-		if (len + i.first.length() > 120)
+		if (len + i.first.length() > 100)
 		{
 			Gotoxy(x, ++y);
 			len = 0;
@@ -184,7 +185,8 @@ void CreateVectorDoc(const std::vector<std::string>& fileName, std::vector<Docum
 }
 
 void Document::DisplayFile() {
-	int y = 5;
+	system("cls");
+	int y = 10;
 	Gotoxy(20, y);
 	Color(9);
 	std::cout << "File: " << fileName;
@@ -198,7 +200,7 @@ void Document::DisplayFile() {
 	Gotoxy(20, ++y);
 	for (auto i : a) {
 		len += i.length();
-		if (len > 120)
+		if (len > 100)
 		{
 			len = i.length();
 			Gotoxy(20, ++y);

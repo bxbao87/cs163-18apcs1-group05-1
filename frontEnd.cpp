@@ -13,7 +13,6 @@ void FrontEnd() {
 	std::string a = "press any key to continue...";
 	Center(a, 0, 27, 15);
 	_getch();
-	system("cls");
 	SearchScreen();
 }
 
@@ -304,6 +303,7 @@ void BogosearchSplash() {
 }
 
 void SearchScreen() {
+	system("cls");
 	B(12, 5, 204);
 	O(27, 5, 153);
 	G(42, 5, 119);
