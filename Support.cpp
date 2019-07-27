@@ -173,3 +173,11 @@ char ConvertNumToChar(const int& x)
 	return '?';
 }
 
+bool IsNothing(std::string &str) {
+	int len = str.length();
+	for (int i = 0; i < len; ++i) {
+		if (str[i] != ' ')
+			return false;
+	}
+	return true;
+}
