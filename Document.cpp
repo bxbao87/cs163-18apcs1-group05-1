@@ -158,6 +158,18 @@ void Document::GetParagraphForShowing(std::vector<std::string>& keyword, const s
 			paragraphForShowing.push_back(word);
 			++cnt;
 		}
+		if ((int)paragraphForShowing.size() == 1)
+		{
+			cnt = 1;
+			for (int i = min - 1; i >= 0 && cnt < 50; ++i)
+			{
+				std::pair<std::string, bool> word;
+				word.first = wordsContent[i];
+				word.second = false;
+				paragraphForShowing.insert(paragraphForShowing.begin(), word);
+				++cnt;
+			}
+		}
 
 	}
 
