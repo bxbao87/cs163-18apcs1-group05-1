@@ -72,7 +72,13 @@ void Document::Display(int x, int y) {// not finished
 	}
 }
 
-void Document::GetParagraphForShowing(const std::vector<std::string>& keyword)
+bool Document::IsDelimeter(const char & c, const std::set<char>& delimeter)
+{
+	if (delimeter.count(c) != 0) return true;
+	else return false;
+}
+
+void Document::GetParagraphForShowing(std::vector<std::string>& keyword,const std::string& phrase)
 {
 	paragraphForShowing.clear();
 	int posP = SearchForPhraseInContent(phrase);
@@ -107,10 +113,16 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& keyword)
 	{
 		std::vector<std::string> wordsContent = splitSentence(content);
 		std::vector<std::string> toloweredContent;
-		toloweredContent.clear();
+		const std::set <char> delimeter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/',
+		'&','[',']','+',':','`','@','%','^','=','_', '\\', '|', '$', '~' };
+	
 		for (auto i : wordsContent)
 		{
 			std::string tmp = TolowerExtend(i);
+			while ((int)tmp.size() > 0 && IsDelimeter(tmp[0],delimeter))
+				tmp.erase(0, 1);
+			while ((int)tmp.size() > 0 && IsDelimeter(tmp.back(),delimeter))
+				tmp.pop_back();
 			toloweredContent.push_back(tmp);
 		}
 		for (auto& i :keyword)
