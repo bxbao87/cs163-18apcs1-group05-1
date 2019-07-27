@@ -256,7 +256,9 @@ bool Search::InputKey(std::string &resultStr) {
 
 	Gotoxy(x, y);
 	key = _getch();
-	while ((key != 13 && IsNothing(resultStr)) ||key!=27) {
+	while (key != 13) {
+		if (key == 27)
+			return false;
 		if (key == 8 && len > 0)
 		{
 			moveCursor = -1;
@@ -313,8 +315,6 @@ bool Search::InputKey(std::string &resultStr) {
 			Gotoxy(x + 111, y);
 		key = _getch();
 	}
-	if (key == 27)
-		return false;
 	if (moveCursor != -1) {
 		resultStr = lsHis[moveCursor];
 		Gotoxy(x, y);
@@ -337,7 +337,7 @@ void Search::GetFileNameByInt(const std::vector<int>& toGet, std::vector<std::st
 	}
 }
 
-void Search::Debug(std::vector<int>& v)
+void Search::Debug(std::vector<int> &v)
 {
 	for (auto i : v) {
 		std::cout << theFullListOfFile[i] << std::endl;
