@@ -83,96 +83,99 @@ bool Document::IsDelimeter(const char & c, const std::set<char>& delimeter)
 	else return false;
 }
 
-void Document::GetParagraphForShowing(std::vector<std::string>& keyword, const std::string& phrase)
+void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 {
 	paragraphForShowing.clear();
-	int posP = SearchForPhraseInContent(phrase);
-	if (posP != -1)
+	for (auto ph : phrase)
 	{
-		int count = 0, len = 0;
-		for (int i = posP; count < 50; ++i)
+		int posP = SearchForPhraseInContent(ph);
+		std::vector<std::string> keyword = splitSentence(ph);
+		if (posP != -1)
 		{
-
-			if ((content[i] == ' ' && content[i - 1] != ' ') ||
-				(content[i] == '\n' && content[i - 1] != '\n' && content[i - 1] != ' '))
+			int count = 0, len = 0;
+			for (int i = posP; i<(int)content.size() && count < 50; ++i)
 			{
-				++count;
+
+				if ((content[i] == ' ' && i > 0 && content[i - 1] != ' ') ||
+					(content[i] == '\n' && i > 0 && content[i - 1] != '\n' && content[i - 1] != ' '))
+				{
+					++count;
+				}
+				++len;
 			}
-			++len;
-		}
 
-		std::string toDisplay = content.substr(posP, len);
-		std::vector<std::string> splitToDisplay = splitSentence(toDisplay);
+			std::string toDisplay = content.substr(posP, len);
+			std::vector<std::string> splitToDisplay = splitSentence(toDisplay);
 
-		for (auto i : splitToDisplay)
-		{
-			std::pair<std::string, bool> word;
-			word.first = i;
-			if (std::find(keyword.begin(), keyword.end(), i) != keyword.end())
-				word.second = true;
-			paragraphForShowing.push_back(word);
-		}
-
-	}
-	else
-	{
-		std::vector<std::string> wordsContent = splitSentence(content);
-		std::vector<std::string> toloweredContent;
-		const std::set <char> delimeter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/',
-		'&','[',']','+',':','`','@','%','^','=','_', '\\', '|', '$', '~' };
-	
-		for (auto i : wordsContent)
-		{
-			std::string tmp = TolowerExtend(i);
-			while ((int)tmp.size() > 0 && IsDelimeter(tmp[0],delimeter))
-				tmp.erase(0, 1);
-			while ((int)tmp.size() > 0 && IsDelimeter(tmp.back(),delimeter))
-				tmp.pop_back();
-			toloweredContent.push_back(tmp);
-		}
-		for (auto& i :keyword)
-			Tolower(i);
-		std::vector<int> pos;
-		pos.clear();
-		for (auto i : keyword)
-		{
-			auto it = std::find(toloweredContent.begin(),toloweredContent.end(), i);
-			if (it != toloweredContent.end())
+			for (auto i : splitToDisplay)
 			{
-				int d = std::distance(toloweredContent.begin(), it);
-				pos.push_back(d);
+				std::pair<std::string, bool> word;
+				word.first = i;
+				if (std::find(keyword.begin(), keyword.end(), i) != keyword.end())
+					word.second = true;
+				paragraphForShowing.push_back(word);
 			}
+
 		}
-		if (pos.empty())
-			return;
-		int min = pos[0], cnt = 0;
-		for (auto i : pos)
-			if (i < min)
-				min = i;
-		for (int i=min; i < (int)wordsContent.size() && cnt < 50; ++i)
+		else
 		{
-			std::pair<std::string, bool> word;
-			word.first = wordsContent[i];
-			if (std::find(keyword.begin(), keyword.end(), toloweredContent[i]) != keyword.end())
-				word.second = true;
-			paragraphForShowing.push_back(word);
-			++cnt;
-		}
-		if ((int)paragraphForShowing.size() == 1)
-		{
-			cnt = 1;
-			for (int i = min - 1; i >= 0 && cnt < 50; ++i)
+			std::vector<std::string> wordsContent = splitSentence(content);
+			std::vector<std::string> toloweredContent;
+			const std::set <char> delimeter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/',
+			'&','[',']','+',':','`','@','%','^','=','_', '\\', '|', '$', '~' };
+
+			for (auto i : wordsContent)
+			{
+				std::string tmp = TolowerExtend(i);
+				while ((int)tmp.size() > 0 && IsDelimeter(tmp[0], delimeter))
+					tmp.erase(0, 1);
+				while ((int)tmp.size() > 0 && IsDelimeter(tmp.back(), delimeter))
+					tmp.pop_back();
+				toloweredContent.push_back(tmp);
+			}
+			for (auto& i : keyword)
+				Tolower(i);
+			std::vector<int> pos;
+			pos.clear();
+			for (auto i : keyword)
+			{
+				auto it = std::find(toloweredContent.begin(), toloweredContent.end(), i);
+				if (it != toloweredContent.end())
+				{
+					int d = std::distance(toloweredContent.begin(), it);
+					pos.push_back(d);
+				}
+			}
+			if (pos.empty())
+				continue;
+			int min = pos[0], cnt = 0;
+			for (auto i : pos)
+				if (i < min)
+					min = i;
+			for (int i = min; i < (int)wordsContent.size() && cnt < 50; ++i)
 			{
 				std::pair<std::string, bool> word;
 				word.first = wordsContent[i];
-				word.second = false;
-				paragraphForShowing.insert(paragraphForShowing.begin(), word);
+				if (std::find(keyword.begin(), keyword.end(), toloweredContent[i]) != keyword.end())
+					word.second = true;
+				paragraphForShowing.push_back(word);
 				++cnt;
 			}
+			if ((int)paragraphForShowing.size() == 1)
+			{
+				cnt = 1;
+				for (int i = min - 1; i >= 0 && cnt < 50; ++i)
+				{
+					std::pair<std::string, bool> word;
+					word.first = wordsContent[i];
+					word.second = false;
+					paragraphForShowing.insert(paragraphForShowing.begin(), word);
+					++cnt;
+				}
+			}
+
 		}
-
 	}
-
 }
 
 void Document::debug()

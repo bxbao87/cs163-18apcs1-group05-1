@@ -24,7 +24,7 @@ public:
 	int SearchForPhraseInTitle(const std::string& phrase); // Retunr the position of the phrase need to be searched in title
 
 	bool IsDelimeter(const char& c, const std::set<char>& delimeter);
-	void GetParagraphForShowing(std::vector<std::string>& keyword,const std::string& phrase);// if the exact
+	void GetParagraphForShowing(const std::vector<std::string>& phrase);// if the exact
 	//phrase doesn't exist, then get by keyword
 
 

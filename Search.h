@@ -43,6 +43,7 @@ public:
 	//Extract command and split into subqueries
 	std::string InfixToPostfix(const std::string &query);
 	std::string PreProcess(const std::string & query);
+	std::vector<std::string> SplitQuery(const std::string& query);
 	bool IsExactQuery(const std::string & query);//check if it there is a quote in query
 	bool IsOpenBracket(const std::string & query); //check if there is a open bracket in the query
 	bool IsCloseBracket(const std::string & query);//check if there is a close bracket in the query

@@ -6,6 +6,5 @@
 int main() {
 	Search bogoSearch;
 	bogoSearch.Run();
-
 	return 0;
 }

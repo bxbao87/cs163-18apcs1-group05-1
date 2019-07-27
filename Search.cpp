@@ -80,18 +80,26 @@ void Search::Run()
 	std::string query = "";
 	while (InputKey(query))
 	{
-		query = InfixToPostfix(query);
+		std::string processedQuery = InfixToPostfix(query);
 		//std::cout << "May qua no thoat roi chu khong la no bay mau cmnr" << "\n";
-		std::vector<int> result = Process(query);
+		std::vector<int> result = Process(processedQuery);
 		
 		std::vector<Document> docs;
 		int total = min((int)result.size(), 5);
 
+		std::vector <std::string> phrases = SplitQuery(query);
+
+		result = Ranking(result, phrases);
+
 		for (int i = 0; i < total; ++i)
 			docs.push_back(Document(theFullListOfFile[result[i]]));
 
+
 		for (auto& doc : docs)
+		{
 			doc.ReadFile();
+			doc.GetParagraphForShowing(phrases);
+		}
 
 		int x = 20, y = 31, step = 10;
 		for (auto& doc : docs)
@@ -525,6 +533,66 @@ std::string Search::PreProcess(const std::string & query)
 	return output;
 }
 
+std::vector<std::string> Search::SplitQuery(const std::string& query)
+{
+	std::vector <std::string> output;
+	output.clear();
+	std::string newquery = PreProcess(query);
+
+	std::stringstream ss(newquery);
+	std::string token, subquery;
+	std::stack<std::string> st;
+
+	while (ss >> token) {
+		if (token == "AND" || token == "OR") {
+			if (subquery.size()) {
+				subquery.pop_back();
+			}
+			output.push_back(subquery);
+			subquery.clear();
+		}
+		else if (IsOpenBracket(token)) {
+			token.erase(token.begin());
+			if (token.size()) {
+				token += " ";
+			}
+			subquery += token;
+		}
+		else if (IsCloseBracket(token)) {
+			token.erase(token.end() - 1);
+			subquery += token;
+			if (subquery.size()) {
+				subquery.pop_back();
+				output.push_back(subquery);
+			}
+			subquery.clear();
+		}
+		else if (IsExactQuery(token)) {//If it is exact query get everything between "" and add it to subquery 
+			do {
+				subquery += token + " ";
+			} while (ss >> token && !IsExactQuery(token));
+			if (token[0] == '\"') {
+				subquery.pop_back();
+			}
+			else
+				subquery += token;
+			subquery.erase(0, 1);
+			subquery.pop_back();
+			output.push_back(subquery) ;
+			subquery.clear();
+		}
+		else {
+			subquery += token + " ";
+		}
+	}
+
+	if (subquery.size()) {
+		subquery.pop_back();
+		output.push_back(subquery);
+	}
+	return output;
+}
+
 bool Search::IsExactQuery(const std::string & query)
 {
 	if (query[0] == '\"' || query[query.size() - 1] == '\"')
@@ -652,11 +720,12 @@ std::vector<int> Search::SearchNormal(const std::string & phrase)
 			}
 			else{
 				while (!isdigit(word[0]))
-					word.erase(word.begin());
+					word.erase(0, 1);
 				while (!isdigit(word[word.size() - 1]))
 					word.pop_back();
 				double number = stod(word);
 				SearchNumber(number, res);
+				AddToMap(res, mp);
 			}
 		}
 	}
