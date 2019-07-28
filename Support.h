@@ -30,7 +30,7 @@ void NOT(std::vector<int> &res, const std::vector <int> & complement);
 std::vector<std::string> splitSentence(const std::string& s);
 void Tolower(std::string& s); // Change a string to lower case
 std::string TolowerExtend(std::string& s);
-bool IsStringWiths(const std::string& s);// check if a string have 's
+bool IsStringWiths(const std::string& s);// check if s2 is s1 with 's 
 
 bool isSub(const std::string &check, const std::string &query);// check if query is substring of check
 
