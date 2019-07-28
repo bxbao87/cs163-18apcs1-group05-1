@@ -164,7 +164,18 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 				}
 			}
 			if (pos.empty())
+			{
+				int cnt = 0;
+				for (int i = 0; i < (int)wordsContent.size() && cnt < 50; ++i)
+				{
+					std::pair<std::string, bool> word;
+					word.first = wordsContent[i];
+					word.second = false;
+					paragraphForShowing.push_back(word);
+					++cnt;
+				}
 				continue;
+			}
 			int min = pos[0], cnt = 0;
 			for (auto i : pos)
 				if (i < min)
