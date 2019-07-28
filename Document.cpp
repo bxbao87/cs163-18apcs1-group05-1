@@ -56,15 +56,35 @@ void Document::OpenFile()
 int Document::SearchForPhraseInContent(const std::string& phrase)
 {
 	auto pos = content.find(phrase);
-	if (pos == std::string::npos) return -1;
-	else return (int)pos;
+	if (pos == std::string::npos) 
+		return -1;
+
+	while (pos != std::string::npos && !IsTheSameString(phrase, content, pos))
+	{
+		pos = content.find(phrase, pos + 1);
+	}
+
+	if (pos == std::string::npos) 
+		return -1;
+	else 
+		return (int)pos;
 }
 
 int Document::SearchForPhraseInTitle(const std::string& phrase)
 {
 	auto pos = title.find(phrase);
-	if (pos == std::string::npos) return -1;
-	else return (int)pos;
+	if (pos == std::string::npos)
+		return -1;
+
+	while (pos != std::string::npos && !IsTheSameString(phrase, content, pos))
+	{
+		pos = title.find(phrase, pos + 1);
+	}
+
+	if (pos == std::string::npos)
+		return -1;
+	else
+		return (int)pos;
 }
 
 void Document::DisplayResult(int x, int &y) {
@@ -221,6 +241,25 @@ void Document::debug()
 	std::cout << fileName << '\n';
 	for (auto i : paragraphForShowing)
 		std::cout << i.first << ' ';
+}
+
+bool Document::IsTheSameString(const std::string& stringToCompare, const std::string& paragraph, const int& pos)
+{
+	if (pos > 0)
+	{
+		int pre = pos - 1;
+		if (paragraph[pre] >= 'a' && paragraph[pre] <= 'z') return false;
+		if (paragraph[pre] >= 'A' && paragraph[pre] <= 'Z') return false;
+		if (paragraph[pre] == '-') return false;
+	}
+	if (pos + (int)stringToCompare.length() < (int)paragraph.length())
+	{
+		int next = pos + (int)stringToCompare.length();
+		if (paragraph[next] >= 'a' && paragraph[next] <= 'z') return false;
+		if (paragraph[next] >= 'A' && paragraph[next] <= 'Z') return false;
+		if (paragraph[next] == '-') return false;
+	}
+	return true;
 }
 
 
