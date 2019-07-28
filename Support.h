@@ -41,5 +41,6 @@ int ConvertCharToNum(const char& c);
 char ConvertNumToChar(const int& x);
 
 bool IsNothing(const std::string &str);
+std::string ReplaceStr(std::string &str, char delimiter);
 
 #endif

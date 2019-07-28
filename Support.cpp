@@ -181,3 +181,18 @@ bool IsNothing(const std::string &str) {
 	}
 	return true;
 }
+
+std::string ReplaceStr(std::string &str, char delimiter) {
+	std::string tmp;
+	
+	while (*str.begin() != delimiter) {
+		tmp.push_back(str[0]);
+		str.erase(str.begin());
+		if (str.empty())
+			break;
+	}
+	tmp.push_back(delimiter);
+	if(!str.empty())
+		str.erase(str.begin());
+	return tmp;
+}

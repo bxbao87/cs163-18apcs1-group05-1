@@ -23,6 +23,7 @@ void SearchScreen();
 void ExitScreen();
 void OutOfRange(std::string a);
 std::vector<std::string> DisplayHistory(const std::vector<std::string> &v);
-int ChooseLink(int n);
+int ChooseLink(int n, std::vector<int> &cor);
+void NoResult();
 
 #endif

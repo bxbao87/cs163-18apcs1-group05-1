@@ -20,12 +20,30 @@ void Document::ReadFile()
 	while (getline(in, title))
 		if (title != "")
 			break;
+	if (title.length() > 120) {
+		std::string tmp, word;
+		tmp = title;
 
-	std::string tmp;
-	while (std::getline(in, tmp))
-	{
-		content += '\n' + tmp;
+
+		title.clear();
+		std::stringstream ss;
+		for (int i = 0; i < 15; ++i)
+		{
+			ss << tmp;
+			ss >> word;
+			title += word + ' ';
+		}
+		title+="...";
+
+		content = tmp;
 	}
+	
+		std::string tmp;
+		while (std::getline(in, tmp))
+		{
+			content += '\n' + tmp;
+		}
+	
 	in.close();
 }
 
@@ -49,7 +67,7 @@ int Document::SearchForPhraseInTitle(const std::string& phrase)
 	else return (int)pos;
 }
 
-void Document::DisplayResult(int x, int y) {// not finished
+void Document::DisplayResult(int x, int &y) {
 	Gotoxy(x, y);
 	Color(9);
 	std::cout << "File: " << fileName;
