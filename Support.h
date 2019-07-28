@@ -26,6 +26,7 @@ bool isNumberWithCharExtended(const std::string &s);// check if a string have nu
 
 void AND(std::vector<int> &v1, const std::vector<int> &v2);//AND operation after AND, the result will be in v1
 void OR(std::vector<int>& v1, const std::vector<int>& v2);// OR operator
+void OR(std::vector<std::string>& v1, const std::vector<std::string>& v2);//Same OR operator but for different data type
 void NOT(std::vector<int> &res, const std::vector <int> & complement);
 std::vector<std::string> splitSentence(const std::string& s);
 void Tolower(std::string& s); // Change a string to lower case
