@@ -942,18 +942,11 @@ std::vector<int> Search::SearchIntitle(const std::string & phrase)
 		docVector[i].ReadFile();
 		for (auto word : words) {
 			if (docVector[i].SearchForPhraseInTitle(word) != -1) {
-				res.push_back(i);
+				res.push_back(tmp[i]);
 				break;
 			}
 		}
 	}
-	//Debug session
-	std::ofstream fout;
-	fout.open("Out.txt");
-	for (auto i : res) {
-		fout << theFullListOfFile[i] << std::endl;
-	}
-	fout.close();
 	return res;
 }
 
