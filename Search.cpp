@@ -76,47 +76,51 @@ bool Search::LoadSynonym()
 void Search::Run()
 {
 	FrontEnd();
+	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 
 	std::string query = "";
 	while (InputKey(query))
 	{
 		std::string processedQuery = InfixToPostfix(query);
-		//std::cout << "May qua no thoat roi chu khong la no bay mau cmnr" << "\n";
-		std::vector<int> result = Process(processedQuery);
-		
-		std::vector<Document> docs;
-		int total = min((int)result.size(), 5);
-		if (total == 0)
-			NoResult();
-		else {
-			std::vector <std::string> phrases = SplitQuery(query);
+		if (!processedQuery.empty())
+		{
+			std::vector<int> result = Process(processedQuery);
 
-			result = Ranking(result, phrases);
-
-			for (int i = 0; i < total; ++i)
-				docs.push_back(Document(theFullListOfFile[result[i]]));
-
-
-			for (auto& doc : docs)
+			std::vector<Document> docs;
+			int total = min((int)result.size(), 5);
+			if (total == 0)
+				NoResult();
+			else
 			{
-				doc.ReadFile();
-				doc.GetParagraphForShowing(phrases);
-			}
+				std::vector <std::string> phrases = SplitQuery(query);
 
-			int x = 20, y = 31, step = 2;
-			std::vector<int> cor;
-			cor.clear();
-			for (auto& doc : docs)
-			{
-				cor.push_back(y);
-				doc.DisplayResult(x, y);
-				y += step;
-			}
+				result = Ranking(result, phrases);
 
-			int chosen = ChooseLink(total, cor);
-			if (chosen != -1) {
-				docs[chosen].DisplayFile();
-				_getch();
+				for (int i = 0; i < total; ++i)
+					docs.push_back(Document(theFullListOfFile[result[i]]));
+
+
+				for (auto& doc : docs)
+				{
+					doc.ReadFile();
+					doc.GetParagraphForShowing(phrases);
+				}
+
+				int x = 20, y = 31, step = 2;
+				std::vector<int> cor;
+				cor.clear();
+				for (auto& doc : docs)
+				{
+					cor.push_back(y);
+					doc.DisplayResult(x, y);
+					y += step;
+				}
+
+				int chosen = ChooseLink(total, cor);
+				if (chosen != -1) {
+					docs[chosen].DisplayFile();
+					_getch();
+				}
 			}
 		}
 		SearchScreen();
@@ -292,7 +296,8 @@ bool Search::InputKey(std::string &resultStr) {
 
 	Gotoxy(x, y);
 	key = _getch();
-	while (key != 13 || len==0&&moveCursor==-1) {
+	while (key != 13 || len == 0 && moveCursor == -1) 
+	{
 		if (key == 27)
 			return false;
 		if (key == 8 && len > 0)
@@ -304,9 +309,9 @@ bool Search::InputKey(std::string &resultStr) {
 				OutOfRange(resultStr);
 			else
 				std::cout << "\b \b";
-			lsHis=DisplayHistory(h.GetHistory(resultStr));
+			lsHis = DisplayHistory(h.GetHistory(resultStr));
 		}
-		else if (key != 0 && key != 224 && key != 8)
+		else if (key != 0 && key != 224 && key != 8 && key != 13)
 		{
 			moveCursor = -1;
 			resultStr += (char)key;
@@ -316,7 +321,7 @@ bool Search::InputKey(std::string &resultStr) {
 				std::cout << (char)key;
 			++len;
 			if (resultStr != " ")
-				lsHis=DisplayHistory(h.GetHistory(resultStr));
+				lsHis = DisplayHistory(h.GetHistory(resultStr));
 		}
 		else if (key == 0 || key == 224)
 		{
@@ -939,5 +944,8 @@ std::vector <int> Search::Process(const std::string &query) {
 			st.push_back(v1);
 		}
 	}
-	return st.back();
+	if (!st.empty())
+		return st.back();
+	else
+		return std::vector<int>();
 }

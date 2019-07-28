@@ -12,6 +12,7 @@ void FrontEnd() {
 	Center("BUI XUAN BAO", 220, 24, 14);
 	std::string a = "press any key to continue...";
 	Center(a, 0, 27, 15);
+	FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
 	_getch();
 	SearchScreen();
 }
@@ -367,6 +368,7 @@ void ExitScreen() {
                                          / / / / / / /_/ / / / / ,< (__  )  / __/  / /_/ / /     / /_/ /(__  ) // / / / /_/ /_/  
                                         /_/ /_/ /_/\__,_/_/ /_/_/|_/____/  /_/     \____/_/      \____//____/_//_/ /_/\__, (_)  
                                                                                                                      /____/      )";
+	Sleep(300);
 }
 
 void OutOfRange(std::string a) {
