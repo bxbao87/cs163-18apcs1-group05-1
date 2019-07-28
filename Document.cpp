@@ -128,6 +128,14 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 	const std::set <char> delimeter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/',
 			'&','[',']','+',':','`','@','%','^','=','_', '\\', '|', '$', '~' };
 	std::vector<std::string> wordsContent = splitSentence(content);
+	std::vector<int> posOfPharse;
+	for (auto p : phrase) // define which phrase appear first;
+	{
+		int tmp = SearchForPhraseInContent(p);
+		if (tmp != -1)
+			posOfPharse.push_back(tmp);
+	}
+
 
 	for (auto ph : phrase)
 	{
