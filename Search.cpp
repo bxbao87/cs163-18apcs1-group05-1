@@ -83,7 +83,6 @@ void Search::Run()
 	{
 		std::string processedQuery = InfixToPostfix(query);
 		//std::cout << "May qua no thoat roi chu khong la no bay mau cmnr" << "\n";
-		std::vector<int> result = Process(processedQuery);
 			
 		if (!processedQuery.empty())
 		{
@@ -648,10 +647,13 @@ void Search::SplitQuery(const std::string& query, std::vector<std::string> &inti
 void Search::TrimQuery(std::string &query, std::vector <std::string> &intitle, std::vector <std::string> &content)
 {
 	if (IsRangeQuery(query)) {
-		int i = (int)query.find("..");
-		if (i != query.npos)
-			query.erase(i, 2);
+		//int i = (int)query.find("..");
+		//if (i != query.npos)
+		//	query.erase(i, 2);
 		//Something big is missing lol :v
+		double lo, hi;
+		PreProcessRangeQuery(query, lo, hi);
+		numIndex.GetValueInRange(lo, hi, content);
 	}
 	else if (IsPlusQuery(query)) {
 		int i = (int)query.find("+");
