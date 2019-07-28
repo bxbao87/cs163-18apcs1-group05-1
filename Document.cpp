@@ -107,6 +107,7 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 	paragraphForShowing.clear();
 	const std::set <char> delimeter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/',
 			'&','[',']','+',':','`','@','%','^','=','_', '\\', '|', '$', '~' };
+	std::vector<std::string> wordsContent = splitSentence(content);
 
 	for (auto ph : phrase)
 	{
@@ -146,7 +147,8 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 			{
 				std::pair<std::string, bool> word;
 				word.first = splitToDisplay[i];
-				if (std::find(keyword.begin(), keyword.end(), process[i]) != keyword.end())
+				if (std::find(keyword.begin(), keyword.end(), process[i]) != keyword.end()
+					|| std::find(phrase.begin(), phrase.end(), process[i]) != phrase.end())
 					word.second = true;
 				paragraphForShowing.push_back(word);
 			}
@@ -154,7 +156,6 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 		}
 		else
 		{
-			std::vector<std::string> wordsContent = splitSentence(content);
 			std::vector<std::string> toloweredContent;
 			
 			for (auto i : wordsContent)
@@ -202,32 +203,34 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 			{
 				std::pair<std::string, bool> word;
 				word.first = wordsContent[i];
-				if (std::find(keyword.begin(), keyword.end(), toloweredContent[i]) != keyword.end())
+				if (std::find(keyword.begin(), keyword.end(), toloweredContent[i]) != keyword.end()
+					|| std::find(phrase.begin(), phrase.end(), toloweredContent[i]) != phrase.end())
 					word.second = true;
 				paragraphForShowing.push_back(word);
 				++cnt;
 			}
-			if ((int)paragraphForShowing.size() == 1)
-			{
-				cnt = 1;
-				for (int i = min - 1; i >= 0 && cnt < 50; ++i)
-				{
-					std::pair<std::string, bool> word;
-					word.first = wordsContent[i];
-					word.second = false;
-					paragraphForShowing.insert(paragraphForShowing.begin(), word);
-					++cnt;
-				}
-			}
 
 		}
+		if ((int)paragraphForShowing.size() <5)
+		{
+			int cnt = (int)paragraphForShowing.size();
+			for (int i = (int)(wordsContent.size()-cnt); i >= 0 && cnt < 50; --i)
+			{
+				std::pair<std::string, bool> word;
+				word.first = wordsContent[i];
+				word.second = false;
+				paragraphForShowing.insert(paragraphForShowing.begin(), word);
+				++cnt;
+			}
+		}
+		
 	}
 }
 
 void Document::debug()
 {
-	if (paragraphForShowing.empty())
-		return;
+	/*if (paragraphForShowing.empty())
+		return;*/
 	std::cout << "size: " << paragraphForShowing.size() << '\n';
 	std::cout << fileName << '\n';
 	for (auto i : paragraphForShowing)

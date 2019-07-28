@@ -97,6 +97,14 @@ std::string TolowerExtend(std::string & s)
 	return tmp;
 }
 
+bool IsStringWiths(const std::string & s)
+{
+	int length = s.length();
+	if (length>2 && s[length - 1] == 's' && s[length - 2] == '\'')
+		return true;
+	return false;
+}
+
 
 void OR(std::vector<int>& v1, const std::vector<int>& v2)
 {
