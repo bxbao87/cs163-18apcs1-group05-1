@@ -85,11 +85,16 @@ bool Document::IsDelimeter(const char & c, const std::set<char>& delimeter)
 
 void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 {
+	//process content
 	paragraphForShowing.clear();
+	const std::set <char> delimeter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/',
+			'&','[',']','+',':','`','@','%','^','=','_', '\\', '|', '$', '~' };
+
 	for (auto ph : phrase)
 	{
 		int posP = SearchForPhraseInContent(ph);
 		std::vector<std::string> keyword = splitSentence(ph);
+
 		if (posP != -1)
 		{
 			int count = 0, len = 0;
@@ -106,12 +111,24 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 
 			std::string toDisplay = content.substr(posP, len);
 			std::vector<std::string> splitToDisplay = splitSentence(toDisplay);
+			std::vector<std::string> process;
 
 			for (auto i : splitToDisplay)
 			{
+				//std::string tmp = TolowerExtend(i);
+				std::string tmp = i;
+				while ((int)tmp.size() > 0 && IsDelimeter(tmp[0], delimeter))
+					tmp.erase(0, 1);
+				while ((int)tmp.size() > 0 && IsDelimeter(tmp.back(), delimeter))
+					tmp.pop_back();
+				process.push_back(tmp);
+			}
+
+			for (int i=0; i < (int)splitToDisplay.size(); ++i)
+			{
 				std::pair<std::string, bool> word;
-				word.first = i;
-				if (std::find(keyword.begin(), keyword.end(), i) != keyword.end())
+				word.first = splitToDisplay[i];
+				if (std::find(keyword.begin(), keyword.end(), process[i]) != keyword.end())
 					word.second = true;
 				paragraphForShowing.push_back(word);
 			}
@@ -121,9 +138,7 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 		{
 			std::vector<std::string> wordsContent = splitSentence(content);
 			std::vector<std::string> toloweredContent;
-			const std::set <char> delimeter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/',
-			'&','[',']','+',':','`','@','%','^','=','_', '\\', '|', '$', '~' };
-
+			
 			for (auto i : wordsContent)
 			{
 				std::string tmp = TolowerExtend(i);
@@ -133,10 +148,12 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 					tmp.pop_back();
 				toloweredContent.push_back(tmp);
 			}
+
 			for (auto& i : keyword)
 				Tolower(i);
+
 			std::vector<int> pos;
-			pos.clear();
+
 			for (auto i : keyword)
 			{
 				auto it = std::find(toloweredContent.begin(), toloweredContent.end(), i);

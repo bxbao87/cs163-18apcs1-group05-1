@@ -5,7 +5,7 @@
 
 int main() {
 	Search bogoSearch;
-	//bogoSearch.Run();
+	bogoSearch.Run();
 	/// Luan's draft
 	while (true) {
 		std::string query;
