@@ -76,7 +76,7 @@ int Document::SearchForPhraseInTitle(const std::string& phrase)
 	if (pos == std::string::npos)
 		return -1;
 
-	while (pos != std::string::npos && !IsTheSameString(phrase, content, pos))
+	while (pos != std::string::npos && !IsTheSameString(phrase, title, pos))
 	{
 		pos = title.find(phrase, pos + 1);
 	}
