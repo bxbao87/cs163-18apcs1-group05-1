@@ -413,7 +413,18 @@ std::vector<std::string> DisplayHistory(const std::vector<std::string> &v) {
 	return returnedVec;
 }
 
-int ChooseLink(int n) {
+void NoResult() {
+	Color(5);
+	Gotoxy(0, 32);
+	std::cout << R"(
+						 __   _  _____        ______ _______ _______ _     _        _______
+						 | \  | |     |      |_____/ |______ |______ |     | |         |   
+						 |  \_| |_____|      |    \_ |______ ______| |_____| |_____    |   
+)" << "\a";
+	_getch();
+}
+
+int ChooseLink(int n, std::vector<int> &cor) {
 	if (n == 0)
 		return -1;
 	Gotoxy(10, 31);
@@ -424,7 +435,7 @@ int ChooseLink(int n) {
 	while (key != 13 && key != 27) {
 		if (key == 224) {
 			int ex = _getch();
-			Gotoxy(10, a * 10 + 31);
+			Gotoxy(10, cor[a]);
 			Color(15);
 			std::cout << "    ";
 			if (ex == 72) {
@@ -439,7 +450,7 @@ int ChooseLink(int n) {
 				else
 					++a;
 			}
-			Gotoxy(10, a * 10 + 31);
+			Gotoxy(10, cor[a]);
 			Color(14);
 			std::cout << "|>|>";
 		}

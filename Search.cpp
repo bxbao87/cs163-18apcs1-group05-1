@@ -86,33 +86,39 @@ void Search::Run()
 		
 		std::vector<Document> docs;
 		int total = min((int)result.size(), 5);
+		if (total == 0)
+			NoResult();
+		else {
+			std::vector <std::string> phrases = SplitQuery(query);
 
-		std::vector <std::string> phrases = SplitQuery(query);
+			result = Ranking(result, phrases);
 
-		result = Ranking(result, phrases);
-
-		for (int i = 0; i < total; ++i)
-			docs.push_back(Document(theFullListOfFile[result[i]]));
+			for (int i = 0; i < total; ++i)
+				docs.push_back(Document(theFullListOfFile[result[i]]));
 
 
-		for (auto& doc : docs)
-		{
-			doc.ReadFile();
-			doc.GetParagraphForShowing(phrases);
+			for (auto& doc : docs)
+			{
+				doc.ReadFile();
+				doc.GetParagraphForShowing(phrases);
+			}
+
+			int x = 20, y = 31, step = 2;
+			std::vector<int> cor;
+			cor.clear();
+			for (auto& doc : docs)
+			{
+				cor.push_back(y);
+				doc.DisplayResult(x, y);
+				y += step;
+			}
+
+			int chosen = ChooseLink(total, cor);
+			if (chosen != -1) {
+				docs[chosen].DisplayFile();
+				_getch();
+			}
 		}
-
-		int x = 20, y = 31, step = 10;
-		for (auto& doc : docs)
-		{
-			doc.DisplayResult(x, y);
-			y += step;
-		}
-
-		int chosen = ChooseLink(total);
-		if (chosen != -1) docs[chosen].DisplayFile();
-
-		_getch();
-
 		SearchScreen();
 		query.clear();
 	}
@@ -286,7 +292,7 @@ bool Search::InputKey(std::string &resultStr) {
 
 	Gotoxy(x, y);
 	key = _getch();
-	while (key != 13) {
+	while (key != 13 || len==0&&moveCursor==-1) {
 		if (key == 27)
 			return false;
 		if (key == 8 && len > 0)
