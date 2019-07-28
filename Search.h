@@ -44,6 +44,7 @@ public:
 	std::string InfixToPostfix(const std::string &query);
 	std::string PreProcess(const std::string & query);
 	std::vector<std::string> SplitQuery(const std::string& query);
+	void TrimQuery(std::string &query);
 	bool IsExactQuery(const std::string & query);//check if it there is a quote in query
 	bool IsOpenBracket(const std::string & query); //check if there is a open bracket in the query
 	bool IsCloseBracket(const std::string & query);//check if there is a close bracket in the query
@@ -69,6 +70,8 @@ public:
 	std::vector<int> SearchSynonym(const std::string &phrase);
 	std::vector<int> SearchPlus(const std::string &phrase);
 	std::vector<int> SearchMinus(const std::string &phrase);
+	std::vector<int> SearchPlaceHolder(const std::string &phrase);//Search place holder
+
 	bool InputKey(std::string &resultStr);
 	void GetFileNameByInt(const std::vector<int>& toGet, std::vector<std::string>& fileName);
 
