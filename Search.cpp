@@ -83,19 +83,19 @@ void Search::Run()
 	{
 		std::string processedQuery = InfixToPostfix(query);
 		//std::cout << "May qua no thoat roi chu khong la no bay mau cmnr" << "\n";
-		std::vector<int> result = Process(processedQuery);
-		
-		std::vector<Document> docs;
-		int total = min((int)result.size(), 5);
-		if (total == 0)
-			NoResult();
-		else {
-			//Need to debug
-			std::vector <std::string> content, title;
-			std::vector <std::string> phrases; 
-			SplitQuery(query, title, content);
-			OR(phrases, content);
-			OR(phrases, title);
+		//std::vector<int> result = Process(processedQuery);
+		//
+		//std::vector<Document> docs;
+		//int total = min((int)result.size(), 5);
+		//if (total == 0)
+		//	NoResult();
+		//else {
+		//	//Need to debug
+		//	std::vector <std::string> content, title;
+		//	std::vector <std::string> phrases; 
+		//	SplitQuery(query, title, content);
+		//	OR(phrases, content);
+		//	OR(phrases, title);
 
 		if (!processedQuery.empty())
 		{
@@ -107,7 +107,7 @@ void Search::Run()
 				NoResult();
 			else
 			{
-				std::vector <std::string> phrases = SplitQuery(query);
+				/*std::vector <std::string> phrases = SplitQuery(query);
 
 				result = Ranking(result, phrases);
 
@@ -135,7 +135,7 @@ void Search::Run()
 				if (chosen != -1) {
 					docs[chosen].DisplayFile();
 					_getch();
-				}
+				}*/
 			}
 		}
 		SearchScreen();
