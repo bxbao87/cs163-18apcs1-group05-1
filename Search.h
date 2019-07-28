@@ -79,6 +79,8 @@ public:
 	void Debug(std::vector <int>& v);
 
 	std::vector<int> Ranking(std::vector<int>& finalList, std::vector<std::string>& subQuery);
+
+	void Test1000Query();
 };
 
 #endif

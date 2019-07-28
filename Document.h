@@ -32,6 +32,8 @@ public:
 	void DisplayFile();
 
 	void debug();
+
+	bool IsTheSameString(const std::string& stringToCompare, const std::string& paragraph, const int& pos);
 };
 
 void CreateVectorDoc(const std::vector<std::string>& fileName, std::vector<Document>& result);
