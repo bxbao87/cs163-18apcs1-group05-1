@@ -441,6 +441,11 @@ std::vector<int> Search::Ranking(std::vector<int>& finalList, std::vector<std::s
 	return result;
 }
 
+void Search::Test1000Query()
+{
+	std::ifstream in("Process\\test_1000_query.txt");
+}
+
 //Extract command and split into smaller queries
 std::string Search::InfixToPostfix(const std::string & query)
 {
@@ -490,14 +495,23 @@ std::string Search::InfixToPostfix(const std::string & query)
 			st.pop();//pop the string "("
 		}
 		else if (IsExactQuery(token)) {//If it is exact query get everything between "" and add it to subquery 
-			do {
+			subquery += token + ' ';
+			while (token.back() != '\"')
+			{
+				ss >> token;
+				subquery += token + ' ';
+			}
+			subquery.pop_back();
+			/*do 
+			{
 				subquery += token + " ";
-			} while (ss >> token && !IsExactQuery(token));
-			if (token[0] == '\"') {
+			} while (ss >> token && !IsExactQuery(token));*/
+			/*if (token[0] == '\"') 
+			{
 				subquery.pop_back();
 			}
 			else 
-				subquery += token;
+				subquery += token;*/
 			output += subquery + ",";
 			subquery.clear();
 		}
@@ -556,6 +570,9 @@ std::vector<std::string> Search::SplitQuery(const std::string& query)
 
 	while (ss >> token) {
 		if (token == "AND" || token == "OR") {
+
+			subquery = token;
+
 			if (subquery.size()) {
 				subquery.pop_back();
 			}
@@ -581,14 +598,21 @@ std::vector<std::string> Search::SplitQuery(const std::string& query)
 			subquery.clear();
 		}
 		else if (IsExactQuery(token)) {//If it is exact query get everything between "" and add it to subquery 
-			do {
+			subquery += token + ' ';
+			while (token.back() != '\"')
+			{
+				ss >> token;
+				subquery += token + ' ';
+			}
+			subquery.pop_back();
+			/*do {
 				subquery += token + " ";
 			} while (ss >> token && !IsExactQuery(token));
 			if (token[0] == '\"') {
 				subquery.pop_back();
 			}
 			else
-				subquery += token;
+				subquery += token;*/
 			subquery.erase(0, 1);
 			subquery.pop_back();
 			output.push_back(subquery) ;
