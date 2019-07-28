@@ -571,14 +571,14 @@ std::vector<std::string> Search::SplitQuery(const std::string& query)
 	while (ss >> token) {
 		if (token == "AND" || token == "OR") {
 
-			subquery = token;
+			/*subquery = token;
 
 			if (subquery.size()) {
 				subquery.pop_back();
 			}
 			TrimQuery(subquery);
 			output.push_back(subquery);
-			subquery.clear();
+			subquery.clear();*/
 		}
 		else if (IsOpenBracket(token)) {
 			token.erase(token.begin());
