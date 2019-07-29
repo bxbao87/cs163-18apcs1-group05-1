@@ -102,34 +102,40 @@ void Search::Run()
 				//phrases are the union of two above vectors
 				OR(phrases, content);
 				OR(phrases, title);
+				OR(title, content);
 
 				result = Ranking(result, phrases);
 
-				for (int i = 0; i < total; ++i)
-					docs.push_back(Document(theFullListOfFile[result[i]]));
-
-
-				for (auto& doc : docs)
+				if (!result.empty())
 				{
-					doc.ReadFile();
-					doc.GetParagraphForShowing(phrases);
-				}
+					for (int i = 0; i < total; ++i)
+						docs.push_back(Document(theFullListOfFile[result[i]]));
 
-				int x = 20, y = 31, step = 2;
-				std::vector<int> cor;
-				cor.clear();
-				for (auto& doc : docs)
-				{
-					cor.push_back(y);
-					doc.DisplayResult(x, y);
-					y += step;
-				}
 
-				int chosen = ChooseLink(total, cor);
-				if (chosen != -1) {
-					docs[chosen].DisplayFile();
-					_getch();
+					for (auto& doc : docs)
+					{
+						doc.ReadFile();
+						doc.GetParagraphForShowing(phrases);
+					}
+
+					int x = 20, y = 31, step = 2;
+					std::vector<int> cor;
+					cor.clear();
+					for (auto& doc : docs)
+					{
+						cor.push_back(y);
+						doc.DisplayResult(x, y);
+						y += step;
+					}
+
+					int chosen = ChooseLink(total, cor);
+					if (chosen != -1) {
+						docs[chosen].DisplayFile();
+						_getch();
+					}
 				}
+				else
+					NoResult();
 			}
 		}
 		SearchScreen();
@@ -564,6 +570,29 @@ std::string Search::PreProcess(const std::string & query)
 	for (int i = 0; i < bracket; i++) {
 		output += " )";
 	}
+	
+	if (quote == 1) {
+		int i = (int)output.size() - 1;
+		for (i; i >= 0; i--) {
+			if (output[i] == '\"')
+				break;
+		}
+		std::string fakeoutput(output, i, std::string::npos);
+		std::stringstream iss(fakeoutput);
+		fakeoutput.clear();
+		std::string token;
+		while (iss >> token) {
+			if (token == "AND" || token == "OR") {
+				break;
+			}
+			fakeoutput += token + " ";
+		}
+
+		fakeoutput.pop_back();
+		int insertPos = (int)fakeoutput.size() + i;
+		output.insert(output.begin() + insertPos, '\"');
+	}
+
 	return output;
 }
 
@@ -646,6 +675,17 @@ void Search::SplitQuery(const std::string& query, std::vector<std::string> &inti
 
 void Search::TrimQuery(std::string &query, std::vector <std::string> &intitle, std::vector <std::string> &content)
 {
+	std::stringstream ss(query);
+	query.clear();
+	std::string token;
+	while (ss >> token) {
+		for (int i = 0; i < (int)token.size(); i++) {
+			if (token[i] == '$' || token[i] == '%')
+				token.erase(i, 1);
+		}
+		query += token + " ";
+	}
+	query.pop_back();
 	if (IsRangeQuery(query)) {
 		//int i = (int)query.find("..");
 		//if (i != query.npos)
