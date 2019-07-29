@@ -100,7 +100,7 @@ std::string TolowerExtend(std::string & s)
 bool IsStringWiths(const std::string & s)
 {
 	int length =(int)s.length();
-	if (s[length-1] == 's' && s[length-2] == '\'')
+	if (length>=2 && s[length-1] == 's' && s[length-2] == '\'')
 		return true;
 	return false;
 }

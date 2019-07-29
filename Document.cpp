@@ -317,10 +317,15 @@ void Document::debug()
 	for (auto i : paragraphForShowing)
 		std::cout << i.first << ' ';
 }
+
 void Document::getWordsIntitle(std::vector<std::string> &phrase) {
-	for (auto i : phrase)
-		wordsIntitle.insert(i);
+	for (auto i : phrase) {
+		std::vector<std::string> words = splitSentence(i);
+		for(auto j:words)
+			wordsIntitle.insert(j);
+	}
 }
+
 void Document::ColorTitle() {
 	std::string word;
 	std::stringstream ss(title);
@@ -331,8 +336,30 @@ void Document::ColorTitle() {
 			std::cout << " " + word;
 			Color(14);
 		}
-		else
-			std::cout << " " + word;
+		else {
+			bool found = false;
+			for (auto i : wordsIntitle) {
+				auto pos = word.find(i);
+				if (pos != std::string::npos) {
+					std::cout << " ";
+					int k = 0;
+					while (k != pos)
+						std::cout << word[k++];
+					int len = i.length();
+					Color(10);
+					while (k < len)
+						std::cout << word[k++];
+					Color(14);
+					len = word.length();
+					while (k < len)
+						std::cout << word[k++];
+					found = true;
+					break;
+				}
+			}
+			if(!found)
+				std::cout << " " + word;
+		}
 		word.clear();
 	}
 }
