@@ -685,7 +685,8 @@ void Search::TrimQuery(std::string &query, std::vector <std::string> &intitle, s
 		}
 		query += token + " ";
 	}
-	query.pop_back();
+	if (query.size() && query.back() == ' ')
+		query.pop_back();
 	if (IsRangeQuery(query)) {
 		//int i = (int)query.find("..");
 		//if (i != query.npos)
@@ -717,6 +718,25 @@ void Search::TrimQuery(std::string &query, std::vector <std::string> &intitle, s
 	else if (IsIntitleQuery(query)) {
 		query.erase(0, 8);
 		intitle.push_back(query);
+	}
+	else if (IsPlaceHolderQuery(query)) {
+		int i = query.find(" * ");
+		if (i != query.npos) {
+			std::string left(query, 0, i);
+			if (i + 3 < (int)query.size()) {
+				std::string right(query.begin() + i + 3, query.end());
+				content.push_back(left);
+				content.push_back(right);
+			}
+		}
+	}
+	else if (query[0] == '~') {
+		query.erase(0, 1);
+		if (synonym.count(query)) {
+			for (auto syn : synonym[query]) {
+				content.push_back(syn);
+			}
+		}
 	}
 	else if (query != "AND" && query != "OR")
 		content.push_back(query);

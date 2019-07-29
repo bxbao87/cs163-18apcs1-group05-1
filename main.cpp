@@ -20,12 +20,12 @@ int main() {
 	system("pause");*/
 	// End of Mai's testing zone
 
-	/////Luan's draft starts here
-	//std::cout << "XONG ROI" << std::endl;
-	//std::string queryCucSuc = "Camera $400";
-	//std::vector <std::string> a, b;
-	//bogosearch.TrimQuery(queryCucSuc,a ,b);
-	//std::cout << queryCucSuc << std::endl;
-	/////End of Luan's draft
+	/*///Luan's draft starts here
+	std::cout << "XONG ROI" << std::endl;
+	std::string queryCucSuc = "Camera";
+	std::vector <std::string> a, b;
+	bogosearch.TrimQuery(queryCucSuc,a ,b);
+	std::cout << queryCucSuc << std::endl;
+	///End of Luan's draft*/
 	return 0;
 }
