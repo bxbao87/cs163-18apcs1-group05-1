@@ -10,6 +10,7 @@ private:
 	std::string title;
 	std::string content;
 	std::vector<std::pair<std::string, bool> > paragraphForShowing; // If bool is true then the word need to be highlighted
+	std::set<std::string> wordsIntitle;
 
 	//const std::string link = "Data\\";
 public:
@@ -26,7 +27,8 @@ public:
 	bool IsDelimeter(const char& c, const std::set<char>& delimeter);
 	void GetParagraphForShowing(const std::vector<std::string>& phrase);// if the exact
 	//phrase doesn't exist, then get by keyword
-
+	void getWordsIntitle(std::vector<std::string> &phrase);
+	void ColorTitle();
 
 	void DisplayResult(int x, int &y);
 	void DisplayFile();

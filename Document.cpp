@@ -15,7 +15,7 @@ void Document::SetFileName(const std::string& name)
 }
 
 void Document::ReadFile()
-{	
+{
 	std::ifstream in(fileName);
 	while (getline(in, title))
 		if (title != "")
@@ -33,17 +33,17 @@ void Document::ReadFile()
 			ss >> word;
 			title += word + ' ';
 		}
-		title+="...";
+		title += "...";
 
 		content = tmp;
 	}
-	
-		std::string tmp;
-		while (std::getline(in, tmp))
-		{
-			content += '\n' + tmp;
-		}
-	
+
+	std::string tmp;
+	while (std::getline(in, tmp))
+	{
+		content += '\n' + tmp;
+	}
+
 	in.close();
 }
 
@@ -72,8 +72,7 @@ void Document::DisplayResult(int x, int &y) {
 	Color(9);
 	std::cout << "File: " << fileName;
 	Gotoxy(x, ++y);
-	Color(14);
-	std::cout << "Title: " << title;
+	ColorTitle();
 	Gotoxy(x, ++y);
 	Color(15);
 	int len = 0;
@@ -84,7 +83,14 @@ void Document::DisplayResult(int x, int &y) {
 			len = 0;
 		}
 		len += i.first.length();
-		if (i.second == true) {
+		if (len > 100) {
+			std::string tmp = i.first.substr(0, 120), tmp2 = i.first.substr(121, len);
+			std::cout << tmp;
+			Gotoxy(x, ++y);
+			std::cout << tmp2;
+			len = tmp2.length();
+		}
+		else if (i.second == true) {
 			Color(12);
 			std::cout << i.first;
 			Color(15);
@@ -222,7 +228,25 @@ void Document::debug()
 	for (auto i : paragraphForShowing)
 		std::cout << i.first << ' ';
 }
-
+void Document::getWordsIntitle(std::vector<std::string> &phrase) {
+	for (auto i : phrase)
+		wordsIntitle.insert(i);
+}
+void Document::ColorTitle() {
+	std::string word;
+	std::stringstream ss;
+	while (ss) {
+		ss >> word;
+		if (wordsIntitle.find(word) != wordsIntitle.end()) {
+			Color(10);
+			std::cout << " " + word;
+			Color(14);
+		}
+		else
+			std::cout << " " + word;
+		word.clear();
+	}
+}
 
 void CreateVectorDoc(const std::vector<std::string>& fileName, std::vector<Document>& result)
 {
@@ -255,6 +279,14 @@ void Document::DisplayFile() {
 			len = i.length();
 			Gotoxy(20, ++y);
 		}
-		std::cout << i << " ";
+		if (len > 100) {
+			std::string tmp = i.substr(0, 120), tmp2 = i.substr(121, len);
+			std::cout << tmp;
+			Gotoxy(20, ++y);
+			std::cout << tmp2;
+			len = tmp2.length();
+		}
+		else
+			std::cout << i << " ";
 	}
 }
