@@ -37,7 +37,7 @@ public:
 	bool IsWeirdWord(const std::string& word); // Check if word has weird character
 	bool LoadSynonym(); // Load file synonym from synonym.txt into map synonym
 	bool LoadStopWord(); // load stopword from stopword.txt into set stopWord
-	//bool CreateIndexForAFile(const std::string& fileName); // create inverted index for a single file
+	bool CreateIndexForNewFile(); // create inverted index for a single file
 	bool CreateIndex(); // create inverted index
 
 	//Extract command and split into subqueries
@@ -80,7 +80,7 @@ public:
 
 	std::vector<int> Ranking(std::vector<int>& finalList, std::vector<std::string>& subQuery);
 
-	void Test200Query();
+	void Test100Query();
 };
 
 #endif
