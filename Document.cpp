@@ -134,7 +134,8 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 	const std::set <char> delimeter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/',
 			'&','[',']','+',':','`','@','%','^','=','_', '\\', '|', '$', '~' };
 	std::vector<std::string> wordsContent = splitSentence(content);
-	std::vector<int> posOfPhrase;
+	//std::vector<int> posOfPhrase;
+	std::set<int> posOfPhrase;
 	std::set<std::string> keyword;
 	for (auto ph : phrase) // process phrase of keyword
 	{
@@ -160,14 +161,11 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 	{
 		int tmp = SearchForPhraseInContent(p);
 		if (tmp != -1)
-			posOfPhrase.push_back(tmp);
+			posOfPhrase.insert(tmp);
 	}
 	if (!posOfPhrase.empty())
 	{
-		int min = posOfPhrase[0], cnt = 0;
-		for (auto i : posOfPhrase)
-			if (i < min)
-				min = i;
+		int min = (*posOfPhrase.begin()), cnt = 0;
 		int count = 0, len = 0;
 		for (int i = min; i < (int)content.size() && count < 50; ++i)
 		{
@@ -199,6 +197,14 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 			process.push_back(tmp);
 		}
 
+		if (min != 0)
+		{
+			std::pair<std::string, bool> last;
+			last.first = "...";
+			last.second = false;
+			paragraphForShowing.push_back(last);
+		}
+
 		for (int i = 0; i < (int)splitToDisplay.size(); ++i)
 		{
 			std::pair<std::string, bool> word;
@@ -227,7 +233,7 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 			toloweredContent.push_back(tmp);
 		}
 
-		std::vector<int> pos;
+		std::set<int> pos;
 
 		for (auto i : keyword)
 		{
@@ -235,7 +241,7 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 			if (it != toloweredContent.end())
 			{
 				int d = (int)std::distance(toloweredContent.begin(), it);
-				pos.push_back(d);
+				pos.insert(d);
 			}
 		}
 		if (pos.empty())
@@ -252,10 +258,16 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 		}
 		else
 		{
-			int min = pos[0], cnt = 0;
-			for (auto i : pos)
-				if (i < min)
-					min = i;
+			//int min = pos[0], cnt = 0;
+			int min = (*pos.begin()), cnt = 0;
+			if (min != 0)
+			{
+				std::pair<std::string, bool> last;
+				last.first = "...";
+				last.second = false;
+				paragraphForShowing.push_back(last);
+			}
+
 			for (int i = min; i < (int)wordsContent.size() && cnt < 50; ++i)
 			{
 				std::pair<std::string, bool> word;
@@ -271,6 +283,10 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 	}
 	if ((int)paragraphForShowing.size() < 5)
 	{
+		std::pair<std::string, bool> last;
+		last.first = "...";
+		last.second = false;
+		paragraphForShowing.insert(paragraphForShowing.begin(), last);
 		int cnt = (int)paragraphForShowing.size();
 		for (int i = (int)(wordsContent.size() - cnt); i >= 0 && cnt < 50; --i)
 		{
@@ -280,6 +296,13 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 			paragraphForShowing.insert(paragraphForShowing.begin(), word);
 			++cnt;
 		}
+	}
+	else
+	{
+		std::pair<std::string, bool> last;
+		last.first = "...";
+		last.second = false;
+		paragraphForShowing.push_back(last);
 	}
 }
 

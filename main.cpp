@@ -7,12 +7,12 @@ int main() {
 	Search bogosearch;
 	bogosearch.Run();
 	// Mai's testing zone 
-	/*Document doc("Data/Group25News41.txt");
+	/*Document doc("Data/Group21News97.txt");
 	doc.ReadFile();
-	std::vector<std::string> p = { "Google" };
+	std::vector<std::string> p = { "Nintendo" };
 	doc.GetParagraphForShowing(p);
-	doc.debug();
-*/
+	doc.debug();*/
+
 	/*if (IsStringWiths("Nintendo","Nintendo's"))
 		std::cout << "True" << '\n';
 	else
