@@ -15,7 +15,7 @@ void Document::SetFileName(const std::string& name)
 }
 
 void Document::ReadFile()
-{	
+{
 	std::ifstream in(fileName);
 	while (getline(in, title))
 		if (title != "")
@@ -33,17 +33,17 @@ void Document::ReadFile()
 			ss >> word;
 			title += word + ' ';
 		}
-		title+="...";
+		title += "...";
 
 		content = tmp;
 	}
-	
-		std::string tmp;
-		while (std::getline(in, tmp))
-		{
-			content += '\n' + tmp;
-		}
-	
+
+	std::string tmp;
+	while (std::getline(in, tmp))
+	{
+		content += '\n' + tmp;
+	}
+
 	in.close();
 }
 
@@ -93,7 +93,8 @@ void Document::DisplayResult(int x, int &y) {
 	std::cout << "File: " << fileName;
 	Gotoxy(x, ++y);
 	Color(14);
-	std::cout << "Title: " << title;
+	std::cout << "Title:";
+	ColorTitle();
 	Gotoxy(x, ++y);
 	Color(15);
 	int len = 0;
@@ -104,7 +105,14 @@ void Document::DisplayResult(int x, int &y) {
 			len = 0;
 		}
 		len += i.first.length();
-		if (i.second == true) {
+		if (len > 100) {
+			std::string tmp = i.first.substr(0, 120), tmp2 = i.first.substr(121, len);
+			std::cout << tmp;
+			Gotoxy(x, ++y);
+			std::cout << tmp2;
+			len = tmp2.length();
+		}
+		else if (i.second == true) {
 			Color(12);
 			std::cout << i.first;
 			Color(15);
@@ -128,148 +136,175 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 	const std::set <char> delimeter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/',
 			'&','[',']','+',':','`','@','%','^','=','_', '\\', '|', '$', '~' };
 	std::vector<std::string> wordsContent = splitSentence(content);
-	std::vector<int> posOfPharse;
+	//std::vector<int> posOfPhrase;
+	std::set<int> posOfPhrase;
+	std::set<std::string> keyword;
+	for (auto ph : phrase) // process phrase of keyword
+	{
+		std::vector<std::string> tmp = splitSentence(ph);
+		for (auto i : tmp)
+		{
+			std::string tmp = i;
+			Tolower(tmp);
+			while ((int)tmp.size() > 0 && IsDelimeter(tmp[0], delimeter))
+				tmp.erase(0, 1);
+			while ((int)tmp.size() > 0 && IsDelimeter(tmp.back(), delimeter))
+				tmp.pop_back();
+			if (IsStringWiths(tmp))
+			{
+				tmp.pop_back();
+				tmp.pop_back();
+			}
+			keyword.insert(tmp);
+		}
+	}
+	//
 	for (auto p : phrase) // define which phrase appear first;
 	{
 		int tmp = SearchForPhraseInContent(p);
 		if (tmp != -1)
-			posOfPharse.push_back(tmp);
+			posOfPhrase.insert(tmp);
 	}
-
-
-	for (auto ph : phrase)
+	if (!posOfPhrase.empty())
 	{
-		int posP = SearchForPhraseInContent(ph);
-		std::vector<std::string> keyword = splitSentence(ph);
-		for (auto& i : keyword)
+		int min = (*posOfPhrase.begin()), cnt = 0;
+		int count = 0, len = 0;
+		for (int i = min; i < (int)content.size() && count < 50; ++i)
 		{
-			Tolower(i);
-			if (IsStringWiths(i))
+
+			if ((content[i] == ' ' && i > 0 && content[i - 1] != ' ') ||
+				(content[i] == '\n' && i > 0 && content[i - 1] != '\n' && content[i - 1] != ' '))
 			{
-				i.pop_back();
-				i.pop_back();
+				++count;
 			}
+			++len;
+		}
+		std::string toDisplay = content.substr(min, len);
+		std::vector<std::string> splitToDisplay = splitSentence(toDisplay);
+		std::vector<std::string> process;
+
+		for (auto i : splitToDisplay)
+		{
+			std::string tmp = i;
+			Tolower(tmp);
+			while ((int)tmp.size() > 0 && IsDelimeter(tmp[0], delimeter))
+				tmp.erase(0, 1);
+			while ((int)tmp.size() > 0 && IsDelimeter(tmp.back(), delimeter))
+				tmp.pop_back();
+			if (IsStringWiths(tmp))
+			{
+				tmp.pop_back();
+				tmp.pop_back();
+			}
+			process.push_back(tmp);
 		}
 
-		if (posP != -1)
+		if (min != 0)
 		{
-			int count = 0, len = 0;
-			for (int i = posP; i<(int)content.size() && count < 50; ++i)
+			std::pair<std::string, bool> last;
+			last.first = "...";
+			last.second = false;
+			paragraphForShowing.push_back(last);
+		}
+
+		for (int i = 0; i < (int)splitToDisplay.size(); ++i)
+		{
+			std::pair<std::string, bool> word;
+			word.first = splitToDisplay[i];
+			if (std::find(keyword.begin(), keyword.end(), process[i])!=keyword.end())
+				word.second = true;
+			paragraphForShowing.push_back(word);
+		}
+	}
+	else
+	{
+		std::vector<std::string> toloweredContent;
+
+		for (auto i : wordsContent)
+		{
+			std::string tmp = TolowerExtend(i);
+			while ((int)tmp.size() > 0 && IsDelimeter(tmp[0], delimeter))
+				tmp.erase(0, 1);
+			while ((int)tmp.size() > 0 && IsDelimeter(tmp.back(), delimeter))
+				tmp.pop_back();
+			if (IsStringWiths(tmp))
 			{
-
-				if ((content[i] == ' ' && i > 0 && content[i - 1] != ' ') ||
-					(content[i] == '\n' && i > 0 && content[i - 1] != '\n' && content[i - 1] != ' '))
-				{
-					++count;
-				}
-				++len;
+				tmp.pop_back();
+				tmp.pop_back();
 			}
+			toloweredContent.push_back(tmp);
+		}
 
-			std::string toDisplay = content.substr(posP, len);
-			std::vector<std::string> splitToDisplay = splitSentence(toDisplay);
-			std::vector<std::string> process;
+		std::set<int> pos;
 
-			for (auto i : splitToDisplay)
+		for (auto i : keyword)
+		{
+			auto it = std::find(toloweredContent.begin(), toloweredContent.end(), i);
+			if (it != toloweredContent.end())
 			{
-				std::string tmp = i;
-				Tolower(tmp);
-				while ((int)tmp.size() > 0 && IsDelimeter(tmp[0], delimeter))
-					tmp.erase(0, 1);
-				while ((int)tmp.size() > 0 && IsDelimeter(tmp.back(), delimeter))
-					tmp.pop_back();
-				if (IsStringWiths(tmp))
-				{
-					tmp.pop_back();
-					tmp.pop_back();
-				}
-				process.push_back(tmp);
+				int d = (int)std::distance(toloweredContent.begin(), it);
+				pos.insert(d);
 			}
-
-			for (int i=0; i < (int)splitToDisplay.size(); ++i)
+		}
+		if (pos.empty())
+		{
+			int cnt = 0;
+			for (int i = 0; i < (int)wordsContent.size() && cnt < 50; ++i)
 			{
 				std::pair<std::string, bool> word;
-				word.first = splitToDisplay[i];
-				auto kw = std::find(keyword.begin(), keyword.end(), process[i]);
-				auto phr = std::find(phrase.begin(), phrase.end(), process[i]);
-				if (kw != keyword.end() || phr != phrase.end())
-					word.second = true;
+				word.first = wordsContent[i];
+				word.second = false;
 				paragraphForShowing.push_back(word);
+				++cnt;
 			}
-
 		}
 		else
 		{
-			std::vector<std::string> toloweredContent;
-			
-			for (auto i : wordsContent)
+			//int min = pos[0], cnt = 0;
+			int min = (*pos.begin()), cnt = 0;
+			if (min != 0)
 			{
-				std::string tmp = TolowerExtend(i);
-				while ((int)tmp.size() > 0 && IsDelimeter(tmp[0], delimeter))
-					tmp.erase(0, 1);
-				while ((int)tmp.size() > 0 && IsDelimeter(tmp.back(), delimeter))
-					tmp.pop_back();
-				if (IsStringWiths(tmp))
-				{
-					tmp.pop_back();
-					tmp.pop_back();
-				}
-				toloweredContent.push_back(tmp);
+				std::pair<std::string, bool> last;
+				last.first = "...";
+				last.second = false;
+				paragraphForShowing.push_back(last);
 			}
 
-			std::vector<int> pos;
-
-			for (auto i : keyword)
-			{
-				auto it = std::find(toloweredContent.begin(), toloweredContent.end(), i);
-				if (it != toloweredContent.end())
-				{
-					int d = (int)std::distance(toloweredContent.begin(), it);
-					pos.push_back(d);
-				}
-			}
-			if (pos.empty())
-			{
-				int cnt = 0;
-				for (int i = 0; i < (int)wordsContent.size() && cnt < 50; ++i)
-				{
-					std::pair<std::string, bool> word;
-					word.first = wordsContent[i];
-					word.second = false;
-					paragraphForShowing.push_back(word);
-					++cnt;
-				}
-				continue;
-			}
-			int min = pos[0], cnt = 0;
-			for (auto i : pos)
-				if (i < min)
-					min = i;
 			for (int i = min; i < (int)wordsContent.size() && cnt < 50; ++i)
 			{
 				std::pair<std::string, bool> word;
 				word.first = wordsContent[i];
 				auto kw = std::find(keyword.begin(), keyword.end(), toloweredContent[i]);
 				auto phr = std::find(phrase.begin(), phrase.end(), toloweredContent[i]);
-				if (kw!=keyword.end() || phr!=phrase.end())
+				if (kw != keyword.end() || phr != phrase.end())
 					word.second = true;
 				paragraphForShowing.push_back(word);
 				++cnt;
 			}
-
 		}
-		if ((int)paragraphForShowing.size() <5)
+	}
+	if ((int)paragraphForShowing.size() < 5)
+	{
+		std::pair<std::string, bool> last;
+		last.first = "...";
+		last.second = false;
+		paragraphForShowing.insert(paragraphForShowing.begin(), last);
+		int cnt = (int)paragraphForShowing.size();
+		for (int i = (int)(wordsContent.size() - cnt); i >= 0 && cnt < 50; --i)
 		{
-			int cnt = (int)paragraphForShowing.size();
-			for (int i = (int)(wordsContent.size()-cnt); i >= 0 && cnt < 50; --i)
-			{
-				std::pair<std::string, bool> word;
-				word.first = wordsContent[i];
-				word.second = false;
-				paragraphForShowing.insert(paragraphForShowing.begin(), word);
-				++cnt;
-			}
+			std::pair<std::string, bool> word;
+			word.first = wordsContent[i];
+			word.second = false;
+			paragraphForShowing.insert(paragraphForShowing.begin(), word);
+			++cnt;
 		}
-		
+	}
+	else
+	{
+		std::pair<std::string, bool> last;
+		last.first = "...";
+		last.second = false;
+		paragraphForShowing.push_back(last);
 	}
 }
 
@@ -281,6 +316,25 @@ void Document::debug()
 	std::cout << fileName << '\n';
 	for (auto i : paragraphForShowing)
 		std::cout << i.first << ' ';
+}
+void Document::getWordsIntitle(std::vector<std::string> &phrase) {
+	for (auto i : phrase)
+		wordsIntitle.insert(i);
+}
+void Document::ColorTitle() {
+	std::string word;
+	std::stringstream ss(title);
+	while (ss) {
+		ss >> word;
+		if (wordsIntitle.find(word) != wordsIntitle.end()) {
+			Color(10);
+			std::cout << " " + word;
+			Color(14);
+		}
+		else
+			std::cout << " " + word;
+		word.clear();
+	}
 }
 
 bool Document::IsTheSameString(const std::string& stringToCompare, const std::string& paragraph, const int& pos)
@@ -301,7 +355,6 @@ bool Document::IsTheSameString(const std::string& stringToCompare, const std::st
 	}
 	return true;
 }
-
 
 void CreateVectorDoc(const std::vector<std::string>& fileName, std::vector<Document>& result)
 {
@@ -334,6 +387,14 @@ void Document::DisplayFile() {
 			len = i.length();
 			Gotoxy(20, ++y);
 		}
-		std::cout << i << " ";
+		if (len > 100) {
+			std::string tmp = i.substr(0, 120), tmp2 = i.substr(121, len);
+			std::cout << tmp;
+			Gotoxy(20, ++y);
+			std::cout << tmp2;
+			len = tmp2.length();
+		}
+		else
+			std::cout << i << " ";
 	}
 }
