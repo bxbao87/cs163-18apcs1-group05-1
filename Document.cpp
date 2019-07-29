@@ -92,6 +92,8 @@ void Document::DisplayResult(int x, int &y) {
 	Color(9);
 	std::cout << "File: " << fileName;
 	Gotoxy(x, ++y);
+	Color(14);
+	std::cout << "Title:";
 	ColorTitle();
 	Gotoxy(x, ++y);
 	Color(15);
@@ -321,7 +323,7 @@ void Document::getWordsIntitle(std::vector<std::string> &phrase) {
 }
 void Document::ColorTitle() {
 	std::string word;
-	std::stringstream ss;
+	std::stringstream ss(title);
 	while (ss) {
 		ss >> word;
 		if (wordsIntitle.find(word) != wordsIntitle.end()) {
