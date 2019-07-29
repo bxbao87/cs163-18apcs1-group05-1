@@ -4,6 +4,7 @@ Search::Search()
 {
 	system("md Process");
 	system("md Data");
+	system("md NewData");
 
 #ifdef CalcTime
 	auto startTime = clock();
@@ -24,6 +25,13 @@ Search::Search()
 	if (!(loadListOfFile && loadTrie && loadNumIndex))
 	{
 		CreateIndex();
+		SaveListOfFile();
+		trie.SaveTrie();
+		numIndex.SaveNumIndex();
+	}
+
+	if (CreateIndexForNewFile())
+	{
 		SaveListOfFile();
 		trie.SaveTrie();
 		numIndex.SaveNumIndex();
@@ -210,6 +218,61 @@ bool Search::LoadStopWord()
 		stopWord.insert(word);
 	}
 	fin.close();
+	return true;
+}
+
+bool Search::CreateIndexForNewFile()
+{
+#ifdef CalcTime
+	auto startTime = clock();
+#endif
+	std::vector<std::string> listOfNewFile;
+	GetFilename("NewData", listOfNewFile);
+
+	if (listOfNewFile.empty())
+		return false;
+
+	int cnt = (int)theFullListOfFile.size();
+
+	for (auto& i : listOfNewFile)
+	{
+		i.erase(0, 8);
+		std::string command = "move NewData\\" + i + " Data\\" + i;
+		system(command.c_str());
+		i = "Data\\" + i;
+		theFullListOfFile.push_back(i);
+	}
+
+	for (auto i : listOfNewFile)
+	{
+		std::vector<std::string> wordsInFile;
+		wordsInFile.clear();
+		ReadSingleFile(i, wordsInFile);
+
+		//if (wordsInFile.empty())
+		//{
+		//	std::cout << "Can't load file\n";
+		//	//return false;
+		//}
+
+		for (int j = 0; j < (int)wordsInFile.size(); ++j)
+		{
+			if (isNumberWithChar(wordsInFile[j]))
+			{
+				double val = stod(wordsInFile[j]);
+				numIndex.AddNum(val, cnt);
+			}
+			else
+			{
+				if (!wordsInFile[j].empty()) trie.AddKey(wordsInFile[j], cnt);
+			}
+		}
+		++cnt;
+	}
+#ifdef CalcTime
+	auto endTime = clock();
+	std::cerr << "Add New File Time: " << (double)(endTime - startTime) / CLOCKS_PER_SEC << "s\n";
+#endif
 	return true;
 }
 
@@ -466,9 +529,9 @@ std::vector<int> Search::Ranking(std::vector<int>& finalList, std::vector<std::s
 	return result;
 }
 
-void Search::Test200Query()
+void Search::Test100Query()
 {
-	std::ifstream in("Process\\test_200_query.txt");
+	std::ifstream in("Process\\test_100_query.txt");
 	if (!in)
 		return;
 	std::string query;
