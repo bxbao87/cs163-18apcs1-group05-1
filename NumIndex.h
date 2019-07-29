@@ -18,6 +18,7 @@ public:
 	void AddNum(const double& val, const std::vector<int>& fileList); // Add val from fileList
 	void GetNumKey(std::vector<int>& fileList, const double& key);// Get a fileList that contain val
 	void GetRange(std::vector<int>& result, const double& key1, const double& key2);
+	void GetValueInRange(const double &lo, const double &hi, std::vector <std::string> & result);
 
 };
 

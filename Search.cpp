@@ -82,6 +82,8 @@ void Search::Run()
 	while (InputKey(query))
 	{
 		std::string processedQuery = InfixToPostfix(query);
+		//std::cout << "May qua no thoat roi chu khong la no bay mau cmnr" << "\n";
+			
 		if (!processedQuery.empty())
 		{
 			std::vector<int> result = Process(processedQuery);
@@ -92,7 +94,14 @@ void Search::Run()
 				NoResult();
 			else
 			{
-				std::vector <std::string> phrases = SplitQuery(query);
+				std::vector <std::string> content, title;
+				std::vector <std::string> phrases;
+				SplitQuery(query, title, content);
+				//title is vector contains all words need to be displayed in the title
+				//contente is the vector contains all words need to be displayed in the content
+				//phrases are the union of two above vectors
+				OR(phrases, content);
+				OR(phrases, title);
 
 				result = Ranking(result, phrases);
 
@@ -441,6 +450,11 @@ std::vector<int> Search::Ranking(std::vector<int>& finalList, std::vector<std::s
 	return result;
 }
 
+void Search::Test1000Query()
+{
+	std::ifstream in("Process\\test_1000_query.txt");
+}
+
 //Extract command and split into smaller queries
 std::string Search::InfixToPostfix(const std::string & query)
 {
@@ -490,14 +504,23 @@ std::string Search::InfixToPostfix(const std::string & query)
 			st.pop();//pop the string "("
 		}
 		else if (IsExactQuery(token)) {//If it is exact query get everything between "" and add it to subquery 
-			do {
+			subquery += token + ' ';
+			while (token.back() != '\"')
+			{
+				ss >> token;
+				subquery += token + ' ';
+			}
+			subquery.pop_back();
+			/*do 
+			{
 				subquery += token + " ";
-			} while (ss >> token && !IsExactQuery(token));
-			if (token[0] == '\"') {
+			} while (ss >> token && !IsExactQuery(token));*/
+			/*if (token[0] == '\"') 
+			{
 				subquery.pop_back();
 			}
 			else 
-				subquery += token;
+				subquery += token;*/
 			output += subquery + ",";
 			subquery.clear();
 		}
@@ -544,80 +567,99 @@ std::string Search::PreProcess(const std::string & query)
 	return output;
 }
 
-std::vector<std::string> Search::SplitQuery(const std::string& query)
+void Search::SplitQuery(const std::string& query, std::vector<std::string> &intitle, std::vector<std::string> &content)
 {
-	std::vector <std::string> output;
-	output.clear();
-	std::string newquery = PreProcess(query);
+	std::string tmp = InfixToPostfix(query);
+	std::stringstream ss(tmp);
+	std::string subquery;
+	while (std::getline(ss, subquery, ',')) {
+		TrimQuery(subquery, intitle, content);
+	// std::vector <std::string> output;
+	// output.clear();
+	// std::string newquery = PreProcess(query);
 
-	std::stringstream ss(newquery);
-	std::string token, subquery;
-	std::stack<std::string> st;
+	// std::stringstream ss(newquery);
+	// std::string token, subquery;
+	// std::stack<std::string> st;
 
-	while (ss >> token) {
-		if (token == "AND" || token == "OR") {
-			if (subquery.size()) {
-				subquery.pop_back();
-			}
-			TrimQuery(subquery);
-			output.push_back(subquery);
-			subquery.clear();
-		}
-		else if (IsOpenBracket(token)) {
-			token.erase(token.begin());
-			if (token.size()) {
-				token += " ";
-			}
-			subquery += token;
-		}
-		else if (IsCloseBracket(token)) {
-			token.erase(token.end() - 1);
-			subquery += token;
-			if (subquery.size()) {
-				subquery.pop_back();
-				TrimQuery(subquery);
-				output.push_back(subquery);
-			}
-			subquery.clear();
-		}
-		else if (IsExactQuery(token)) {//If it is exact query get everything between "" and add it to subquery 
-			do {
-				subquery += token + " ";
-			} while (ss >> token && !IsExactQuery(token));
-			if (token[0] == '\"') {
-				subquery.pop_back();
-			}
-			else
-				subquery += token;
-			subquery.erase(0, 1);
-			subquery.pop_back();
-			output.push_back(subquery) ;
-			subquery.clear();
-		}
-		else {
-			subquery += token + " ";
-		}
+	// while (ss >> token) {
+	// 	if (token == "AND" || token == "OR") {
+
+// 			/*subquery = token;
+
+// 			if (subquery.size()) {
+// 				subquery.pop_back();
+// 			}
+// 			TrimQuery(subquery);
+// 			output.push_back(subquery);
+// 			subquery.clear();*/
+// 		}
+// 		else if (IsOpenBracket(token)) {
+// 			token.erase(token.begin());
+// 			if (token.size()) {
+// 				token += " ";
+// 			}
+// 			subquery += token;
+// 		}
+// 		else if (IsCloseBracket(token)) {
+// 			token.erase(token.end() - 1);
+// 			subquery += token;
+// 			if (subquery.size()) {
+// 				subquery.pop_back();
+// 				TrimQuery(subquery);
+// 				output.push_back(subquery);
+// 			}
+// 			subquery.clear();
+// 		}
+// 		else if (IsExactQuery(token)) {//If it is exact query get everything between "" and add it to subquery 
+// 			subquery += token + ' ';
+// 			while (token.back() != '\"')
+// 			{
+// 				ss >> token;
+// 				subquery += token + ' ';
+// 			}
+// 			subquery.pop_back();
+// 			/*do {
+// 				subquery += token + " ";
+// 			} while (ss >> token && !IsExactQuery(token));
+// 			if (token[0] == '\"') {
+// 				subquery.pop_back();
+// 			}
+// 			else
+// 				subquery += token;*/
+// 			subquery.erase(0, 1);
+// 			subquery.pop_back();
+// 			output.push_back(subquery) ;
+// 			subquery.clear();
+// 		}
+// 		else {
+// 			subquery += token + " ";
+// 		}
+// 	}
+
+// 	if (subquery.size()) {
+// 		subquery.pop_back();
+// 		TrimQuery(subquery);
+// 		output.push_back(subquery);
 	}
-
-	if (subquery.size()) {
-		subquery.pop_back();
-		TrimQuery(subquery);
-		output.push_back(subquery);
-	}
-	return output;
 }
 
-void Search::TrimQuery(std::string & query)
+void Search::TrimQuery(std::string &query, std::vector <std::string> &intitle, std::vector <std::string> &content)
 {
 	if (IsRangeQuery(query)) {
-		int i = (int)query.find("..");
-		if (i != query.npos)
-			query.erase(i, 2);
+		//int i = (int)query.find("..");
+		//if (i != query.npos)
+		//	query.erase(i, 2);
+		//Something big is missing lol :v
+		double lo, hi;
+		PreProcessRangeQuery(query, lo, hi);
+		numIndex.GetValueInRange(lo, hi, content);
 	}
 	else if (IsPlusQuery(query)) {
 		int i = (int)query.find("+");
 		if (i != query.npos)
 			query.erase(i, 1);
+		content.push_back(query);
 	}
 	else if (IsMinusQuery(query)) {
 		int i = (int)query.find("-");
@@ -625,11 +667,19 @@ void Search::TrimQuery(std::string & query)
 			query.erase(i);//erase from the - character till end
 		if (query.back() == ' ')
 			query.pop_back();
+		content.push_back(query);
 	}
 	else if (IsExactQuery(query)) {
 		query.pop_back();
 		query.erase(0, 1);
+		content.push_back(query);
 	}
+	else if (IsIntitleQuery(query)) {
+		query.erase(0, 8);
+		intitle.push_back(query);
+	}
+	else if (query != "AND" && query != "OR")
+		content.push_back(query);
 }
 
 bool Search::IsExactQuery(const std::string & query)
@@ -879,6 +929,29 @@ std::vector<int> Search::SearchPlaceHolder(const std::string & phrase)
 		return std::vector<int>();
 }
 
+std::vector<int> Search::SearchIntitle(const std::string & phrase)
+{
+	std::vector<int> res;
+	std::vector<std::string> words = splitSentence(phrase);
+	auto tmp = SearchNormal(phrase);
+
+	std::vector<Document> docVector;
+	for (auto i : tmp) {
+		docVector.push_back(Document(theFullListOfFile[i]));
+	}
+
+	for (int i = 0; i < (int)tmp.size(); i++) {
+		docVector[i].ReadFile();
+		for (auto word : words) {
+			if (docVector[i].SearchForPhraseInTitle(word) != -1) {
+				res.push_back(tmp[i]);
+				break;
+			}
+		}
+	}
+	return res;
+}
+
 int Search::SwitchQuery(const std::string & subquery) {
 	if (IsExactQuery(subquery))
 		return 1;
@@ -913,6 +986,8 @@ std::vector <int> Search::Process(const std::string &query) {
 				break;
 			case 2://Intitle query
 				//Process Intitle query here
+				subquery.erase(0, 8);
+				res = SearchIntitle(subquery);
 				break;
 			case 3://Placeholder query
 				//Process placeholder here

@@ -56,15 +56,35 @@ void Document::OpenFile()
 int Document::SearchForPhraseInContent(const std::string& phrase)
 {
 	auto pos = content.find(phrase);
-	if (pos == std::string::npos) return -1;
-	else return (int)pos;
+	if (pos == std::string::npos) 
+		return -1;
+
+	while (pos != std::string::npos && !IsTheSameString(phrase, content, pos))
+	{
+		pos = content.find(phrase, pos + 1);
+	}
+
+	if (pos == std::string::npos) 
+		return -1;
+	else 
+		return (int)pos;
 }
 
 int Document::SearchForPhraseInTitle(const std::string& phrase)
 {
 	auto pos = title.find(phrase);
-	if (pos == std::string::npos) return -1;
-	else return (int)pos;
+	if (pos == std::string::npos)
+		return -1;
+
+	while (pos != std::string::npos && !IsTheSameString(phrase, title, pos))
+	{
+		pos = title.find(phrase, pos + 1);
+	}
+
+	if (pos == std::string::npos)
+		return -1;
+	else
+		return (int)pos;
 }
 
 void Document::DisplayResult(int x, int &y) {
@@ -113,11 +133,29 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 	paragraphForShowing.clear();
 	const std::set <char> delimeter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/',
 			'&','[',']','+',':','`','@','%','^','=','_', '\\', '|', '$', '~' };
+	std::vector<std::string> wordsContent = splitSentence(content);
+	std::vector<int> posOfPharse;
+	for (auto p : phrase) // define which phrase appear first;
+	{
+		int tmp = SearchForPhraseInContent(p);
+		if (tmp != -1)
+			posOfPharse.push_back(tmp);
+	}
+
 
 	for (auto ph : phrase)
 	{
 		int posP = SearchForPhraseInContent(ph);
 		std::vector<std::string> keyword = splitSentence(ph);
+		for (auto& i : keyword)
+		{
+			Tolower(i);
+			if (IsStringWiths(i))
+			{
+				i.pop_back();
+				i.pop_back();
+			}
+		}
 
 		if (posP != -1)
 		{
@@ -139,12 +177,17 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 
 			for (auto i : splitToDisplay)
 			{
-				//std::string tmp = TolowerExtend(i);
 				std::string tmp = i;
+				Tolower(tmp);
 				while ((int)tmp.size() > 0 && IsDelimeter(tmp[0], delimeter))
 					tmp.erase(0, 1);
 				while ((int)tmp.size() > 0 && IsDelimeter(tmp.back(), delimeter))
 					tmp.pop_back();
+				if (IsStringWiths(tmp))
+				{
+					tmp.pop_back();
+					tmp.pop_back();
+				}
 				process.push_back(tmp);
 			}
 
@@ -152,7 +195,9 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 			{
 				std::pair<std::string, bool> word;
 				word.first = splitToDisplay[i];
-				if (std::find(keyword.begin(), keyword.end(), process[i]) != keyword.end())
+				auto kw = std::find(keyword.begin(), keyword.end(), process[i]);
+				auto phr = std::find(phrase.begin(), phrase.end(), process[i]);
+				if (kw != keyword.end() || phr != phrase.end())
 					word.second = true;
 				paragraphForShowing.push_back(word);
 			}
@@ -160,7 +205,6 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 		}
 		else
 		{
-			std::vector<std::string> wordsContent = splitSentence(content);
 			std::vector<std::string> toloweredContent;
 			
 			for (auto i : wordsContent)
@@ -170,11 +214,13 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 					tmp.erase(0, 1);
 				while ((int)tmp.size() > 0 && IsDelimeter(tmp.back(), delimeter))
 					tmp.pop_back();
+				if (IsStringWiths(tmp))
+				{
+					tmp.pop_back();
+					tmp.pop_back();
+				}
 				toloweredContent.push_back(tmp);
 			}
-
-			for (auto& i : keyword)
-				Tolower(i);
 
 			std::vector<int> pos;
 
@@ -188,7 +234,18 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 				}
 			}
 			if (pos.empty())
+			{
+				int cnt = 0;
+				for (int i = 0; i < (int)wordsContent.size() && cnt < 50; ++i)
+				{
+					std::pair<std::string, bool> word;
+					word.first = wordsContent[i];
+					word.second = false;
+					paragraphForShowing.push_back(word);
+					++cnt;
+				}
 				continue;
+			}
 			int min = pos[0], cnt = 0;
 			for (auto i : pos)
 				if (i < min)
@@ -197,32 +254,35 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 			{
 				std::pair<std::string, bool> word;
 				word.first = wordsContent[i];
-				if (std::find(keyword.begin(), keyword.end(), toloweredContent[i]) != keyword.end())
+				auto kw = std::find(keyword.begin(), keyword.end(), toloweredContent[i]);
+				auto phr = std::find(phrase.begin(), phrase.end(), toloweredContent[i]);
+				if (kw!=keyword.end() || phr!=phrase.end())
 					word.second = true;
 				paragraphForShowing.push_back(word);
 				++cnt;
 			}
-			if ((int)paragraphForShowing.size() == 1)
-			{
-				cnt = 1;
-				for (int i = min - 1; i >= 0 && cnt < 50; ++i)
-				{
-					std::pair<std::string, bool> word;
-					word.first = wordsContent[i];
-					word.second = false;
-					paragraphForShowing.insert(paragraphForShowing.begin(), word);
-					++cnt;
-				}
-			}
 
 		}
+		if ((int)paragraphForShowing.size() <5)
+		{
+			int cnt = (int)paragraphForShowing.size();
+			for (int i = (int)(wordsContent.size()-cnt); i >= 0 && cnt < 50; --i)
+			{
+				std::pair<std::string, bool> word;
+				word.first = wordsContent[i];
+				word.second = false;
+				paragraphForShowing.insert(paragraphForShowing.begin(), word);
+				++cnt;
+			}
+		}
+		
 	}
 }
 
 void Document::debug()
 {
-	if (paragraphForShowing.empty())
-		return;
+	/*if (paragraphForShowing.empty())
+		return;*/
 	std::cout << "size: " << paragraphForShowing.size() << '\n';
 	std::cout << fileName << '\n';
 	for (auto i : paragraphForShowing)
@@ -246,6 +306,25 @@ void Document::ColorTitle() {
 			std::cout << " " + word;
 		word.clear();
 	}
+}
+
+bool Document::IsTheSameString(const std::string& stringToCompare, const std::string& paragraph, const int& pos)
+{
+	if (pos > 0)
+	{
+		int pre = pos - 1;
+		if (paragraph[pre] >= 'a' && paragraph[pre] <= 'z') return false;
+		if (paragraph[pre] >= 'A' && paragraph[pre] <= 'Z') return false;
+		if (paragraph[pre] == '-') return false;
+	}
+	if (pos + (int)stringToCompare.length() < (int)paragraph.length())
+	{
+		int next = pos + (int)stringToCompare.length();
+		if (paragraph[next] >= 'a' && paragraph[next] <= 'z') return false;
+		if (paragraph[next] >= 'A' && paragraph[next] <= 'Z') return false;
+		if (paragraph[next] == '-') return false;
+	}
+	return true;
 }
 
 void CreateVectorDoc(const std::vector<std::string>& fileName, std::vector<Document>& result)

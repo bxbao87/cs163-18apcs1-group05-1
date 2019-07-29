@@ -79,3 +79,14 @@ void NumIndex::GetRange(std::vector<int>& result, const double & key1, const dou
 	for (auto i : process)
 		result.push_back(i);
 }
+
+void NumIndex::GetValueInRange(const double & lo, const double & hi, std::vector<std::string>& result)
+{
+	auto it = numList.lower_bound(lo);
+	for (it; it->first <= hi; it++) {
+		std::stringstream ss;
+		ss << it->first;
+		std::string res = ss.str();
+		result.push_back(res);
+	}
+}

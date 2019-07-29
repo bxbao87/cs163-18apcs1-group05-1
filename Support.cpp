@@ -97,6 +97,14 @@ std::string TolowerExtend(std::string & s)
 	return tmp;
 }
 
+bool IsStringWiths(const std::string & s)
+{
+	int length =(int)s.length();
+	if (s[length-1] == 's' && s[length-2] == '\'')
+		return true;
+	return false;
+}
+
 
 void OR(std::vector<int>& v1, const std::vector<int>& v2)
 {
@@ -106,6 +114,21 @@ void OR(std::vector<int>& v1, const std::vector<int>& v2)
 	v1.clear();
 	for (auto i : uni)
 		v1.push_back(i);
+}
+
+void OR(std::vector<std::string>& v1, const std::vector<std::string>& v2) {
+	std::set<std::string> uni;
+	if (v2.size() == 0)
+		return;
+	else {
+		for (auto item : v2)
+			uni.insert(item);
+		for (auto item : v1)
+			uni.insert(item);
+	}
+	v1.clear();
+	for (auto item : uni)
+		v1.push_back(item);
 }
 
 void NOT(std::vector<int>& res, const std::vector<int>& complement)
@@ -196,3 +219,4 @@ std::string ReplaceStr(std::string &str, char delimiter) {
 		str.erase(str.begin());
 	return tmp;
 }
+
