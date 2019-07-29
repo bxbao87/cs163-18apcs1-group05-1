@@ -92,6 +92,8 @@ void Document::DisplayResult(int x, int &y) {
 	Color(9);
 	std::cout << "File: " << fileName;
 	Gotoxy(x, ++y);
+	Color(14);
+	std::cout << "Title:";
 	ColorTitle();
 	Gotoxy(x, ++y);
 	Color(15);
@@ -134,13 +136,13 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 	const std::set <char> delimeter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/',
 			'&','[',']','+',':','`','@','%','^','=','_', '\\', '|', '$', '~' };
 	std::vector<std::string> wordsContent = splitSentence(content);
-	std::vector<int> posOfPharse;
-	for (auto p : phrase) // define which phrase appear first;
-	{
-		int tmp = SearchForPhraseInContent(p);
-		if (tmp != -1)
-			posOfPharse.push_back(tmp);
-	}
+	//std::vector<int> posOfPharse;
+	//for (auto p : phrase) // define which phrase appear first;
+	//{
+	//	int tmp = SearchForPhraseInContent(p);
+	//	if (tmp != -1)
+	//		posOfPharse.push_back(tmp);
+	//}
 
 
 	for (auto ph : phrase)
@@ -294,7 +296,7 @@ void Document::getWordsIntitle(std::vector<std::string> &phrase) {
 }
 void Document::ColorTitle() {
 	std::string word;
-	std::stringstream ss;
+	std::stringstream ss(title);
 	while (ss) {
 		ss >> word;
 		if (wordsIntitle.find(word) != wordsIntitle.end()) {

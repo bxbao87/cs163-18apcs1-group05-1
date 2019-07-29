@@ -112,23 +112,33 @@ void Search::Run()
 				for (auto& doc : docs)
 				{
 					doc.ReadFile();
+					doc.getWordsIntitle(title);
 					doc.GetParagraphForShowing(phrases);
 				}
 
-				int x = 20, y = 31, step = 2;
-				std::vector<int> cor;
-				cor.clear();
-				for (auto& doc : docs)
+				while(true)
 				{
-					cor.push_back(y);
-					doc.DisplayResult(x, y);
-					y += step;
-				}
+					int x = 20, y = 31, step = 2;
+					std::vector<int> cor;
+					cor.clear();
+					for (auto& doc : docs)
+					{
+						cor.push_back(y);
+						doc.DisplayResult(x, y);
+						y += step;
+					}
 
-				int chosen = ChooseLink(total, cor);
-				if (chosen != -1) {
-					docs[chosen].DisplayFile();
-					_getch();
+					int chosen = ChooseLink(total, cor);
+					if (chosen != -1) {
+						docs[chosen].DisplayFile();
+						_getch();
+					}
+					if (chosen == -1)
+						break;
+					system("cls");
+					SearchScreen();
+					Gotoxy(28, 21);
+					std::cout << query;
 				}
 			}
 		}
