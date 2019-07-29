@@ -466,9 +466,80 @@ std::vector<int> Search::Ranking(std::vector<int>& finalList, std::vector<std::s
 	return result;
 }
 
-void Search::Test1000Query()
+void Search::Test200Query()
 {
-	std::ifstream in("Process\\test_1000_query.txt");
+	std::ifstream in("Process\\test_200_query.txt");
+	if (!in)
+		return;
+	std::string query;
+	auto startTime = clock();
+	while (std::getline(in, query))
+	{
+		std::string processedQuery = InfixToPostfix(query);
+
+		if (!processedQuery.empty())
+		{
+			std::vector<int> result = Process(processedQuery);
+
+			std::vector<Document> docs;
+			int total = min((int)result.size(), 5);
+			if (total == 0)
+				//NoResult();
+			{
+				std::cout << query << " No result\n";
+			}
+			else
+			{
+				std::vector <std::string> content, title;
+				std::vector <std::string> phrases;
+				SplitQuery(query, title, content);
+				//title is vector contains all words need to be displayed in the title
+				//contente is the vector contains all words need to be displayed in the content
+				//phrases are the union of two above vectors
+				OR(phrases, content);
+				OR(phrases, title);
+				OR(title, content);
+
+				result = Ranking(result, phrases);
+				/*if (result.empty())
+				{
+					std::cout << query << " No result\n";
+				}*/
+				if (!result.empty())
+				{
+					for (int i = 0; i < total; ++i)
+						docs.push_back(Document(theFullListOfFile[result[i]]));
+
+
+					for (auto& doc : docs)
+					{
+						doc.ReadFile();
+						doc.getWordsIntitle(title);
+						doc.GetParagraphForShowing(phrases);
+					}
+
+					int x = 20, y = 31, step = 2;
+					std::vector<int> cor;
+					cor.clear();
+					for (auto& doc : docs)
+					{
+						cor.push_back(y);
+						doc.DisplayResult(x, y);
+						y += step;
+					}
+				}
+				else
+					//NoResult();
+					std::cout << query << " No result\n";
+			}
+		}
+		SearchScreen();
+		query.clear();
+	}
+	auto endTime = clock();
+	in.close();
+	std::cout << "Total Time: " << (double)(endTime - startTime) / CLOCKS_PER_SEC << '\n';
+	system("pause");
 }
 
 //Extract command and split into smaller queries
@@ -851,7 +922,7 @@ std::vector<int> Search::SearchNormal(const std::string & phrase)
 		Tolower(word);
 	words = RemoveStopWord(words);
 
-	std::map<int, int> mp;
+	std::set<int> s;
 
 	for (auto word : words)
 	{
@@ -861,12 +932,12 @@ std::vector<int> Search::SearchNormal(const std::string & phrase)
 			if (word[0] == '~') {
 				word.erase(word.begin());
 				res = SearchSynonym(word);
-				AddToMap(res, mp);
+				AddToSet(res, s);
 			}
 			else {
 				//normal search
 				res = trie.GetKey(word);
-				AddToMap(res, mp);
+				AddToSet(res, s);
 			}
 		}
 		else
@@ -875,7 +946,7 @@ std::vector<int> Search::SearchNormal(const std::string & phrase)
 				double l, r;
 				PreProcessRangeQuery(word, l, r);
 				SearchRange(l, r, res);
-				AddToMap(res, mp);
+				AddToSet(res, s);
 			}
 			else{
 				while (!isdigit(word[0]))
@@ -884,13 +955,13 @@ std::vector<int> Search::SearchNormal(const std::string & phrase)
 					word.pop_back();
 				double number = stod(word);
 				SearchNumber(number, res);
-				AddToMap(res, mp);
+				AddToSet(res, s);
 			}
 		}
 	}
 	res.clear();
-	for (auto i : mp) 
-		res.push_back(i.first);
+	for (auto i : s) 
+		res.push_back(i);
 
 	return res;
 

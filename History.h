@@ -13,5 +13,6 @@ public :
 	std::vector<std::string> GetHistory(const std::string &searchKeyword);//get searchKeyword and return history 
 private:
 	std::queue <std::string> history;
+	const int limits = 30;
 };
 #endif

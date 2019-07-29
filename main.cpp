@@ -4,8 +4,9 @@
 #include <map>
 
 int main() {
-	Search bogosearch;
-	bogosearch.Run();
+	Search bogoSearch;
+	//bogoSearch.Test200Query();
+	bogoSearch.Run();
 	// Mai's testing zone 
 	/*Document doc("Data/Group21News97.txt");
 	doc.ReadFile();
@@ -27,5 +28,6 @@ int main() {
 	bogosearch.TrimQuery(queryCucSuc,a ,b);
 	std::cout << queryCucSuc << std::endl;
 	///End of Luan's draft*/
+	//system("cls");
 	return 0;
 }

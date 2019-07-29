@@ -8,7 +8,7 @@
 #include "History.h"
 #include "Document.h"
 
-//#define CalcTime 
+#define CalcTime 
 
 class Search
 {
@@ -80,7 +80,7 @@ public:
 
 	std::vector<int> Ranking(std::vector<int>& finalList, std::vector<std::string>& subQuery);
 
-	void Test1000Query();
+	void Test200Query();
 };
 
 #endif
