@@ -322,7 +322,7 @@ void Document::getWordsIntitle(std::vector<std::string> &phrase) {
 	for (auto i : phrase) {
 		std::vector<std::string> words = splitSentence(i);
 		for(auto j:words)
-			wordsIntitle.insert(j);
+			wordsIntitle.insert(TolowerExtend(j));
 	}
 }
 
@@ -331,7 +331,8 @@ void Document::ColorTitle() {
 	std::stringstream ss(title);
 	while (ss) {
 		ss >> word;
-		if (wordsIntitle.find(word) != wordsIntitle.end()) {
+		std::string lowerWord = TolowerExtend(word);
+		if (wordsIntitle.find(lowerWord) != wordsIntitle.end()) {
 			Color(10);
 			std::cout << " " + word;
 			Color(14);
@@ -339,7 +340,7 @@ void Document::ColorTitle() {
 		else {
 			bool found = false;
 			for (auto i : wordsIntitle) {
-				auto pos = word.find(i);
+				auto pos = lowerWord.find(i);
 				if (pos != std::string::npos) {
 					std::cout << " ";
 					int k = 0;
