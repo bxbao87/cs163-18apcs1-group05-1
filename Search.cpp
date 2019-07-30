@@ -1212,10 +1212,21 @@ std::vector <int> Search::Process(const std::string &query) {
 			st.push_back(res);
 		}
 		else {
-			std::vector <int> v1 = st.back();
+			/*std::vector <int> v1 = st.back();
 			st.pop_back();
 			std::vector <int> v2 = st.back();
-			st.pop_back();
+			st.pop_back();*/
+			std::vector<int> v1, v2;
+			if (!st.empty())
+			{
+				v1 = st.back();
+				st.pop_back();
+			}
+			if (!st.empty())
+			{
+				v2 = st.back();
+				st.pop_back();
+			}
 			if (subquery == "AND")
 				AND(v1, v2);
 			else if (subquery == "OR")
