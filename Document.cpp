@@ -134,7 +134,7 @@ void Document::GetParagraphForShowing(const std::vector<std::string>& phrase)
 	//process content
 	paragraphForShowing.clear();
 	const std::set <char> delimeter = { '.', ',', '\'', '?', '\"', '\n', '!', '(', ')','-','/',
-			'&','[',']','+',':','`','@','%','^','=','_', '\\', '|', '$', '~' };
+			'&','[',']','+',':','`','@','%','^','=','_', '\\', '|', '$', '~',';' };
 	std::vector<std::string> wordsContent = splitSentence(content);
 	//std::vector<int> posOfPhrase;
 	std::set<int> posOfPhrase;
