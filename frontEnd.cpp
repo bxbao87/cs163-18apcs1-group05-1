@@ -36,7 +36,7 @@ void SetWindow(int Width, int Height)
 {
 	_COORD coord;
 	coord.X = Width;
-	coord.Y = 200;
+	coord.Y = 500;
 
 	_SMALL_RECT Rect;
 	Rect.Top = 0;
