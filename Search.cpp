@@ -24,17 +24,31 @@ Search::Search()
 
 	if (!(loadListOfFile && loadTrie && loadNumIndex))
 	{
+#ifdef CalcTime
+		auto startTime = clock();
+#endif
 		CreateIndex();
 		SaveListOfFile();
 		trie.SaveTrie();
 		numIndex.SaveNumIndex();
+#ifdef CalcTime
+		auto endTime = clock();
+		std::cerr << "Build Time: " << (double)(endTime - startTime) / CLOCKS_PER_SEC << '\n';
+#endif
 	}
 
 	if (CreateIndexForNewFile())
 	{
+#ifdef CalcTime
+		auto startTime = clock();
+#endif
 		SaveListOfFile();
 		trie.SaveTrie();
 		numIndex.SaveNumIndex();
+#ifdef CalcTime
+		auto endTime = clock();
+		std::cerr << "Add New File Time: " << (double)(endTime - startTime) / CLOCKS_PER_SEC << "s\n";
+#endif
 	}
 }
 
@@ -223,9 +237,6 @@ bool Search::LoadStopWord()
 
 bool Search::CreateIndexForNewFile()
 {
-#ifdef CalcTime
-	auto startTime = clock();
-#endif
 	std::vector<std::string> listOfNewFile;
 	GetFilename("NewData", listOfNewFile);
 
@@ -269,10 +280,6 @@ bool Search::CreateIndexForNewFile()
 		}
 		++cnt;
 	}
-#ifdef CalcTime
-	auto endTime = clock();
-	std::cerr << "Add New File Time: " << (double)(endTime - startTime) / CLOCKS_PER_SEC << "s\n";
-#endif
 	return true;
 }
 
@@ -306,9 +313,6 @@ std::vector<std::string> Search::RemoveWeirdWord(const std::vector<std::string>&
 
 bool Search::CreateIndex()
 {
-#ifdef CalcTime
-	auto startTime = clock();
-#endif
 	GetFilename("Data", theFullListOfFile);
 
 	if (theFullListOfFile.empty())
@@ -341,10 +345,6 @@ bool Search::CreateIndex()
 		}
 		++cnt;
 	}
-#ifdef CalcTime
-	auto endTime = clock();
-	std::cerr << "Build Trie Time: " << (double)(endTime - startTime) / CLOCKS_PER_SEC << "s\n";
-#endif
 	return true;
 }
 
@@ -549,7 +549,7 @@ void Search::Test100Query()
 			if (total == 0)
 				//NoResult();
 			{
-				std::cout << query << " No result\n";
+				//std::cout << query << " No result\n";
 			}
 			else
 			{
@@ -564,10 +564,7 @@ void Search::Test100Query()
 				OR(title, content);
 
 				result = Ranking(result, phrases);
-				/*if (result.empty())
-				{
-					std::cout << query << " No result\n";
-				}*/
+
 				if (!result.empty())
 				{
 					for (int i = 0; i < total; ++i)
@@ -592,8 +589,10 @@ void Search::Test100Query()
 					}
 				}
 				else
+				{
 					//NoResult();
 					std::cout << query << " No result\n";
+				}
 			}
 		}
 		SearchScreen();
@@ -881,6 +880,7 @@ void Search::TrimQuery(std::string &query, std::vector <std::string> &intitle, s
 				content.push_back(syn);
 			}
 		}
+		content.push_back(query);
 	}
 	else if (query != "AND" && query != "OR")
 		content.push_back(query);
@@ -993,7 +993,7 @@ std::vector<int> Search::SearchNormal(const std::string & phrase)
 		{
 			//Search synonym
 			if (word[0] == '~') {
-				word.erase(word.begin());
+				word.erase(0, 1);
 				res = SearchSynonym(word);
 				AddToSet(res, s);
 			}
@@ -1077,7 +1077,11 @@ void Search::PreProcessRangeQuery(const std::string query, double & lo, double &
 
 
 std::vector<int> Search::SearchSynonym(const std::string &phrase) {
-	std::vector<std::string> syn = synonym[phrase];
+	std::vector<std::string> syn;
+	if (synonym.count(phrase)) 
+		syn = synonym[phrase];
+	syn.push_back(phrase);
+
 	std::vector<int> res;
 	std::set<int> st;
 	for (auto i : syn) {

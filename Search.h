@@ -8,7 +8,7 @@
 #include "History.h"
 #include "Document.h"
 
-#define CalcTime 
+//#define CalcTime 
 
 class Search
 {

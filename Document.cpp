@@ -106,7 +106,7 @@ void Document::DisplayResult(int x, int &y) {
 		}
 		len += i.first.length();
 		if (len > 100) {
-			std::string tmp = i.first.substr(0, 120), tmp2 = i.first.substr(121, len);
+			std::string tmp = i.first.substr(0, 110), tmp2 = i.first.substr(111, len);
 			std::cout << tmp;
 			Gotoxy(x, ++y);
 			std::cout << tmp2;
@@ -416,7 +416,7 @@ void Document::DisplayFile() {
 			Gotoxy(20, ++y);
 		}
 		if (len > 100) {
-			std::string tmp = i.substr(0, 120), tmp2 = i.substr(121, len);
+			std::string tmp = i.substr(0, 110), tmp2 = i.substr(111, len);
 			std::cout << tmp;
 			Gotoxy(20, ++y);
 			std::cout << tmp2;
